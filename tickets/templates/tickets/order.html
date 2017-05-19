@@ -1,0 +1,20 @@
+{% extends 'ironcage/base.html' %}
+
+{% block content %}
+<h1>Details of your order</h1>
+
+<p>You have ordered {{ order.num_tickets }} ticket(s) at the {{ order.rate }} rate.</p>
+
+<p>Total cost: £{{ order.cost }}</p>
+
+<table class="table">
+  {% for detail in order.ticket_details %}
+  <tr>
+    <td>{{ detail.id }}</td>
+    <td>{{ detail.name }}</td>
+    <td>{{ detail.days }}</td>
+    <td>£{{ detail.cost }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}
