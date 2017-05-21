@@ -1,3 +1,4 @@
+from django.core import mail
 from django.test import TestCase
 
 from django.contrib.auth.models import User
@@ -71,6 +72,21 @@ class OrderCreationTests(TestCase):
         ticket = order.unclaimed_tickets().get(invitations__email_addr='bob@example.com')
         self.assertEqual(ticket.days(), ['Friday', 'Saturday'])
 
+
+class SendTicketInvitationsTest(TestCase):
+    def test_send_ticket_invitations(self):
+        alice = User.objects.create_user(username='Alice')
+        order = actions.place_order_for_self_and_others(
+            alice,
+            'individual',
+            ['thu', 'fri', 'sat'],
+            [
+                ('bob@example.com', ['fri', 'sat']),
+                ('carol@example.com', ['sat', 'sun']),
+            ]
+        )
+        actions.send_ticket_invitations(order)
+        self.assertEqual(len(mail.outbox), 2)
 
 class TicketInvitationTests(TestCase):
     def test_claim_ticket_invitation(self):

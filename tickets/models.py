@@ -144,6 +144,9 @@ class TicketInvitation(models.Model):
 
     objects = Manager()
 
+    def get_absolute_url(self):
+        return reverse('tickets:ticket_invitation', args=[self.token])
+
     def claim_for_owner(self, owner):
         assert self.status == 'unclaimed'
         # TODO where do transactions go?

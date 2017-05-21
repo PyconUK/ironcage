@@ -27,6 +27,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# A custom setting for creating full URLs in links in emails
+# TODO possibly read from ALLOWED_HOSTS?
+DOMAIN = 'http://localhost:8000'
 
 # Application definition
 
