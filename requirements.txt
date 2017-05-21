@@ -4,5 +4,6 @@
 #
 #    pip-compile --output-file requirements.txt requirements.in
 #
+django-dotenv==1.4.1
 django==1.11.1
 pytz==2017.2              # via django
