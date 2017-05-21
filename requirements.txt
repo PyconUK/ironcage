@@ -7,3 +7,5 @@
 django-dotenv==1.4.1
 django==1.11.1
 pytz==2017.2              # via django
+requests==2.14.2          # via stripe
+stripe==1.55.2

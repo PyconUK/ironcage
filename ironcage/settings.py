@@ -124,3 +124,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
+
+# Stripe
+
+STRIPE_API_KEY = os.getenv('STRIPE_API_KEY')

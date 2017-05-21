@@ -11,6 +11,9 @@ from .utils import Scrambler
 class Order(models.Model):
     purchaser = models.ForeignKey(User, related_name='orders', on_delete=models.CASCADE)
     rate = models.CharField(max_length=40)
+    status = models.CharField(max_length=10)
+    stripe_charge_id = models.CharField(max_length=80)
+    stripe_charge_failure_reason = models.CharField(max_length=400, blank=True)
 
     id_scrambler = Scrambler(1000)
 
@@ -21,18 +24,18 @@ class Order(models.Model):
 
         # TODO where do transactions go?
         def create_with_ticket_for_purchaser(self, purchaser, rate, days):
-            order = self.create(purchaser=purchaser, rate=rate)
+            order = self.create(purchaser=purchaser, rate=rate, status='pending')
             order.tickets.create_for_user(purchaser, days)
             return order
 
         def create_with_tickets_for_others(self, purchaser, rate, email_addrs_and_days):
-            order = self.create(purchaser=purchaser, rate=rate)
+            order = self.create(purchaser=purchaser, rate=rate, status='pending')
             for email_addr, days in email_addrs_and_days:
                 order.tickets.create_with_invitation(email_addr, days)
             return order
 
         def create_with_tickets_for_purchaser_and_others(self, purchaser, rate, purchaser_days, email_addrs_and_days):
-            order = self.create(purchaser=purchaser, rate=rate)
+            order = self.create(purchaser=purchaser, rate=rate, status='pending')
             order.tickets.create_for_user(purchaser, purchaser_days)
             for email_addr, days in email_addrs_and_days:
                 order.tickets.create_with_invitation(email_addr, days)
@@ -54,6 +57,9 @@ class Order(models.Model):
 
     def cost(self):
         return sum(ticket.cost() for ticket in self.tickets.all())
+
+    def cost_pence(self):
+        return 100 * self.cost()
 
     def num_tickets(self):
         return self.tickets.count()
