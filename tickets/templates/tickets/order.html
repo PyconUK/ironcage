@@ -1,7 +1,7 @@
 {% extends 'ironcage/base.html' %}
 
 {% block content %}
-<h1>Details of your order</h1>
+<h1>Details of your order ({{ order.order_id }})</h1>
 
 <p>You have ordered {{ order.num_tickets }} ticket(s) at the {{ order.rate }} rate.</p>
 

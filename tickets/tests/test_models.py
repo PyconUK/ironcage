@@ -24,17 +24,17 @@ class OrderTests(TestCase):
 
     def test_ticket_details(self):
         expected_details = [{
-            'id': 1,
+            'id': '9A19',
             'name': 'Alice',
             'days': 'Thursday, Friday, Saturday',
             'cost': 90,
         }, {
-            'id': 2,
+            'id': '2C62',
             'name': 'bob@example.com',
             'days': 'Friday, Saturday',
             'cost': 66,
         }, {
-            'id': 3,
+            'id': 'BEAB',
             'name': 'carol@example.com',
             'days': 'Saturday, Sunday',
             'cost': 66,

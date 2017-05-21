@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import redirect, render
 
 from .actions import place_order_for_self, place_order_for_others, place_order_for_self_and_others
 from .forms import TicketForm, TicketForSelfForm, TicketForOthersFormSet
@@ -64,7 +64,7 @@ def new_order(request):
 
 @login_required
 def order(request, order_id):
-    order = get_object_or_404(Order, pk=order_id)
+    order = Order.objects.get_by_order_id_or_404(order_id)
     context = {
         'order': order,
     }

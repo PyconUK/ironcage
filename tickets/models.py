@@ -1,16 +1,24 @@
 from django.db import models
+from django.shortcuts import get_object_or_404
 from django.urls import reverse
 
 from django.contrib.auth.models import User
 
 from .constants import DAYS, RATES
+from .utils import Scrambler
 
 
 class Order(models.Model):
     purchaser = models.ForeignKey(User, related_name='orders', on_delete=models.CASCADE)
     rate = models.CharField(max_length=40)
 
+    id_scrambler = Scrambler(1000)
+
     class Manager(models.Manager):
+        def get_by_order_id_or_404(self, order_id):
+            id = self.model.id_scrambler.backward(order_id)
+            return get_object_or_404(self.model, pk=id)
+
         # TODO where do transactions go?
         def create_with_ticket_for_purchaser(self, purchaser, rate, days):
             order = self.create(purchaser=purchaser, rate=rate)
@@ -32,8 +40,14 @@ class Order(models.Model):
 
     objects = Manager()
 
+    @property
+    def order_id(self):
+        if self.id is None:
+            return None
+        return self.id_scrambler.forward(self.id)
+
     def get_absolute_url(self):
-        return reverse('tickets:order', args=[self.id])
+        return reverse('tickets:order', args=[self.order_id])
 
     def ticket_details(self):
         return [ticket.details() for ticket in self.tickets.all()]
@@ -57,7 +71,13 @@ class Ticket(models.Model):
     sun = models.BooleanField()
     mon = models.BooleanField()
 
+    id_scrambler = Scrambler(2000)
+
     class Manager(models.Manager):
+        def get_by_ticket_id_or_404(self, ticket_id):
+            id = self.model.id_scrambler.backward(ticket_id)
+            return get_object_or_404(self.model, pk=id)
+
         def create_for_user(self, user, days):
             day_fields = {day: (day in days) for day in DAYS}
             self.create(owner=user, **day_fields)
@@ -69,9 +89,15 @@ class Ticket(models.Model):
 
     objects = Manager()
 
+    @property
+    def ticket_id(self):
+        if self.id is None:
+            return None
+        return self.id_scrambler.forward(self.id)
+
     def details(self):
         return {
-            'id': self.id,
+            'id': self.ticket_id,
             'name': self.ticket_holder_name(),
             'days': ', '.join(self.days()),
             'cost': self.cost(),
