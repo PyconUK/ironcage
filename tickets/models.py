@@ -1,6 +1,7 @@
 from django.db import models
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
+from django.utils.crypto import get_random_string
 
 from django.contrib.auth.models import User
 
@@ -101,6 +102,9 @@ class Ticket(models.Model):
             return None
         return self.id_scrambler.forward(self.id)
 
+    def get_absolute_url(self):
+        return reverse('tickets:ticket', args=[self.ticket_id])
+
     def details(self):
         return {
             'id': self.ticket_id,
@@ -130,3 +134,21 @@ class Ticket(models.Model):
 class TicketInvitation(models.Model):
     ticket = models.ForeignKey(Ticket, related_name='invitations', on_delete=models.CASCADE)
     email_addr = models.EmailField()
+    token = models.CharField(max_length=12, unique=True)  # An index is automatically created since unique=True
+    status = models.CharField(max_length=10, default='unclaimed')
+
+    class Manager(models.Manager):
+        def create(self, **kwargs):
+            token = get_random_string(length=12)
+            return super().create(token=token, **kwargs)
+
+    objects = Manager()
+
+    def claim_for_owner(self, owner):
+        assert self.status == 'unclaimed'
+        # TODO where do transactions go?
+        ticket = self.ticket
+        ticket.owner = owner
+        ticket.save()
+        self.status = 'claimed'
+        self.save()

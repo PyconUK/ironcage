@@ -1,9 +1,9 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 
-from .actions import place_order_for_self, place_order_for_others, place_order_for_self_and_others
+from .actions import claim_ticket_invitation, place_order_for_self, place_order_for_others, place_order_for_self_and_others
 from .forms import TicketForm, TicketForSelfForm, TicketForOthersFormSet
-from .models import Order, Ticket
+from .models import Order, Ticket, TicketInvitation
 
 
 @login_required
@@ -80,3 +80,21 @@ def ticket(request, ticket_id):
         'ticket': ticket,
     }
     return render(request, 'tickets/ticket.html', context)
+
+
+@login_required
+def ticket_invitation(request, token):
+    invitation = get_object_or_404(TicketInvitation, token=token)
+    ticket = invitation.ticket
+
+    if invitation.status == 'unclaimed':
+        assert ticket.owner is None
+        claim_ticket_invitation(request.user, invitation)
+        message = None
+    elif invitation.status == 'claimed':
+        assert ticket.owner is not None
+        message = 'This invitation has already been claimed'
+    else:
+        assert False
+
+    return redirect(ticket)

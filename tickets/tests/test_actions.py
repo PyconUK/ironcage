@@ -3,6 +3,7 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 
 from tickets import actions
+from tickets.models import TicketInvitation
 
 
 class OrderCreationTests(TestCase):
@@ -69,3 +70,22 @@ class OrderCreationTests(TestCase):
 
         ticket = order.unclaimed_tickets().get(invitations__email_addr='bob@example.com')
         self.assertEqual(ticket.days(), ['Friday', 'Saturday'])
+
+
+class TicketInvitationTests(TestCase):
+    def test_claim_ticket_invitation(self):
+        alice = User.objects.create_user(username='Alice')
+        bob = User.objects.create_user(username='Bob')
+        actions.place_order_for_others(
+            alice,
+            'individual',
+            [
+                ('bob@example.com', ['fri', 'sat']),
+                ('carol@example.com', ['sat', 'sun']),
+            ]
+        )
+
+        invitation = TicketInvitation.objects.get(email_addr='bob@example.com')
+        actions.claim_ticket_invitation(bob, invitation)
+
+        ticket = bob.tickets.get()

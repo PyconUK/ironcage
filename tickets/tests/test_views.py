@@ -3,6 +3,7 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 
 from tickets import actions
+from tickets.models import TicketInvitation
 
 
 class NewOrderTests(TestCase):
@@ -61,3 +62,31 @@ class NewOrderTests(TestCase):
         }
         rsp = self.client.post('/tickets/orders/new/', form_data, follow=True)
         self.assertContains(rsp, 'You have ordered 3 ticket(s)')
+
+
+class TicketInvitationTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        alice = User.objects.create_user(username='Alice')
+        actions.place_order_for_others(
+            alice,
+            'individual',
+            [
+                ('bob@example.com', ['fri', 'sat']),
+                ('carol@example.com', ['sat', 'sun']),
+            ]
+        )
+        cls.invitation = TicketInvitation.objects.get(email_addr='bob@example.com')
+        cls.bob = User.objects.create_user(username='Bob')
+
+    def setUp(self):
+        self.client.force_login(self.bob)
+
+    def test_ticket_invitation_for_unclaimed_invitation(self):
+        rsp = self.client.get(f'/tickets/invitations/{self.invitation.token}/', follow=True)
+        self.assertContains(rsp, 'Details of your ticket (9A19)')
+
+    def test_ticket_invitation_for_claimed_invitation(self):
+        actions.claim_ticket_invitation(self.bob, self.invitation)
+        rsp = self.client.get(f'/tickets/invitations/{self.invitation.token}/', follow=True)
+        self.assertContains(rsp, 'Details of your ticket (9A19)')
