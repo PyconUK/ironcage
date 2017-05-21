@@ -64,6 +64,7 @@ def new_order(request):
 
 @login_required
 def order(request, order_id):
+    # TODO Only show to purchaser
     order = Order.objects.get_by_order_id_or_404(order_id)
     context = {
         'order': order,
@@ -73,6 +74,7 @@ def order(request, order_id):
 
 @login_required
 def ticket(request, ticket_id):
+    # TODO Only show to owner
     ticket = Ticket.objects.get_by_ticket_id_or_404(ticket_id)
     context = {
         'ticket': ticket,
