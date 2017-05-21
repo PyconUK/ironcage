@@ -3,7 +3,7 @@ from django.shortcuts import redirect, render
 
 from .actions import place_order_for_self, place_order_for_others, place_order_for_self_and_others
 from .forms import TicketForm, TicketForSelfForm, TicketForOthersFormSet
-from .models import Order
+from .models import Order, Ticket
 
 
 @login_required
@@ -69,3 +69,12 @@ def order(request, order_id):
         'order': order,
     }
     return render(request, 'tickets/order.html', context)
+
+
+@login_required
+def ticket(request, ticket_id):
+    ticket = Ticket.objects.get_by_ticket_id_or_404(ticket_id)
+    context = {
+        'ticket': ticket,
+    }
+    return render(request, 'tickets/ticket.html', context)
