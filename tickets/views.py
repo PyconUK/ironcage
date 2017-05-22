@@ -1,7 +1,9 @@
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_POST
 
-from .actions import claim_ticket_invitation, place_order_for_self, place_order_for_others, place_order_for_self_and_others
+from .actions import claim_ticket_invitation, place_order_for_self, place_order_for_others, place_order_for_self_and_others, process_stripe_charge
 from .forms import TicketForm, TicketForSelfForm, TicketForOthersFormSet
 from .models import Order, Ticket, TicketInvitation
 
@@ -68,8 +70,19 @@ def order(request, order_id):
     order = Order.objects.get_by_order_id_or_404(order_id)
     context = {
         'order': order,
+        'stripe_api_key': settings.STRIPE_API_KEY_PUBLISHABLE,
     }
     return render(request, 'tickets/order.html', context)
+
+
+@login_required
+@require_POST
+def order_payment(request, order_id):
+    # TODO Only show to purchaser
+    order = Order.objects.get_by_order_id_or_404(order_id)
+    token = request.POST['stripeToken']
+    process_stripe_charge(order, token)
+    return redirect(order)
 
 
 @login_required

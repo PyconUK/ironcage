@@ -68,6 +68,9 @@ class Order(models.Model):
     def unclaimed_tickets(self):
         return self.tickets.filter(owner=None)
 
+    def payment_required(self):
+        return self.status in ['pending', 'failed']
+
 
 class Ticket(models.Model):
     order = models.ForeignKey(Order, related_name='tickets', on_delete=models.CASCADE)

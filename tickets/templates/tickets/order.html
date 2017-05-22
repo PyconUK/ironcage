@@ -3,6 +3,12 @@
 {% block content %}
 <h1>Details of your order ({{ order.order_id }})</h1>
 
+{% if order.status == 'successful' %}
+<div class="alert alert-success" role="alert">Payment for this order has been received.</div>
+{% elif order.status == 'failed' %}
+<div class="alert alert-danger" role="alert">Payment for this order failed ({{ order.stripe_charge_failure_reason }})</div>
+{% endif %}
+
 <p>You have ordered {{ order.num_tickets }} ticket(s) at the {{ order.rate }} rate.</p>
 
 <p>Total cost: £{{ order.cost }}</p>
@@ -17,4 +23,26 @@
   </tr>
   {% endfor %}
 </table>
+
+{% if order.payment_required %}
+<div id="stripe-form">
+  <form action="{% url 'tickets:order_payment' order_id=order.order_id %}" method="POST">
+    {% csrf_token %}
+    <!-- TODO Use PyCon UK logo for data-image -->
+    <script
+      src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+      data-key="{{ stripe_api_key }}"
+      data-amount="{{ order.cost_pence }}"
+      data-currency="gbp"
+      data-name="PyCon UK Society Ltd"
+      data-description="PyCon UK 2017 order {{ order.order_id }}"
+      data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
+      data-locale="auto"
+      data-zip-code="true"
+      >
+    </script>
+  </form>
+</div>
+{% endif %}
+
 {% endblock %}

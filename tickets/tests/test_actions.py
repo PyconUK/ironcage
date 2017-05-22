@@ -3,6 +3,8 @@ from django.test import TestCase
 
 from django.contrib.auth.models import User
 
+from .utils import patched_charge_creation_failure, patched_charge_creation_success
+
 from tickets import actions
 from tickets.models import TicketInvitation
 
@@ -73,10 +75,11 @@ class OrderCreationTests(TestCase):
         self.assertEqual(ticket.days(), ['Friday', 'Saturday'])
 
 
-class SendTicketInvitationsTest(TestCase):
-    def test_send_ticket_invitations(self):
+class ProcessStripeChargeTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
         alice = User.objects.create_user(username='Alice')
-        order = actions.place_order_for_self_and_others(
+        cls.order = actions.place_order_for_self_and_others(
             alice,
             'individual',
             ['thu', 'fri', 'sat'],
@@ -85,8 +88,25 @@ class SendTicketInvitationsTest(TestCase):
                 ('carol@example.com', ['sat', 'sun']),
             ]
         )
-        actions.send_ticket_invitations(order)
+
+    def setUp(self):
+        self.order.refresh_from_db()
+
+    def test_process_stripe_charge_success(self):
+        token = 'tok_ abcdefghijklmnopqurstuvwx'
+        with patched_charge_creation_success():
+            actions.process_stripe_charge(self.order, token)
+        self.order.refresh_from_db()
+        self.assertEqual(self.order.status, 'successful')
         self.assertEqual(len(mail.outbox), 2)
+
+    def test_process_stripe_charge_failure(self):
+        token = 'tok_ abcdefghijklmnopqurstuvwx'
+        with patched_charge_creation_failure():
+            actions.process_stripe_charge(self.order, token)
+        self.order.refresh_from_db()
+        self.assertEqual(self.order.status, 'failed')
+        self.assertEqual(len(mail.outbox), 0)
 
 class TicketInvitationTests(TestCase):
     def test_claim_ticket_invitation(self):

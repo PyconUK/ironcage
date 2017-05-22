@@ -1,5 +1,6 @@
 from .invitation_mailer import send_invitation_mail
 from .models import Order, Ticket
+from .stripe_integration import create_charge_for_order
 
 
 def place_order_for_self(purchaser, rate, days):
@@ -12,6 +13,18 @@ def place_order_for_others(purchaser, rate, email_addrs_and_days):
 
 def place_order_for_self_and_others(purchaser, rate, self_days, email_addrs_and_days):
     return Order.objects.create_with_tickets_for_purchaser_and_others(purchaser, rate, self_days, email_addrs_and_days)
+
+
+def process_stripe_charge(order, token):
+    create_charge_for_order(order, token)
+    if not order.payment_required():
+        send_receipt(order)
+        send_ticket_invitations(order)
+
+
+def send_receipt(order):
+    # TODO
+    pass
 
 
 def send_ticket_invitations(order):

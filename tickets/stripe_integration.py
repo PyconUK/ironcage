@@ -4,7 +4,7 @@ from django.conf import settings
 
 
 def set_stripe_api_key():
-    stripe.api_key = settings.STRIPE_API_KEY
+    stripe.api_key = settings.STRIPE_API_KEY_SECRET
 
 
 def create_charge_for_order(order, token):

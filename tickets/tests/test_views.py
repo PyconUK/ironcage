@@ -2,6 +2,8 @@ from django.test import TestCase
 
 from django.contrib.auth.models import User
 
+from .utils import patched_charge_creation_failure, patched_charge_creation_success
+
 from tickets import actions
 from tickets.models import TicketInvitation
 
@@ -63,6 +65,44 @@ class NewOrderTests(TestCase):
         rsp = self.client.post('/tickets/orders/new/', form_data, follow=True)
         self.assertContains(rsp, 'You have ordered 3 ticket(s)')
 
+
+class OrderPaymentTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.alice = User.objects.create_user(username='Alice')
+        cls.order = actions.place_order_for_self_and_others(
+            cls.alice,
+            'individual',
+            ['thu', 'fri', 'sat'],
+            [
+                ('bob@example.com', ['fri', 'sat']),
+                ('carol@example.com', ['sat', 'sun']),
+            ]
+        )
+
+    def setUp(self):
+        self.client.force_login(self.alice)
+        self.order.refresh_from_db()
+
+    def test_order_payment_success(self):
+        with patched_charge_creation_success():
+            rsp = self.client.post(
+                f'/tickets/orders/{self.order.order_id}/payment/',
+                {'stripeToken': 'tok_ abcdefghijklmnopqurstuvwx'},
+                follow=True,
+            )
+        self.assertContains(rsp, 'Payment for this order has been received')
+        self.assertNotContains(rsp, '<div id="stripe-form">')
+
+    def test_order_payment_failure(self):
+        with patched_charge_creation_failure():
+            rsp = self.client.post(
+                f'/tickets/orders/{self.order.order_id}/payment/',
+                {'stripeToken': 'tok_ abcdefghijklmnopqurstuvwx'},
+                follow=True,
+            )
+        self.assertContains(rsp, 'Payment for this order failed (Your card was declined.)')
+        self.assertContains(rsp, '<div id="stripe-form">')
 
 class TicketInvitationTests(TestCase):
     @classmethod
