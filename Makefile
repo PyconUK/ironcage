@@ -9,3 +9,4 @@ test:
 	STRIPE_API_KEY_SECRET=dummy \
 	coverage run manage.py test
 	coverage report
+	flake8 .
