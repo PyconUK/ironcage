@@ -15,12 +15,13 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+ENVVAR_SENTINAL = 'not-for-production'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '$fv1g2*1=9ke)#ro@9di4ss-*bqs#na*zif75ba_$podh7)do-'
+SECRET_KEY = os.environ.get('SECRET_KEY', ENVVAR_SENTINAL)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -130,5 +131,5 @@ STATICFILES_DIRS = [
 
 # Stripe
 
-STRIPE_API_KEY_PUBLISHABLE = os.environ['STRIPE_API_KEY_PUBLISHABLE']
-STRIPE_API_KEY_SECRET = os.environ['STRIPE_API_KEY_SECRET']
+STRIPE_API_KEY_PUBLISHABLE = os.environ.get('STRIPE_API_KEY_PUBLISHABLE', ENVVAR_SENTINAL)
+STRIPE_API_KEY_SECRET = os.environ.get('STRIPE_API_KEY_SECRET', ENVVAR_SENTINAL)
