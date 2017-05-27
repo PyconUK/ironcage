@@ -27,7 +27,7 @@ class NewOrderTests(TestCase):
             'form-MIN_NUM_FORMS': '1',
             'form-MAX_NUM_FORMS': '1000',
             'form-0-email_addr': '',
-            'form-1-email_addr': '', 
+            'form-1-email_addr': '',
         }
         rsp = self.client.post('/tickets/orders/new/', form_data, follow=True)
         self.assertContains(rsp, 'You have ordered 1 ticket(s)')
@@ -42,7 +42,7 @@ class NewOrderTests(TestCase):
             'form-MAX_NUM_FORMS': '1000',
             'form-0-email_addr': 'test1@example.com',
             'form-0-days': ['thu', 'fri'],
-            'form-1-email_addr': 'test2@example.com', 
+            'form-1-email_addr': 'test2@example.com',
             'form-1-days': ['sat', 'sun', 'mon'],
         }
         rsp = self.client.post('/tickets/orders/new/', form_data, follow=True)
@@ -59,7 +59,7 @@ class NewOrderTests(TestCase):
             'form-MAX_NUM_FORMS': '1000',
             'form-0-email_addr': 'test1@example.com',
             'form-0-days': ['thu', 'fri'],
-            'form-1-email_addr': 'test2@example.com', 
+            'form-1-email_addr': 'test2@example.com',
             'form-1-days': ['sat', 'sun', 'mon'],
         }
         rsp = self.client.post('/tickets/orders/new/', form_data, follow=True)
@@ -103,6 +103,7 @@ class OrderPaymentTests(TestCase):
             )
         self.assertContains(rsp, 'Payment for this order failed (Your card was declined.)')
         self.assertContains(rsp, '<div id="stripe-form">')
+
 
 class TicketInvitationTests(TestCase):
     @classmethod

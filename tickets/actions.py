@@ -1,5 +1,5 @@
 from .invitation_mailer import send_invitation_mail
-from .models import Order, Ticket
+from .models import Order
 from .stripe_integration import create_charge_for_order
 
 

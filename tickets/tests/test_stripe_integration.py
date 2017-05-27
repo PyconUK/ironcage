@@ -5,7 +5,6 @@ from django.contrib.auth.models import User
 from .utils import patched_charge_creation_failure, patched_charge_creation_success
 
 from tickets import actions
-from tickets import models
 from tickets import stripe_integration
 
 

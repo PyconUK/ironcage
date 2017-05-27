@@ -1,4 +1,3 @@
-from django.http import QueryDict
 from django.test import TestCase
 
 from .utils import build_querydict
@@ -15,7 +14,7 @@ class TicketForOthersFormSetTests(TestCase):
             'form-MAX_NUM_FORMS': '1000',
             'form-0-email_addr': 'test1@example.com',
             'form-0-days': ['thu', 'fri'],
-            'form-1-email_addr': 'test2@example.com', 
+            'form-1-email_addr': 'test2@example.com',
             'form-1-days': ['sat', 'sun', 'mon']
         })
 
@@ -30,7 +29,7 @@ class TicketForOthersFormSetTests(TestCase):
             'form-MAX_NUM_FORMS': '1000',
             'form-0-email_addr': 'test1@example.com',
             'form-0-days': ['thu', 'fri'],
-            'form-1-email_addr': '', 
+            'form-1-email_addr': '',
         })
 
         formset = forms.TicketForOthersFormSet(post_data)
@@ -44,7 +43,7 @@ class TicketForOthersFormSetTests(TestCase):
             'form-MAX_NUM_FORMS': '1000',
             'form-0-email_addr': 'test1@example.com',
             'form-0-days': ['thu', 'fri'],
-            'form-1-email_addr': '', 
+            'form-1-email_addr': '',
             'form-1-days': ['sat', 'sun', 'mon']
         })
 
@@ -62,7 +61,7 @@ class TicketForOthersFormSetTests(TestCase):
             'form-MAX_NUM_FORMS': '1000',
             'form-0-email_addr': 'test1@example.com',
             'form-0-days': ['thu', 'fri'],
-            'form-1-email_addr': 'test2@example.com', 
+            'form-1-email_addr': 'test2@example.com',
         })
 
         formset = forms.TicketForOthersFormSet(post_data)
@@ -78,7 +77,7 @@ class TicketForOthersFormSetTests(TestCase):
             'form-MIN_NUM_FORMS': '1',
             'form-MAX_NUM_FORMS': '1000',
             'form-0-email_addr': '',
-            'form-1-email_addr': '', 
+            'form-1-email_addr': '',
         })
 
         formset = forms.TicketForOthersFormSet(post_data)
@@ -95,7 +94,7 @@ class TicketForOthersFormSetTests(TestCase):
             'form-MAX_NUM_FORMS': '1000',
             'form-0-email_addr': 'test1@example.com',
             'form-0-days': ['thu', 'fri'],
-            'form-1-email_addr': 'test2@example.com', 
+            'form-1-email_addr': 'test2@example.com',
             'form-1-days': ['sat', 'sun', 'mon']
         })
 

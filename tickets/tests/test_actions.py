@@ -108,6 +108,7 @@ class ProcessStripeChargeTests(TestCase):
         self.assertEqual(self.order.status, 'failed')
         self.assertEqual(len(mail.outbox), 0)
 
+
 class TicketInvitationTests(TestCase):
     def test_claim_ticket_invitation(self):
         alice = User.objects.create_user(username='Alice')
