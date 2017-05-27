@@ -15,7 +15,14 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# Used for distinguishing settings that are unset in production.
 ENVVAR_SENTINAL = 'not-for-production'
+# Settings that must be set in production.
+ENVVAR_WATCHED = [
+    'SECRET_KEY',
+    'STRIPE_API_KEY_PUBLISHABLE',
+    'STRIPE_API_KEY_SECRET',
+]
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
@@ -35,6 +42,7 @@ DOMAIN = 'http://localhost:8000'
 # Application definition
 
 INSTALLED_APPS = [
+    'ironcage',
     'tickets',
 
     'django.contrib.admin',
