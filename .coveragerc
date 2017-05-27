@@ -1,0 +1,7 @@
+[run]
+source = ironcage,tickets
+omit = *tests*,*migrations*,ironcage/wsgi.py
+
+[report]
+show_missing = true
+skip_covered = true
