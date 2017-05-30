@@ -1,7 +1,7 @@
 from django.core import mail
 from django.test import TestCase
 
-from django.contrib.auth.models import User
+from accounts.models import User
 
 from .utils import patched_charge_creation_failure, patched_charge_creation_success
 
@@ -12,7 +12,7 @@ from tickets.models import TicketInvitation
 class OrderCreationTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.alice = User.objects.create_user(username='Alice')
+        cls.alice = User.objects.create_user(email_addr='alice@example.com', name='Alice')
 
     def test_place_order_for_self(self):
         actions.place_order_for_self(
@@ -78,7 +78,7 @@ class OrderCreationTests(TestCase):
 class ProcessStripeChargeTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        alice = User.objects.create_user(username='Alice')
+        alice = User.objects.create_user(email_addr='alice@example.com', name='Alice')
         cls.order = actions.place_order_for_self_and_others(
             alice,
             'individual',
@@ -111,8 +111,8 @@ class ProcessStripeChargeTests(TestCase):
 
 class TicketInvitationTests(TestCase):
     def test_claim_ticket_invitation(self):
-        alice = User.objects.create_user(username='Alice')
-        bob = User.objects.create_user(username='Bob')
+        alice = User.objects.create_user(email_addr='alice@example.com', name='Alice')
+        bob = User.objects.create_user(email_addr='bob@example.com', name='Bob')
         actions.place_order_for_others(
             alice,
             'individual',

@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from django.contrib.auth.models import User
+from accounts.models import User
 
 from .utils import patched_charge_creation_failure, patched_charge_creation_success
 
@@ -11,7 +11,7 @@ from tickets.models import TicketInvitation
 class NewOrderTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.alice = User.objects.create_user(username='Alice')
+        cls.alice = User.objects.create_user(email_addr='alice@example.com', name='Alice')
 
     def test_get_new_order_when_not_authenticated(self):
         rsp = self.client.get('/tickets/orders/new/')
@@ -86,7 +86,7 @@ class NewOrderTests(TestCase):
 class OrderPaymentTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.alice = User.objects.create_user(username='Alice')
+        cls.alice = User.objects.create_user(email_addr='alice@example.com', name='Alice')
         cls.order = actions.place_order_for_self_and_others(
             cls.alice,
             'individual',
@@ -125,7 +125,7 @@ class OrderPaymentTests(TestCase):
 class TicketInvitationTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        alice = User.objects.create_user(username='Alice')
+        alice = User.objects.create_user(email_addr='alice@example.com', name='Alice')
         actions.place_order_for_others(
             alice,
             'individual',
@@ -135,7 +135,7 @@ class TicketInvitationTests(TestCase):
             ]
         )
         cls.invitation = TicketInvitation.objects.get(email_addr='bob@example.com')
-        cls.bob = User.objects.create_user(username='Bob')
+        cls.bob = User.objects.create_user(email_addr='bob@example.com', name='Bob')
 
     def setUp(self):
         self.client.force_login(self.bob)

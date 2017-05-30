@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from django.contrib.auth.models import User
+from accounts.models import User
 
 from .utils import patched_charge_creation_failure, patched_charge_creation_success
 
@@ -11,7 +11,7 @@ from tickets import stripe_integration
 class StripeIntegrationTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        alice = User.objects.create_user(username='Alice')
+        alice = User.objects.create_user(email_addr='alice@example.com', name='Alice')
         cls.order = actions.place_order_for_self(
             alice,
             'individual',

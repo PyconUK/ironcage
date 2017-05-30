@@ -1,16 +1,15 @@
+from django.conf import settings
 from django.db import models
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.utils.crypto import get_random_string
-
-from django.contrib.auth.models import User
 
 from .constants import DAYS, RATES
 from .utils import Scrambler
 
 
 class Order(models.Model):
-    purchaser = models.ForeignKey(User, related_name='orders', on_delete=models.CASCADE)
+    purchaser = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='orders', on_delete=models.CASCADE)
     rate = models.CharField(max_length=40)
     status = models.CharField(max_length=10)
     stripe_charge_id = models.CharField(max_length=80)
@@ -77,7 +76,7 @@ class Order(models.Model):
 
 class Ticket(models.Model):
     order = models.ForeignKey(Order, related_name='tickets', on_delete=models.CASCADE)
-    owner = models.ForeignKey(User, related_name='tickets', null=True, on_delete=models.CASCADE)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='tickets', null=True, on_delete=models.CASCADE)
     thu = models.BooleanField()
     fri = models.BooleanField()
     sat = models.BooleanField()
@@ -127,7 +126,7 @@ class Ticket(models.Model):
 
     def ticket_holder_name(self):
         if self.owner:
-            return self.owner.username  # TODO use name in profile if available
+            return self.owner.name
         else:
             return self.invitation().email_addr
 

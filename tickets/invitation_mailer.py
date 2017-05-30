@@ -19,7 +19,7 @@ We look forward to seeing you in Cardiff!
 
 def send_invitation_mail(invitation):
     ticket = invitation.ticket
-    purchaser_name = ticket.order.purchaser.username  # TODO get name from profile
+    purchaser_name = ticket.order.purchaser.name
     url = settings.DOMAIN + invitation.get_absolute_url()
     body = INVITATION_TEMPLATE.format(purchaser_name=purchaser_name, url=url)
 

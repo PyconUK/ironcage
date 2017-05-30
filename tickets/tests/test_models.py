@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from django.contrib.auth.models import User
+from accounts.models import User
 
 from tickets import actions
 
@@ -8,7 +8,7 @@ from tickets import actions
 class OrderTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        alice = User.objects.create_user(username='Alice')
+        alice = User.objects.create_user(email_addr='alice@example.com', name='Alice')
         cls.order = actions.place_order_for_self_and_others(
             alice,
             'individual',
