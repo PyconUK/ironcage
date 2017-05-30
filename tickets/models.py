@@ -16,6 +16,9 @@ class Order(models.Model):
     stripe_charge_id = models.CharField(max_length=80)
     stripe_charge_failure_reason = models.CharField(max_length=400, blank=True)
 
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
     id_scrambler = Scrambler(1000)
 
     class Manager(models.Manager):
@@ -81,6 +84,9 @@ class Ticket(models.Model):
     sun = models.BooleanField()
     mon = models.BooleanField()
 
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
     id_scrambler = Scrambler(2000)
 
     class Manager(models.Manager):
@@ -139,6 +145,9 @@ class TicketInvitation(models.Model):
     email_addr = models.EmailField()
     token = models.CharField(max_length=12, unique=True)  # An index is automatically created since unique=True
     status = models.CharField(max_length=10, default='unclaimed')
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Manager(models.Manager):
         def create(self, **kwargs):
