@@ -83,6 +83,38 @@ class NewOrderTests(TestCase):
         self.assertContains(rsp, 'You have ordered 3 ticket(s)')
 
 
+class OrderTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.alice = User.objects.create_user(email_addr='alice@example.com', name='Alice')
+        cls.order = actions.place_order_for_self_and_others(
+            cls.alice,
+            'individual',
+            ['thu', 'fri', 'sat'],
+            [
+                ('bob@example.com', ['fri', 'sat']),
+                ('carol@example.com', ['sat', 'sun']),
+            ]
+        )
+
+    def test_order(self):
+        self.client.force_login(self.alice)
+        rsp = self.client.get(f'/tickets/orders/{self.order.order_id}/', follow=True)
+        self.assertContains(rsp, f'Details of your order ({self.order.order_id})')
+
+    def test_order_when_not_authenticated(self):
+        rsp = self.client.get(f'/tickets/orders/{self.order.order_id}/', follow=True)
+        self.assertRedirects(rsp, f'/accounts/login/?next=/tickets/orders/{self.order.order_id}/')
+        self.assertContains(rsp, 'Please login to see this page.')
+
+    def test_order_when_not_authorized(self):
+        bob = User.objects.create_user(email_addr='bob@example.com')
+        self.client.force_login(bob)
+        rsp = self.client.get(f'/tickets/orders/{self.order.order_id}/', follow=True)
+        self.assertRedirects(rsp, '/profile/')
+        self.assertContains(rsp, 'Only the purchaser of an order can view the order')
+
+
 class OrderPaymentTests(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -120,6 +152,39 @@ class OrderPaymentTests(TestCase):
             )
         self.assertContains(rsp, 'Payment for this order failed (Your card was declined.)')
         self.assertContains(rsp, '<div id="stripe-form">')
+
+
+class TicketTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.alice = User.objects.create_user(email_addr='alice@example.com', name='Alice')
+        order = actions.place_order_for_self_and_others(
+            cls.alice,
+            'individual',
+            ['thu', 'fri', 'sat'],
+            [
+                ('bob@example.com', ['fri', 'sat']),
+                ('carol@example.com', ['sat', 'sun']),
+            ]
+        )
+        cls.ticket = cls.alice.ticket()
+
+    def test_ticket(self):
+        self.client.force_login(self.alice)
+        rsp = self.client.get(f'/tickets/tickets/{self.ticket.ticket_id}/', follow=True)
+        self.assertContains(rsp, f'Details of your ticket ({self.ticket.ticket_id})')
+
+    def test_ticket_when_not_authenticated(self):
+        rsp = self.client.get(f'/tickets/tickets/{self.ticket.ticket_id}/', follow=True)
+        self.assertRedirects(rsp, f'/accounts/login/?next=/tickets/tickets/{self.ticket.ticket_id}/')
+        self.assertContains(rsp, 'Please login to see this page.')
+
+    def test_ticket_when_not_authorized(self):
+        bob = User.objects.create_user(email_addr='bob@example.com')
+        self.client.force_login(bob)
+        rsp = self.client.get(f'/tickets/tickets/{self.ticket.ticket_id}/', follow=True)
+        self.assertRedirects(rsp, '/profile/')
+        self.assertContains(rsp, 'Only the owner of a ticket can view the ticket')
 
 
 class TicketInvitationTests(TestCase):

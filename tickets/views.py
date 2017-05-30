@@ -72,8 +72,12 @@ def new_order(request):
 
 @login_required
 def order(request, order_id):
-    # TODO Only show to purchaser
     order = Order.objects.get_by_order_id_or_404(order_id)
+
+    if request.user != order.purchaser:
+        messages.warning(request, 'Only the purchaser of an order can view the order')
+        return redirect('accounts:profile')
+
     context = {
         'order': order,
         'stripe_api_key': settings.STRIPE_API_KEY_PUBLISHABLE,
@@ -84,8 +88,10 @@ def order(request, order_id):
 @login_required
 @require_POST
 def order_payment(request, order_id):
-    # TODO Only show to purchaser
     order = Order.objects.get_by_order_id_or_404(order_id)
+    assert request.user == order.purchaser
+    assert order.payment_required
+
     token = request.POST['stripeToken']
     process_stripe_charge(order, token)
     return redirect(order)
@@ -93,8 +99,12 @@ def order_payment(request, order_id):
 
 @login_required
 def ticket(request, ticket_id):
-    # TODO Only show to owner
     ticket = Ticket.objects.get_by_ticket_id_or_404(ticket_id)
+
+    if request.user != ticket.owner:
+        messages.warning(request, 'Only the owner of a ticket can view the ticket')
+        return redirect('accounts:profile')
+
     context = {
         'ticket': ticket,
     }
