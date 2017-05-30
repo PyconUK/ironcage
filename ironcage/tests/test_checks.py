@@ -17,9 +17,9 @@ class EnvVarsCheckTest(TestCase):
         self.assertEqual(errors, expected)
 
     @override_settings(
-            SECRET_KEY='changed',
-            STRIPE_API_KEY_PUBLISHABLE='changed',
-            STRIPE_API_KEY_SECRET='changed',
+        SECRET_KEY='changed',
+        STRIPE_API_KEY_PUBLISHABLE='changed',
+        STRIPE_API_KEY_SECRET='changed',
     )
     def test_set_in_prod(self):
         """If all's well in production, no need to return any errors."""

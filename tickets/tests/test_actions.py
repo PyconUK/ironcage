@@ -125,4 +125,4 @@ class TicketInvitationTests(TestCase):
         invitation = TicketInvitation.objects.get(email_addr='bob@example.com')
         actions.claim_ticket_invitation(bob, invitation)
 
-        ticket = bob.tickets.get()
+        self.assertIsNotNone(bob.tickets.get())
