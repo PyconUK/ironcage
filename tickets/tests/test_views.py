@@ -16,7 +16,11 @@ class NewOrderTests(TestCase):
     def setUp(self):
         self.client.force_login(self.alice)
 
-    def test_new_order_for_self(self):
+    def test_get_new_order(self):
+        rsp = self.client.get('/tickets/orders/new/')
+        self.assertInHTML('<tr><td>5 days</td><td>£138</td><td>£276</td></tr>', rsp.content.decode())
+
+    def test_post_new_order_for_self(self):
         form_data = {
             'who': 'self',
             'rate': 'individual',
@@ -32,7 +36,7 @@ class NewOrderTests(TestCase):
         rsp = self.client.post('/tickets/orders/new/', form_data, follow=True)
         self.assertContains(rsp, 'You have ordered 1 ticket(s)')
 
-    def test_new_order_for_others(self):
+    def test_post_new_order_for_others(self):
         form_data = {
             'who': 'others',
             'rate': 'individual',
@@ -48,7 +52,7 @@ class NewOrderTests(TestCase):
         rsp = self.client.post('/tickets/orders/new/', form_data, follow=True)
         self.assertContains(rsp, 'You have ordered 2 ticket(s)')
 
-    def test_new_order_for_self_and_others(self):
+    def test_post_new_order_for_self_and_others(self):
         form_data = {
             'who': 'self and others',
             'rate': 'individual',

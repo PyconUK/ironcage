@@ -1,9 +1,26 @@
 {% extends 'ironcage/base.html' %}
 
 {% block content %}
-<form method="post" id="order-form">
-  {% csrf_token %}
-  <div class="row">
+<div class="row">
+  <div class="col-xs-10 col-xs-offset-1">
+    <p>Tickets are available for between one and five days of the conference.</p>
+    <p>If you are paying for your own ticket, you should pay at the Individual rate.  If your company is paying for your ticket, you should pay at the Corporate rate.</p>
+    <div class="alert alert-danger" role="alert">These numbers have been pulled out of the air!</div>
+    <table class="table">
+      {% for row in rates_table_data %}
+      <tr>
+        {% for item in row %}
+        <td>{{ item }}</td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+
+<div class="row">
+  <form method="post" id="order-form">
+    {% csrf_token %}
     <div class="col-xs-10 col-xs-offset-1">
       <div class="panel panel-default">
         <div class="panel-heading">About your order</div>
@@ -93,6 +110,6 @@
         </div>
       </div>
     </div>
-  </div>
-</form>
+  </form>
+</div>
 {% endblock %}

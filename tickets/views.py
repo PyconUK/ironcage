@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
 from .actions import claim_ticket_invitation, place_order_for_self, place_order_for_others, place_order_for_self_and_others, process_stripe_charge
+from .constants import RATES
 from .forms import TicketForm, TicketForSelfForm, TicketForOthersFormSet
 from .models import Order, Ticket, TicketInvitation
 
@@ -59,6 +60,7 @@ def new_order(request):
         'form': form,
         'self_form': self_form,
         'others_formset': others_formset,
+        'rates_table_data': _rates_table_data(),
     }
 
     return render(request, 'tickets/new_order.html', context)
@@ -112,3 +114,18 @@ def ticket_invitation(request, token):
         assert False
 
     return redirect(ticket)
+
+
+def _rates_table_data():
+    data = []
+    data.append(['', 'Individual rate', 'Corporate rate'])
+    for ix in range(5):
+        num_days = ix + 1
+        individual_rate = RATES['individual']['ticket_price'] + RATES['individual']['day_price'] * num_days
+        corporate_rate = RATES['corporate']['ticket_price'] + RATES['corporate']['day_price'] * num_days
+        if num_days == 1:
+            data.append(['1 day', f'£{individual_rate}', f'£{corporate_rate}'])
+        else:
+            data.append([f'{num_days} days', f'£{individual_rate}', f'£{corporate_rate}'])
+
+    return data
