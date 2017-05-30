@@ -103,10 +103,11 @@ def ticket_invitation(request, token):
     if invitation.status == 'unclaimed':
         assert ticket.owner is None
         claim_ticket_invitation(request.user, invitation)
-        message = None
+        # message = None
     elif invitation.status == 'claimed':
         assert ticket.owner is not None
-        message = 'This invitation has already been claimed'
+        # TODO Show message to user (#43)
+        # message = 'This invitation has already been claimed'
     else:
         assert False
 
