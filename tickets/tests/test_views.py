@@ -143,8 +143,10 @@ class TicketInvitationTests(TestCase):
     def test_ticket_invitation_for_unclaimed_invitation(self):
         rsp = self.client.get(f'/tickets/invitations/{self.invitation.token}/', follow=True)
         self.assertContains(rsp, 'Details of your ticket (9A19)')
+        self.assertNotContains(rsp, 'This invitation has already been claimed', html=True)
 
     def test_ticket_invitation_for_claimed_invitation(self):
         actions.claim_ticket_invitation(self.bob, self.invitation)
         rsp = self.client.get(f'/tickets/invitations/{self.invitation.token}/', follow=True)
         self.assertContains(rsp, 'Details of your ticket (9A19)')
+        self.assertContains(rsp, '<div class="alert alert-info" role="alert">This invitation has already been claimed</div>', html=True)
