@@ -101,9 +101,13 @@ def ticket(request, ticket_id):
     return render(request, 'tickets/ticket.html', context)
 
 
-@login_required
 def ticket_invitation(request, token):
     invitation = get_object_or_404(TicketInvitation, token=token)
+
+    if not request.user.is_authenticated:
+        messages.info(request, 'You need to create an account to claim your invitation')
+        return redirect(settings.LOGIN_URL)
+
     ticket = invitation.ticket
 
     if invitation.status == 'unclaimed':
