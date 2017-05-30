@@ -31,6 +31,7 @@ def patched_charge_creation_success():
         mock.return_value = charge
         yield
 
+
 @contextmanager
 def patched_charge_creation_failure():
     card_error = stripe.error.CardError('Your card was declined.', None, 'card_declined')

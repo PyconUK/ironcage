@@ -49,7 +49,7 @@ def new_order(request):
 
             else:
                 assert False
-                    
+
     else:
         form = TicketForm()
         self_form = TicketForSelfForm()
