@@ -2,6 +2,8 @@ from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.db import models
 
+from tickets.models import Ticket
+
 from .managers import UserManager
 
 
@@ -30,3 +32,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     def get_short_name(self):
         '''This is used by the admin.'''
         return self.name
+
+    def ticket(self):
+        try:
+            return self.tickets.get()
+        except Ticket.DoesNotExist:
+            return None
