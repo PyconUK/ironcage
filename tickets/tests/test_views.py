@@ -13,14 +13,25 @@ class NewOrderTests(TestCase):
     def setUpTestData(cls):
         cls.alice = User.objects.create_user(username='Alice')
 
-    def setUp(self):
-        self.client.force_login(self.alice)
-
-    def test_get_new_order(self):
+    def test_get_new_order_when_not_authenticated(self):
         rsp = self.client.get('/tickets/orders/new/')
         self.assertInHTML('<tr><td>5 days</td><td>£138</td><td>£276</td></tr>', rsp.content.decode())
+        self.assertNotContains(rsp, '<form method="post" id="order-form">')
+        self.assertContains(rsp, 'Please create an account to buy a ticket.')
+
+    def test_post_new_order_when_not_authenticated(self):
+        rsp = self.client.post('/tickets/orders/new/', follow=True)
+        self.assertRedirects(rsp, '/accounts/login/')
+
+    def test_get_new_order(self):
+        self.client.force_login(self.alice)
+        rsp = self.client.get('/tickets/orders/new/')
+        self.assertInHTML('<tr><td>5 days</td><td>£138</td><td>£276</td></tr>', rsp.content.decode())
+        self.assertContains(rsp, '<form method="post" id="order-form">')
+        self.assertNotContains(rsp, 'Please create an account to buy a ticket.')
 
     def test_post_new_order_for_self(self):
+        self.client.force_login(self.alice)
         form_data = {
             'who': 'self',
             'rate': 'individual',
@@ -37,6 +48,7 @@ class NewOrderTests(TestCase):
         self.assertContains(rsp, 'You have ordered 1 ticket(s)')
 
     def test_post_new_order_for_others(self):
+        self.client.force_login(self.alice)
         form_data = {
             'who': 'others',
             'rate': 'individual',
@@ -53,6 +65,7 @@ class NewOrderTests(TestCase):
         self.assertContains(rsp, 'You have ordered 2 ticket(s)')
 
     def test_post_new_order_for_self_and_others(self):
+        self.client.force_login(self.alice)
         form_data = {
             'who': 'self and others',
             'rate': 'individual',

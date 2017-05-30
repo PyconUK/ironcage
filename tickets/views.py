@@ -9,9 +9,11 @@ from .forms import TicketForm, TicketForSelfForm, TicketForOthersFormSet
 from .models import Order, Ticket, TicketInvitation
 
 
-@login_required
 def new_order(request):
     if request.method == 'POST':
+        if not request.user.is_authenticated:
+            return redirect(settings.LOGIN_URL)
+
         form = TicketForm(request.POST)
         self_form = TicketForSelfForm(request.POST)
         others_formset = TicketForOthersFormSet(request.POST)
@@ -61,6 +63,7 @@ def new_order(request):
         'self_form': self_form,
         'others_formset': others_formset,
         'rates_table_data': _rates_table_data(),
+        'show_order_form': request.user.is_authenticated,
     }
 
     return render(request, 'tickets/new_order.html', context)

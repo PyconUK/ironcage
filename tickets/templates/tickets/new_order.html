@@ -19,6 +19,7 @@
 </div>
 
 <div class="row">
+  {% if request.user.is_authenticated %}
   <form method="post" id="order-form">
     {% csrf_token %}
     <div class="col-xs-10 col-xs-offset-1">
@@ -111,5 +112,9 @@
       </div>
     </div>
   </form>
+  {% else %}
+  <div class="col-xs-10 col-xs-offset-1">
+    <p>Please create an account to buy a ticket.</p>
+  {% endif %}
 </div>
 {% endblock %}
