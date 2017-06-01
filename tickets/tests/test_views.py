@@ -130,28 +130,61 @@ class OrderPaymentTests(TestCase):
         )
 
     def setUp(self):
-        self.client.force_login(self.alice)
         self.order.refresh_from_db()
 
     def test_stripe_success(self):
+        self.client.force_login(self.alice)
         with patched_charge_creation_success():
             rsp = self.client.post(
                 f'/tickets/orders/{self.order.order_id}/payment/',
-                {'stripeToken': 'tok_ abcdefghijklmnopqurstuvwx'},
+                {'stripeToken': 'tok_abcdefghijklmnopqurstuvwx'},
                 follow=True,
             )
         self.assertContains(rsp, 'Payment for this order has been received')
         self.assertNotContains(rsp, '<div id="stripe-form">')
 
     def test_stripe_failure(self):
+        self.client.force_login(self.alice)
         with patched_charge_creation_failure():
             rsp = self.client.post(
                 f'/tickets/orders/{self.order.order_id}/payment/',
-                {'stripeToken': 'tok_ abcdefghijklmnopqurstuvwx'},
+                {'stripeToken': 'tok_abcdefghijklmnopqurstuvwx'},
                 follow=True,
             )
         self.assertContains(rsp, 'Payment for this order failed (Your card was declined.)')
         self.assertContains(rsp, '<div id="stripe-form">')
+
+    def test_when_already_paid(self):
+        self.client.force_login(self.alice)
+        self.order.status = 'successful'
+        self.order.save()
+        rsp = self.client.post(
+            f'/tickets/orders/{self.order.order_id}/payment/',
+            {'stripeToken': 'tok_abcdefghijklmnopqurstuvwx'},
+            follow=True,
+        )
+        self.assertRedirects(rsp, f'/tickets/orders/{self.order.order_id}/')
+        self.assertContains(rsp, 'This order has already been paid')
+
+    def test_when_not_authenticated(self):
+        rsp = self.client.post(
+            f'/tickets/orders/{self.order.order_id}/payment/',
+            {'stripeToken': 'tok_abcdefghijklmnopqurstuvwx'},
+            follow=True,
+        )
+        self.assertRedirects(rsp, f'/accounts/login/?next=/tickets/orders/{self.order.order_id}/payment/')
+        self.assertContains(rsp, 'Please login to see this page.')
+
+    def test_when_not_authorized(self):
+        bob = User.objects.create_user(email_addr='bob@example.com')
+        self.client.force_login(bob)
+        rsp = self.client.post(
+            f'/tickets/orders/{self.order.order_id}/payment/',
+            {'stripeToken': 'tok_abcdefghijklmnopqurstuvwx'},
+            follow=True,
+        )
+        self.assertRedirects(rsp, '/profile/')
+        self.assertContains(rsp, 'Only the purchaser of an order can pay for the order')
 
 
 class TicketTests(TestCase):

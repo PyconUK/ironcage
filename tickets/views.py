@@ -89,8 +89,14 @@ def order(request, order_id):
 @require_POST
 def order_payment(request, order_id):
     order = Order.objects.get_by_order_id_or_404(order_id)
-    assert request.user == order.purchaser
-    assert order.payment_required
+
+    if request.user != order.purchaser:
+        messages.warning(request, 'Only the purchaser of an order can pay for the order')
+        return redirect('accounts:profile')
+
+    if not order.payment_required():
+        messages.error(request, 'This order has already been paid')
+        return redirect(order)
 
     token = request.POST['stripeToken']
     process_stripe_charge(order, token)
