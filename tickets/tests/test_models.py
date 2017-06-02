@@ -23,18 +23,19 @@ class OrderTests(TestCase):
         self.assertEqual(self.order.cost(), 222)  # 222 == 3 * 18 + 7 * 24
 
     def test_ticket_details(self):
+        ticket_ids = [t.ticket_id for t in self.order.tickets.all()]
         expected_details = [{
-            'id': '9A19',
+            'id': ticket_ids[0],
             'name': 'Alice',
             'days': 'Thursday, Friday, Saturday',
             'cost': 90,
         }, {
-            'id': '2C62',
+            'id': ticket_ids[1],
             'name': 'bob@example.com',
             'days': 'Friday, Saturday',
             'cost': 66,
         }, {
-            'id': 'BEAB',
+            'id': ticket_ids[2],
             'name': 'carol@example.com',
             'days': 'Saturday, Sunday',
             'cost': 66,

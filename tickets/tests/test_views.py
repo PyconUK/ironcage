@@ -238,14 +238,14 @@ class TicketInvitationTests(TestCase):
     def test_for_unclaimed_invitation(self):
         self.client.force_login(self.bob)
         rsp = self.client.get(f'/tickets/invitations/{self.invitation.token}/', follow=True)
-        self.assertContains(rsp, 'Details of your ticket (9A19)')
+        self.assertContains(rsp, f'Details of your ticket ({self.invitation.ticket.ticket_id})')
         self.assertNotContains(rsp, 'This invitation has already been claimed', html=True)
 
     def test_for_claimed_invitation(self):
         self.client.force_login(self.bob)
         actions.claim_ticket_invitation(self.bob, self.invitation)
         rsp = self.client.get(f'/tickets/invitations/{self.invitation.token}/', follow=True)
-        self.assertContains(rsp, 'Details of your ticket (9A19)')
+        self.assertContains(rsp, f'Details of your ticket ({self.invitation.ticket.ticket_id})')
         self.assertContains(rsp, '<div class="alert alert-info" role="alert">This invitation has already been claimed</div>', html=True)
 
     def test_when_not_authenticated(self):

@@ -21,6 +21,8 @@ You can copy `.env.example` to `.env`, which will be enough to run the tests.
 To interact with Stripe, you will need some test API keys.
 Ask @inglesp if you would like to use the test API keys for the PyCon UK account.
 
+You will also need to have a Postgres database called `ironcage`.
+
 ## Why are you reinventing the wheel?
 
 We are aware of a number of other projects for managing conferences.

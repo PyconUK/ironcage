@@ -3,3 +3,4 @@ Django
 flake8
 stripe
 django-dotenv
+psycopg2

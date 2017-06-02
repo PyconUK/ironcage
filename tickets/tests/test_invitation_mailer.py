@@ -29,6 +29,6 @@ class InvitationMailerTests(TestCase):
         email = mail.outbox[0]
         self.assertEqual(email.to, ['bob@example.com'])
         self.assertEqual(email.from_email, 'PyCon UK 2017 <tickets@pyconuk.org>')
-        self.assertEqual(email.subject, 'PyCon UK 2017 ticket invitation (9A19)')
+        self.assertEqual(email.subject, f'PyCon UK 2017 ticket invitation ({invitation.ticket.ticket_id})')
         self.assertTrue(re.search(r'Alice has purchased you a ticket for PyCon UK 2017', email.body))
         self.assertTrue(re.search(r'http://localhost:8000/tickets/invitations/\w{12}/', email.body))
