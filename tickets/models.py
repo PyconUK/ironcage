@@ -27,25 +27,6 @@ class Order(models.Model):
             id = self.model.id_scrambler.backward(order_id)
             return get_object_or_404(self.model, pk=id)
 
-        # TODO where do transactions go?
-        def create_with_ticket_for_purchaser(self, purchaser, rate, days):
-            order = self.create(purchaser=purchaser, rate=rate, status='pending')
-            order.tickets.create_for_user(purchaser, days)
-            return order
-
-        def create_with_tickets_for_others(self, purchaser, rate, email_addrs_and_days):
-            order = self.create(purchaser=purchaser, rate=rate, status='pending')
-            for email_addr, days in email_addrs_and_days:
-                order.tickets.create_with_invitation(email_addr, days)
-            return order
-
-        def create_with_tickets_for_purchaser_and_others(self, purchaser, rate, purchaser_days, email_addrs_and_days):
-            order = self.create(purchaser=purchaser, rate=rate, status='pending')
-            order.tickets.create_for_user(purchaser, purchaser_days)
-            for email_addr, days in email_addrs_and_days:
-                order.tickets.create_with_invitation(email_addr, days)
-            return order
-
     objects = Manager()
 
     @property

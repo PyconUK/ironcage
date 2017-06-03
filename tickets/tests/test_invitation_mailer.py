@@ -3,25 +3,15 @@ import re
 from django.core import mail
 from django.test import TestCase
 
-from accounts.models import User
+from . import factories
 
-from tickets import actions
 from tickets.invitation_mailer import send_invitation_mail
 from tickets.models import TicketInvitation
 
 
 class InvitationMailerTests(TestCase):
     def test_send_invitation_mail(self):
-        alice = User.objects.create_user(email_addr='alice@example.com', name='Alice')
-        order = actions.place_order_for_others(
-            alice,
-            'individual',
-            [
-                ('bob@example.com', ['fri', 'sat']),
-                ('carol@example.com', ['sat', 'sun']),
-            ]
-        )
-        actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvw')
+        factories.create_confirmed_order_for_others()
 
         mail.outbox = []
 

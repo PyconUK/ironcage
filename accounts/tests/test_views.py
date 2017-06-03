@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from tickets import actions as ticket_actions
+from tickets.tests import factories as tickets_factories
 
 from accounts.models import User
 
@@ -23,12 +23,8 @@ class ProfileTest(TestCase):
         self.assertContains(rsp, '<a href="/tickets/orders/new/">Buy one now!</a>', html=True)
 
     def test_get_profile_with_ticket(self):
-        order = ticket_actions.place_order_for_self(
-            self.alice,
-            'individual',
-            ['thu', 'fri', 'sat'],
-        )
-        ticket_actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvw')
+        tickets_factories.create_ticket(self.alice)
+
         rsp = self.client.get('/profile/')
         self.assertNotContains(rsp, '<a href="/tickets/orders/new/">Buy one now!</a>', html=True)
         self.assertContains(rsp, 'You have a ticket for Thursday, Friday, Saturday')

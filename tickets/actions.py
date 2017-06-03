@@ -5,18 +5,6 @@ from .models import Order
 from .stripe_integration import create_charge_for_order
 
 
-def place_order_for_self(purchaser, rate, days):
-    return create_pending_order(purchaser, rate, days_for_self=days)
-
-
-def place_order_for_others(purchaser, rate, email_addrs_and_days):
-    return create_pending_order(purchaser, rate, email_addrs_and_days_for_others=email_addrs_and_days)
-
-
-def place_order_for_self_and_others(purchaser, rate, self_days, email_addrs_and_days):
-    return create_pending_order(purchaser, rate, days_for_self=self_days, email_addrs_and_days_for_others=email_addrs_and_days)
-
-
 def create_pending_order(purchaser, rate, days_for_self=None, email_addrs_and_days_for_others=None):
     assert days_for_self or email_addrs_and_days_for_others
 
