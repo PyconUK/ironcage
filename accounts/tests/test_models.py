@@ -38,10 +38,11 @@ class UserTests(TestCase):
 
         self.assertIsNone(user.ticket())
 
-        ticket_actions.place_order_for_self(
+        order = ticket_actions.place_order_for_self(
             user,
             'individual',
             ['thu', 'fri', 'sat'],
         )
+        ticket_actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvw')
 
         self.assertIsNotNone(user.ticket())

@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
@@ -14,6 +15,7 @@ class Order(models.Model):
     status = models.CharField(max_length=10)
     stripe_charge_id = models.CharField(max_length=80)
     stripe_charge_failure_reason = models.CharField(max_length=400, blank=True)
+    unconfirmed_details = JSONField()
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -55,17 +57,43 @@ class Order(models.Model):
     def get_absolute_url(self):
         return reverse('tickets:order', args=[self.order_id])
 
+    def all_tickets(self):
+        if self.payment_required():
+            tickets = []
+
+            days_for_self = self.unconfirmed_details['days_for_self']
+            if days_for_self is not None:
+                ticket = UnconfirmedTicket(
+                    order=self,
+                    owner=self.purchaser,
+                    days=days_for_self,
+                )
+                tickets.append(ticket)
+
+            email_addrs_and_days_for_others = self.unconfirmed_details['email_addrs_and_days_for_others']
+            if email_addrs_and_days_for_others is not None:
+                for email_addr, days in email_addrs_and_days_for_others:
+                    ticket = UnconfirmedTicket(
+                        order=self,
+                        email_addr=email_addr,
+                        days=days,
+                    )
+                    tickets.append(ticket)
+            return tickets
+        else:
+            return self.tickets.all()
+
     def ticket_details(self):
-        return [ticket.details() for ticket in self.tickets.all()]
+        return [ticket.details() for ticket in self.all_tickets()]
 
     def cost(self):
-        return sum(ticket.cost() for ticket in self.tickets.all())
+        return sum(ticket.cost() for ticket in self.all_tickets())
 
     def cost_pence(self):
         return 100 * self.cost()
 
     def num_tickets(self):
-        return self.tickets.count()
+        return len(self.all_tickets())
 
     def unclaimed_tickets(self):
         return self.tickets.filter(owner=None)
@@ -137,6 +165,32 @@ class Ticket(models.Model):
     def invitation(self):
         # This will raise an exception if a ticket has multiple invitations
         return self.invitations.get()
+
+
+class UnconfirmedTicket:
+    def __init__(self, order, days, owner=None, email_addr=None):
+        assert owner or email_addr
+        self.order = order
+        self.days = [DAYS[day] for day in days]
+        self.owner = owner
+        self.email_addr = email_addr
+
+    def details(self):
+        return {
+            'name': self.ticket_holder_name(),
+            'days': ', '.join(self.days),
+            'cost': self.cost(),
+        }
+
+    def ticket_holder_name(self):
+        if self.owner:
+            return self.owner.name
+        else:
+            return self.email_addr
+
+    def cost(self):
+        rate = self.order.rate
+        return RATES[rate]['ticket_price'] + RATES[rate]['day_price'] * len(self.days)
 
 
 class TicketInvitation(models.Model):

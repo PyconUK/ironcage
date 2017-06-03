@@ -9,32 +9,30 @@ from tickets import actions
 from tickets.models import TicketInvitation
 
 
-class OrderCreationTests(TestCase):
+class CreatePendingOrderTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.alice = User.objects.create_user(email_addr='alice@example.com', name='Alice')
 
-    def test_place_order_for_self(self):
-        actions.place_order_for_self(
+    def test_order_for_self(self):
+        order = actions.create_pending_order(
             self.alice,
             'individual',
-            ['thu', 'fri', 'sat']
+            days_for_self=['thu', 'fri', 'sat']
         )
 
         self.assertEqual(self.alice.orders.count(), 1)
-        self.assertEqual(self.alice.tickets.count(), 1)
+        self.assertEqual(self.alice.tickets.count(), 0)
 
-        order = self.alice.orders.all()[0]
+        self.assertEqual(order.purchaser, self.alice)
+        self.assertEqual(order.status, 'pending')
         self.assertEqual(order.rate, 'individual')
 
-        ticket = self.alice.tickets.all()[0]
-        self.assertEqual(ticket.days(), ['Thursday', 'Friday', 'Saturday'])
-
-    def test_place_order_for_others(self):
-        actions.place_order_for_others(
+    def test_order_for_others(self):
+        order = actions.create_pending_order(
             self.alice,
             'individual',
-            [
+            email_addrs_and_days_for_others=[
                 ('bob@example.com', ['fri', 'sat']),
                 ('carol@example.com', ['sat', 'sun']),
             ]
@@ -43,36 +41,153 @@ class OrderCreationTests(TestCase):
         self.assertEqual(self.alice.orders.count(), 1)
         self.assertEqual(self.alice.tickets.count(), 0)
 
-        order = self.alice.orders.all()[0]
+        self.assertEqual(order.purchaser, self.alice)
+        self.assertEqual(order.status, 'pending')
         self.assertEqual(order.rate, 'individual')
-        self.assertEqual(order.unclaimed_tickets().count(), 2)
 
-        ticket = order.unclaimed_tickets().get(invitations__email_addr='bob@example.com')
-        self.assertEqual(ticket.days(), ['Friday', 'Saturday'])
-
-    def test_place_order_for_self_and_others(self):
-        actions.place_order_for_self_and_others(
+    def test_order_for_self_and_others(self):
+        order = actions.create_pending_order(
             self.alice,
             'individual',
-            ['thu', 'fri', 'sat'],
-            [
+            days_for_self=['thu', 'fri', 'sat'],
+            email_addrs_and_days_for_others=[
                 ('bob@example.com', ['fri', 'sat']),
                 ('carol@example.com', ['sat', 'sun']),
             ]
         )
 
         self.assertEqual(self.alice.orders.count(), 1)
+        self.assertEqual(self.alice.tickets.count(), 0)
+
+        self.assertEqual(order.purchaser, self.alice)
+        self.assertEqual(order.status, 'pending')
+        self.assertEqual(order.rate, 'individual')
+
+
+class ConfirmOrderTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.alice = User.objects.create_user(email_addr='alice@example.com', name='Alice')
+
+    def test_order_for_self(self):
+        order = actions.create_pending_order(
+            self.alice,
+            'individual',
+            days_for_self=['thu', 'fri', 'sat']
+        )
+
+        actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvw')
+
+        self.assertEqual(order.stripe_charge_id, 'ch_abcdefghijklmnopqurstuvw')
+        self.assertEqual(order.stripe_charge_failure_reason, '')
+        self.assertEqual(order.status, 'successful')
+
+        self.assertEqual(self.alice.orders.count(), 1)
         self.assertEqual(self.alice.tickets.count(), 1)
 
-        order = self.alice.orders.all()[0]
-        self.assertEqual(order.rate, 'individual')
-        self.assertEqual(order.unclaimed_tickets().count(), 2)
-
-        ticket = self.alice.tickets.all()[0]
+        ticket = self.alice.ticket()
         self.assertEqual(ticket.days(), ['Thursday', 'Friday', 'Saturday'])
 
-        ticket = order.unclaimed_tickets().get(invitations__email_addr='bob@example.com')
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_order_for_others(self):
+        order = actions.create_pending_order(
+            self.alice,
+            'individual',
+            email_addrs_and_days_for_others=[
+                ('bob@example.com', ['fri', 'sat']),
+                ('carol@example.com', ['sat', 'sun']),
+            ]
+        )
+
+        actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvw')
+
+        self.assertEqual(order.stripe_charge_id, 'ch_abcdefghijklmnopqurstuvw')
+        self.assertEqual(order.stripe_charge_failure_reason, '')
+        self.assertEqual(order.status, 'successful')
+
+        self.assertEqual(self.alice.orders.count(), 1)
+        self.assertEqual(self.alice.tickets.count(), 0)
+
+        ticket = TicketInvitation.objects.get(email_addr='bob@example.com').ticket
         self.assertEqual(ticket.days(), ['Friday', 'Saturday'])
+
+        ticket = TicketInvitation.objects.get(email_addr='carol@example.com').ticket
+        self.assertEqual(ticket.days(), ['Saturday', 'Sunday'])
+
+        self.assertEqual(len(mail.outbox), 2)
+
+    def test_order_for_self_and_others(self):
+        order = actions.create_pending_order(
+            self.alice,
+            'individual',
+            days_for_self=['thu', 'fri', 'sat'],
+            email_addrs_and_days_for_others=[
+                ('bob@example.com', ['fri', 'sat']),
+                ('carol@example.com', ['sat', 'sun']),
+            ]
+        )
+
+        actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvw')
+
+        self.assertEqual(order.stripe_charge_id, 'ch_abcdefghijklmnopqurstuvw')
+        self.assertEqual(order.stripe_charge_failure_reason, '')
+        self.assertEqual(order.status, 'successful')
+
+        self.assertEqual(self.alice.orders.count(), 1)
+        self.assertEqual(self.alice.tickets.count(), 1)
+
+        ticket = self.alice.ticket()
+        self.assertEqual(ticket.days(), ['Thursday', 'Friday', 'Saturday'])
+
+        ticket = TicketInvitation.objects.get(email_addr='bob@example.com').ticket
+        self.assertEqual(ticket.days(), ['Friday', 'Saturday'])
+
+        ticket = TicketInvitation.objects.get(email_addr='carol@example.com').ticket
+        self.assertEqual(ticket.days(), ['Saturday', 'Sunday'])
+
+        self.assertEqual(len(mail.outbox), 2)
+
+    def test_after_order_marked_as_failed(self):
+        order = actions.create_pending_order(
+            self.alice,
+            'individual',
+            days_for_self=['thu', 'fri', 'sat']
+        )
+
+        actions.mark_order_as_failed(order, 'There was a problem')
+
+        actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvw')
+
+        self.assertEqual(order.stripe_charge_id, 'ch_abcdefghijklmnopqurstuvw')
+        self.assertEqual(order.stripe_charge_failure_reason, '')
+        self.assertEqual(order.status, 'successful')
+
+        self.assertEqual(self.alice.orders.count(), 1)
+        self.assertEqual(self.alice.tickets.count(), 1)
+
+        ticket = self.alice.ticket()
+        self.assertEqual(ticket.days(), ['Thursday', 'Friday', 'Saturday'])
+
+        self.assertEqual(len(mail.outbox), 0)
+
+
+class MarkOrderAsFailed(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.alice = User.objects.create_user(email_addr='alice@example.com', name='Alice')
+
+    def test_mark_order_as_failed(self):
+        order = actions.create_pending_order(
+            self.alice,
+            'individual',
+            days_for_self=['thu', 'fri', 'sat']
+        )
+
+        actions.mark_order_as_failed(order, 'There was a problem')
+
+        self.assertEqual(order.stripe_charge_failure_reason, 'There was a problem')
+        self.assertEqual(order.status, 'failed')
 
 
 class ProcessStripeChargeTests(TestCase):
@@ -98,7 +213,6 @@ class ProcessStripeChargeTests(TestCase):
             actions.process_stripe_charge(self.order, token)
         self.order.refresh_from_db()
         self.assertEqual(self.order.status, 'successful')
-        self.assertEqual(len(mail.outbox), 2)
 
     def test_process_stripe_charge_failure(self):
         token = 'tok_ abcdefghijklmnopqurstuvwx'
@@ -106,14 +220,13 @@ class ProcessStripeChargeTests(TestCase):
             actions.process_stripe_charge(self.order, token)
         self.order.refresh_from_db()
         self.assertEqual(self.order.status, 'failed')
-        self.assertEqual(len(mail.outbox), 0)
 
 
 class TicketInvitationTests(TestCase):
     def test_claim_ticket_invitation(self):
         alice = User.objects.create_user(email_addr='alice@example.com', name='Alice')
         bob = User.objects.create_user(email_addr='bob@example.com', name='Bob')
-        actions.place_order_for_others(
+        order = actions.place_order_for_others(
             alice,
             'individual',
             [
@@ -121,6 +234,8 @@ class TicketInvitationTests(TestCase):
                 ('carol@example.com', ['sat', 'sun']),
             ]
         )
+
+        actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvw')
 
         invitation = TicketInvitation.objects.get(email_addr='bob@example.com')
         actions.claim_ticket_invitation(bob, invitation)

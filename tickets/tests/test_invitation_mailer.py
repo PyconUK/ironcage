@@ -13,7 +13,7 @@ from tickets.models import TicketInvitation
 class InvitationMailerTests(TestCase):
     def test_send_invitation_mail(self):
         alice = User.objects.create_user(email_addr='alice@example.com', name='Alice')
-        actions.place_order_for_others(
+        order = actions.place_order_for_others(
             alice,
             'individual',
             [
@@ -21,8 +21,11 @@ class InvitationMailerTests(TestCase):
                 ('carol@example.com', ['sat', 'sun']),
             ]
         )
-        invitation = TicketInvitation.objects.get(email_addr='bob@example.com')
+        actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvw')
 
+        mail.outbox = []
+
+        invitation = TicketInvitation.objects.get(email_addr='bob@example.com')
         send_invitation_mail(invitation)
 
         self.assertEqual(len(mail.outbox), 1)

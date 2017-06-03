@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
-from .actions import claim_ticket_invitation, place_order_for_self, place_order_for_others, place_order_for_self_and_others, process_stripe_charge
+from .actions import claim_ticket_invitation, create_pending_order, process_stripe_charge
 from .constants import RATES
 from .forms import TicketForm, TicketForSelfForm, TicketForOthersFormSet
 from .models import Order, Ticket, TicketInvitation
@@ -22,31 +22,31 @@ def new_order(request):
         if form.is_valid():
             if form.cleaned_data['who'] == 'self':
                 if self_form.is_valid():
-                    order = place_order_for_self(
-                        request.user,
-                        form.cleaned_data['rate'],
-                        self_form.cleaned_data['days'],
+                    order = create_pending_order(
+                        purchaser=request.user,
+                        rate=form.cleaned_data['rate'],
+                        days_for_self=self_form.cleaned_data['days'],
                     )
 
                     return redirect(order)
 
             elif form.cleaned_data['who'] == 'others':
                 if others_formset.is_valid():
-                    order = place_order_for_others(
-                        request.user,
-                        form.cleaned_data['rate'],
-                        others_formset.email_addrs_and_days,
+                    order = create_pending_order(
+                        purchaser=request.user,
+                        rate=form.cleaned_data['rate'],
+                        email_addrs_and_days_for_others=others_formset.email_addrs_and_days,
                     )
 
                     return redirect(order)
 
             elif form.cleaned_data['who'] == 'self and others':
                 if self_form.is_valid() and others_formset.is_valid():
-                    order = place_order_for_self_and_others(
-                        request.user,
-                        form.cleaned_data['rate'],
-                        self_form.cleaned_data['days'],
-                        others_formset.email_addrs_and_days,
+                    order = create_pending_order(
+                        purchaser=request.user,
+                        rate=form.cleaned_data['rate'],
+                        days_for_self=self_form.cleaned_data['days'],
+                        email_addrs_and_days_for_others=others_formset.email_addrs_and_days,
                     )
 
                     return redirect(order)

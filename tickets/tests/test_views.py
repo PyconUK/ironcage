@@ -200,6 +200,7 @@ class TicketTests(TestCase):
                 ('carol@example.com', ['sat', 'sun']),
             ]
         )
+        actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvw')
         cls.ticket = cls.alice.ticket()
 
     def test_ticket(self):
@@ -224,7 +225,7 @@ class TicketInvitationTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         alice = User.objects.create_user(email_addr='alice@example.com', name='Alice')
-        actions.place_order_for_others(
+        order = actions.place_order_for_others(
             alice,
             'individual',
             [
@@ -232,6 +233,7 @@ class TicketInvitationTests(TestCase):
                 ('carol@example.com', ['sat', 'sun']),
             ]
         )
+        actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvw')
         cls.invitation = TicketInvitation.objects.get(email_addr='bob@example.com')
         cls.bob = User.objects.create_user(email_addr='bob@example.com', name='Bob')
 
