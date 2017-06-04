@@ -231,7 +231,7 @@ class ProcessStripeChargeTests(TestCase):
 class TicketInvitationTests(TestCase):
     def test_claim_ticket_invitation(self):
         factories.create_confirmed_order_for_others()
-        bob = factories.create_user(email_addr='bob@example.com', name='Bob')
+        bob = factories.create_user('Bob')
 
         invitation = TicketInvitation.objects.get(email_addr='bob@example.com')
         actions.claim_ticket_invitation(bob, invitation)

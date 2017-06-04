@@ -3,7 +3,8 @@ from accounts.models import User
 from tickets import actions
 
 
-def create_user(email_addr='alice@example.com', name='Alice'):
+def create_user(name='Alice'):
+    email_addr = f'{name.lower()}@example.com'
     return User.objects.create_user(email_addr=email_addr, name=name)
 
 

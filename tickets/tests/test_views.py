@@ -155,14 +155,14 @@ class OrderEditTests(TestCase):
         self.assertRedirects(rsp, f'/accounts/login/?next=/tickets/orders/{self.order.order_id}/edit/')
 
     def test_get_when_not_authorized(self):
-        bob = factories.create_user(email_addr='bob@example.com')
+        bob = factories.create_user('Bob')
         self.client.force_login(bob)
         rsp = self.client.get(f'/tickets/orders/{self.order.order_id}/edit/', follow=True)
         self.assertRedirects(rsp, '/profile/')
         self.assertContains(rsp, 'Only the purchaser of an order can update the order')
 
     def test_post_when_not_authorized(self):
-        bob = factories.create_user(email_addr='bob@example.com')
+        bob = factories.create_user('Bob')
         self.client.force_login(bob)
         rsp = self.client.post(f'/tickets/orders/{self.order.order_id}/edit/', follow=True)
         self.assertRedirects(rsp, '/profile/')
@@ -192,7 +192,7 @@ class OrderTests(TestCase):
         self.assertContains(rsp, 'Please login to see this page.')
 
     def test_when_not_authorized(self):
-        bob = factories.create_user(email_addr='bob@example.com')
+        bob = factories.create_user('Bob')
         self.client.force_login(bob)
         rsp = self.client.get(f'/tickets/orders/{self.order.order_id}/', follow=True)
         self.assertRedirects(rsp, '/profile/')
@@ -247,7 +247,7 @@ class OrderPaymentTests(TestCase):
         self.assertContains(rsp, 'Please login to see this page.')
 
     def test_when_not_authorized(self):
-        bob = factories.create_user(email_addr='bob@example.com')
+        bob = factories.create_user('Bob')
         self.client.force_login(bob)
         rsp = self.client.post(
             f'/tickets/orders/{self.order.order_id}/payment/',
@@ -274,7 +274,7 @@ class TicketTests(TestCase):
         self.assertContains(rsp, 'Please login to see this page.')
 
     def test_when_not_authorized(self):
-        bob = factories.create_user(email_addr='bob@example.com')
+        bob = factories.create_user('Bob')
         self.client.force_login(bob)
         rsp = self.client.get(f'/tickets/tickets/{self.ticket.ticket_id}/', follow=True)
         self.assertRedirects(rsp, '/profile/')
@@ -286,7 +286,7 @@ class TicketInvitationTests(TestCase):
     def setUpTestData(cls):
         factories.create_confirmed_order_for_others()
         cls.invitation = TicketInvitation.objects.get(email_addr='bob@example.com')
-        cls.bob = factories.create_user(email_addr='bob@example.com', name='Bob')
+        cls.bob = factories.create_user('Bob')
 
     def test_for_unclaimed_invitation(self):
         self.client.force_login(self.bob)
