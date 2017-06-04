@@ -1,5 +1,5 @@
 [run]
-source = ironcage,tickets
+source = ironcage,accounts,reports,tickets
 omit = *tests*,*migrations*,ironcage/wsgi.py
 
 [report]
