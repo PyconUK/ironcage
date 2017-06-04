@@ -1,0 +1,11 @@
+{% extends 'ironcage/base.html' %}
+
+{% block content %}
+<h1>Reports</h1>
+
+<ul>
+  {% for report in reports %}
+  <li><a href="{% url report.namespaced_url_name %}">{{ report.title }}</a></li>
+  {% endfor %}
+</ul>
+{% endblock %}

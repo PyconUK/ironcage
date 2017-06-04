@@ -44,6 +44,7 @@ DOMAIN = 'http://localhost:8000'
 INSTALLED_APPS = [
     'ironcage',
     'accounts',
+    'reports',
     'tickets',
 
     'django.contrib.admin',
