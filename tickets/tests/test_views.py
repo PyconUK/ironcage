@@ -82,6 +82,100 @@ class NewOrderTests(TestCase):
         self.assertRedirects(rsp, '/accounts/login/')
 
 
+class OrderEditTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.order = factories.create_pending_order_for_self()
+
+    def test_get(self):
+        self.client.force_login(self.order.purchaser)
+        rsp = self.client.get(f'/tickets/orders/{self.order.order_id}/edit/')
+        self.assertInHTML('<tr><td>5 days</td><td>£138</td><td>£276</td></tr>', rsp.content.decode())
+        self.assertContains(rsp, '<form method="post" id="order-form">')
+        self.assertNotContains(rsp, 'Please create an account to buy a ticket.')
+
+    def test_post_for_self(self):
+        self.client.force_login(self.order.purchaser)
+        form_data = {
+            'who': 'self',
+            'rate': 'corporate',
+            'days': ['fri', 'sat', 'sun'],
+            # The formset gets POSTed even when order is only for self
+            'form-TOTAL_FORMS': '2',
+            'form-INITIAL_FORMS': '0',
+            'form-MIN_NUM_FORMS': '1',
+            'form-MAX_NUM_FORMS': '1000',
+            'form-0-email_addr': '',
+            'form-1-email_addr': '',
+        }
+        rsp = self.client.post(f'/tickets/orders/{self.order.order_id}/edit/', form_data, follow=True)
+        self.assertContains(rsp, 'You have ordered 1 ticket(s)')
+
+    def test_post_for_others(self):
+        self.client.force_login(self.order.purchaser)
+        form_data = {
+            'who': 'others',
+            'rate': 'corporate',
+            'form-TOTAL_FORMS': '2',
+            'form-INITIAL_FORMS': '0',
+            'form-MIN_NUM_FORMS': '1',
+            'form-MAX_NUM_FORMS': '1000',
+            'form-0-email_addr': 'test1@example.com',
+            'form-0-days': ['thu', 'fri'],
+            'form-1-email_addr': 'test2@example.com',
+            'form-1-days': ['sat', 'sun', 'mon'],
+        }
+        rsp = self.client.post(f'/tickets/orders/{self.order.order_id}/edit/', form_data, follow=True)
+        self.assertContains(rsp, 'You have ordered 2 ticket(s)')
+
+    def test_post_for_self_and_others(self):
+        self.client.force_login(self.order.purchaser)
+        form_data = {
+            'who': 'self and others',
+            'rate': 'corporate',
+            'days': ['fri', 'sat', 'sun'],
+            'form-TOTAL_FORMS': '2',
+            'form-INITIAL_FORMS': '0',
+            'form-MIN_NUM_FORMS': '1',
+            'form-MAX_NUM_FORMS': '1000',
+            'form-0-email_addr': 'test1@example.com',
+            'form-0-days': ['thu', 'fri'],
+            'form-1-email_addr': 'test2@example.com',
+            'form-1-days': ['sat', 'sun', 'mon'],
+        }
+        rsp = self.client.post(f'/tickets/orders/{self.order.order_id}/edit/', form_data, follow=True)
+        self.assertContains(rsp, 'You have ordered 3 ticket(s)')
+
+    def test_get_when_not_authenticated(self):
+        rsp = self.client.get(f'/tickets/orders/{self.order.order_id}/edit/')
+        self.assertRedirects(rsp, f'/accounts/login/?next=/tickets/orders/{self.order.order_id}/edit/')
+
+    def test_post_when_not_authenticated(self):
+        rsp = self.client.get(f'/tickets/orders/{self.order.order_id}/edit/', follow=True)
+        self.assertRedirects(rsp, f'/accounts/login/?next=/tickets/orders/{self.order.order_id}/edit/')
+
+    def test_get_when_not_authorized(self):
+        bob = factories.create_user(email_addr='bob@example.com')
+        self.client.force_login(bob)
+        rsp = self.client.get(f'/tickets/orders/{self.order.order_id}/edit/', follow=True)
+        self.assertRedirects(rsp, '/profile/')
+        self.assertContains(rsp, 'Only the purchaser of an order can update the order')
+
+    def test_post_when_not_authorized(self):
+        bob = factories.create_user(email_addr='bob@example.com')
+        self.client.force_login(bob)
+        rsp = self.client.post(f'/tickets/orders/{self.order.order_id}/edit/', follow=True)
+        self.assertRedirects(rsp, '/profile/')
+        self.assertContains(rsp, 'Only the purchaser of an order can update the order')
+
+    def test_get_when_already_paid(self):
+        factories.confirm_order(self.order)
+        self.client.force_login(self.order.purchaser)
+        rsp = self.client.get(f'/tickets/orders/{self.order.order_id}/edit/', follow=True)
+        self.assertRedirects(rsp, f'/tickets/orders/{self.order.order_id}/')
+        self.assertContains(rsp, 'This order has already been paid')
+
+
 class OrderTests(TestCase):
     @classmethod
     def setUpTestData(cls):

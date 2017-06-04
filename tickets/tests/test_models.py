@@ -49,3 +49,73 @@ class OrderTests(TestCase):
             'cost': 66,
         }]
         self.assertEqual(order.ticket_details(), expected_details)
+
+    def test_form_data_for_order_for_self(self):
+        order = factories.create_pending_order_for_self()
+        expected = {
+            'who': 'self',
+            'rate': 'individual',
+        }
+        self.assertEqual(order.form_data(), expected)
+
+    def test_form_data_for_order_for_others(self):
+        order = factories.create_pending_order_for_others()
+        expected = {
+            'who': 'others',
+            'rate': 'individual',
+        }
+        self.assertEqual(order.form_data(), expected)
+
+    def test_form_data_for_order_for_self_and_others(self):
+        order = factories.create_pending_order_for_self_and_others()
+        expected = {
+            'who': 'self and others',
+            'rate': 'individual',
+        }
+        self.assertEqual(order.form_data(), expected)
+
+    def test_self_form_data_for_order_for_self(self):
+        order = factories.create_pending_order_for_self()
+        expected = {
+            'days': ['thu', 'fri', 'sat'],
+        }
+        self.assertEqual(order.self_form_data(), expected)
+
+    def test_self_form_data_for_order_for_others(self):
+        order = factories.create_pending_order_for_others()
+        self.assertEqual(order.self_form_data(), None)
+
+    def test_self_form_data_for_order_for_self_and_others(self):
+        order = factories.create_pending_order_for_self_and_others()
+        expected = {
+            'days': ['thu', 'fri', 'sat'],
+        }
+        self.assertEqual(order.self_form_data(), expected)
+
+    def test_others_formset_data_for_order_for_self(self):
+        order = factories.create_pending_order_for_self()
+        self.assertEqual(order.others_formset_data(), None)
+
+    def test_others_formset_data_for_order_for_others(self):
+        order = factories.create_pending_order_for_others()
+        expected = {
+            'form-TOTAL_FORMS': '2',
+            'form-INITIAL_FORMS': '2',
+            'form-0-days': ['fri', 'sat'],
+            'form-0-email_addr': 'bob@example.com',
+            'form-1-days': ['sat', 'sun'],
+            'form-1-email_addr': 'carol@example.com',
+        }
+        self.assertEqual(order.others_formset_data(), expected)
+
+    def test_others_formset_data_for_order_for_self_and_others(self):
+        order = factories.create_pending_order_for_self_and_others()
+        expected = {
+            'form-TOTAL_FORMS': '2',
+            'form-INITIAL_FORMS': '2',
+            'form-0-days': ['fri', 'sat'],
+            'form-0-email_addr': 'bob@example.com',
+            'form-1-days': ['sat', 'sun'],
+            'form-1-email_addr': 'carol@example.com',
+        }
+        self.assertEqual(order.others_formset_data(), expected)

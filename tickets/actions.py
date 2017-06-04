@@ -21,6 +21,18 @@ def create_pending_order(purchaser, rate, days_for_self=None, email_addrs_and_da
     )
 
 
+def update_pending_order(order, rate, days_for_self=None, email_addrs_and_days_for_others=None):
+    assert days_for_self is not None or email_addrs_and_days_for_others is not None
+    assert order.payment_required()
+
+    order.rate = rate
+    order.unconfirmed_details = {
+        'days_for_self': days_for_self,
+        'email_addrs_and_days_for_others': email_addrs_and_days_for_others,
+    }
+    order.save()
+
+
 def confirm_order(order, charge_id):
     assert order.payment_required()
 

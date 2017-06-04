@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
-from .actions import claim_ticket_invitation, create_pending_order, process_stripe_charge
+from .actions import claim_ticket_invitation, create_pending_order, process_stripe_charge, update_pending_order
 from .constants import RATES
 from .forms import TicketForm, TicketForSelfForm, TicketForOthersFormSet
 from .models import Order, Ticket, TicketInvitation
@@ -68,6 +68,73 @@ def new_order(request):
     }
 
     return render(request, 'tickets/new_order.html', context)
+
+
+@login_required
+def order_edit(request, order_id):
+    order = Order.objects.get_by_order_id_or_404(order_id)
+
+    if request.user != order.purchaser:
+        messages.warning(request, 'Only the purchaser of an order can update the order')
+        return redirect('accounts:profile')
+
+    if not order.payment_required():
+        messages.error(request, 'This order has already been paid')
+        return redirect(order)
+
+    if request.method == 'POST':
+        form = TicketForm(request.POST)
+        self_form = TicketForSelfForm(request.POST)
+        others_formset = TicketForOthersFormSet(request.POST)
+
+        if form.is_valid():
+            if form.cleaned_data['who'] == 'self':
+                if self_form.is_valid():
+                    update_pending_order(
+                        order,
+                        rate=form.cleaned_data['rate'],
+                        days_for_self=self_form.cleaned_data['days'],
+                    )
+
+                    return redirect(order)
+
+            elif form.cleaned_data['who'] == 'others':
+                if others_formset.is_valid():
+                    update_pending_order(
+                        order,
+                        rate=form.cleaned_data['rate'],
+                        email_addrs_and_days_for_others=others_formset.email_addrs_and_days,
+                    )
+
+                    return redirect(order)
+
+            elif form.cleaned_data['who'] == 'self and others':
+                if self_form.is_valid() and others_formset.is_valid():
+                    update_pending_order(
+                        order,
+                        rate=form.cleaned_data['rate'],
+                        days_for_self=self_form.cleaned_data['days'],
+                        email_addrs_and_days_for_others=others_formset.email_addrs_and_days,
+                    )
+
+                    return redirect(order)
+
+            else:
+                assert False
+
+    else:
+        form = TicketForm(order.form_data())
+        self_form = TicketForSelfForm(order.self_form_data())
+        others_formset = TicketForOthersFormSet(order.others_formset_data())
+
+    context = {
+        'form': form,
+        'self_form': self_form,
+        'others_formset': others_formset,
+        'rates_table_data': _rates_table_data(),
+    }
+
+    return render(request, 'tickets/order_edit.html', context)
 
 
 @login_required

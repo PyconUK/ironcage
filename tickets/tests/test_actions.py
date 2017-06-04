@@ -63,6 +63,67 @@ class CreatePendingOrderTests(TestCase):
         self.assertEqual(order.rate, 'individual')
 
 
+class UpdatePendingOrderTests(TestCase):
+    def test_order_for_self_to_order_for_self(self):
+        order = factories.create_pending_order_for_self()
+        actions.update_pending_order(
+            order,
+            'corporate',
+            days_for_self=['fri', 'sat', 'sun']
+        )
+
+        self.assertEqual(order.status, 'pending')
+        self.assertEqual(order.rate, 'corporate')
+        self.assertEqual(
+            order.ticket_details(),
+            [{'name': 'Alice', 'days': 'Friday, Saturday, Sunday', 'cost': 180}]
+        )
+
+    def test_order_for_self_to_order_for_others(self):
+        order = factories.create_pending_order_for_self()
+        actions.update_pending_order(
+            order,
+            'corporate',
+            email_addrs_and_days_for_others=[
+                ('bob@example.com', ['fri', 'sat']),
+                ('carol@example.com', ['sat', 'sun']),
+            ]
+        )
+
+        self.assertEqual(order.status, 'pending')
+        self.assertEqual(order.rate, 'corporate')
+        self.assertEqual(
+            order.ticket_details(),
+            [
+                {'name': 'bob@example.com', 'days': 'Friday, Saturday', 'cost': 132},
+                {'name': 'carol@example.com', 'days': 'Saturday, Sunday', 'cost': 132},
+            ]
+        )
+
+    def test_order_for_self_to_order_for_self_and_others(self):
+        order = factories.create_pending_order_for_self()
+        actions.update_pending_order(
+            order,
+            'corporate',
+            days_for_self=['fri', 'sat', 'sun'],
+            email_addrs_and_days_for_others=[
+                ('bob@example.com', ['fri', 'sat']),
+                ('carol@example.com', ['sat', 'sun']),
+            ]
+        )
+
+        self.assertEqual(order.status, 'pending')
+        self.assertEqual(order.rate, 'corporate')
+        self.assertEqual(
+            order.ticket_details(),
+            [
+                {'name': 'Alice', 'days': 'Friday, Saturday, Sunday', 'cost': 180},
+                {'name': 'bob@example.com', 'days': 'Friday, Saturday', 'cost': 132},
+                {'name': 'carol@example.com', 'days': 'Saturday, Sunday', 'cost': 132},
+            ]
+        )
+
+
 class ConfirmOrderTests(TestCase):
     def test_order_for_self(self):
         order = factories.create_pending_order_for_self()

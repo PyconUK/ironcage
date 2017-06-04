@@ -43,6 +43,9 @@
     </script>
   </form>
 </div>
+
+<a href="{% url 'tickets:order_edit' order.order_id %}">Make changes to your order</a>
+
 {% endif %}
 
 {% endblock %}
