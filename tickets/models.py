@@ -293,7 +293,6 @@ class TicketInvitation(models.Model):
 
     def claim_for_owner(self, owner):
         assert self.status == 'unclaimed'
-        # TODO where do transactions go?
         ticket = self.ticket
         ticket.owner = owner
         ticket.save()
