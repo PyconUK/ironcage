@@ -6,60 +6,11 @@ from .stripe_integration import create_charge_for_order
 
 
 def create_pending_order(purchaser, rate, days_for_self=None, email_addrs_and_days_for_others=None):
-    assert days_for_self or email_addrs_and_days_for_others
-
-    unconfirmed_details = {
-        'days_for_self': days_for_self,
-        'email_addrs_and_days_for_others': email_addrs_and_days_for_others,
-    }
-
-    return Order.objects.create(
-        purchaser=purchaser,
-        rate=rate,
-        status='pending',
-        unconfirmed_details=unconfirmed_details,
-    )
+    return Order.objects.create_pending(purchaser, rate, days_for_self, email_addrs_and_days_for_others)
 
 
 def update_pending_order(order, rate, days_for_self=None, email_addrs_and_days_for_others=None):
-    assert days_for_self is not None or email_addrs_and_days_for_others is not None
-    assert order.payment_required()
-
-    order.rate = rate
-    order.unconfirmed_details = {
-        'days_for_self': days_for_self,
-        'email_addrs_and_days_for_others': email_addrs_and_days_for_others,
-    }
-    order.save()
-
-
-def confirm_order(order, charge_id):
-    assert order.payment_required()
-
-    days_for_self = order.unconfirmed_details['days_for_self']
-    if days_for_self is not None:
-        order.tickets.create_for_user(order.purchaser, days_for_self)
-
-    email_addrs_and_days_for_others = order.unconfirmed_details['email_addrs_and_days_for_others']
-    if email_addrs_and_days_for_others is not None:
-        for email_addr, days in email_addrs_and_days_for_others:
-            order.tickets.create_with_invitation(email_addr, days)
-
-    order.stripe_charge_id = charge_id
-    order.stripe_charge_failure_reason = ''
-    order.status = 'successful'
-
-    order.save()
-
-    send_receipt(order)
-    send_ticket_invitations(order)
-
-
-def mark_order_as_failed(order, charge_failure_reason):
-    order.stripe_charge_failure_reason = charge_failure_reason
-    order.status = 'failed'
-
-    order.save()
+    order.update(rate, days_for_self, email_addrs_and_days_for_others)
 
 
 def process_stripe_charge(order, token):
@@ -69,6 +20,16 @@ def process_stripe_charge(order, token):
         confirm_order(order, charge.id)
     except stripe.error.CardError as e:
         mark_order_as_failed(order, e._message)
+
+
+def confirm_order(order, charge_id):
+    order.confirm(charge_id)
+    send_receipt(order)
+    send_ticket_invitations(order)
+
+
+def mark_order_as_failed(order, charge_failure_reason):
+    order.mark_as_failed(charge_failure_reason)
 
 
 def send_receipt(order):

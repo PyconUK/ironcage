@@ -27,6 +27,21 @@ class Order(models.Model):
             id = self.model.id_scrambler.backward(order_id)
             return get_object_or_404(self.model, pk=id)
 
+        def create_pending(self, purchaser, rate, days_for_self=None, email_addrs_and_days_for_others=None):
+            assert days_for_self is not None or email_addrs_and_days_for_others is not None
+
+            unconfirmed_details = {
+                'days_for_self': days_for_self,
+                'email_addrs_and_days_for_others': email_addrs_and_days_for_others,
+            }
+
+            return self.create(
+                purchaser=purchaser,
+                rate=rate,
+                status='pending',
+                unconfirmed_details=unconfirmed_details,
+            )
+
     objects = Manager()
 
     @property
@@ -37,6 +52,41 @@ class Order(models.Model):
 
     def get_absolute_url(self):
         return reverse('tickets:order', args=[self.order_id])
+
+    def update(self, rate, days_for_self=None, email_addrs_and_days_for_others=None):
+        assert days_for_self is not None or email_addrs_and_days_for_others is not None
+        assert self.payment_required()
+
+        self.rate = rate
+        self.unconfirmed_details = {
+            'days_for_self': days_for_self,
+            'email_addrs_and_days_for_others': email_addrs_and_days_for_others,
+        }
+        self.save()
+
+    def confirm(self, charge_id):
+        assert self.payment_required()
+
+        days_for_self = self.unconfirmed_details['days_for_self']
+        if days_for_self is not None:
+            self.tickets.create_for_user(self.purchaser, days_for_self)
+
+        email_addrs_and_days_for_others = self.unconfirmed_details['email_addrs_and_days_for_others']
+        if email_addrs_and_days_for_others is not None:
+            for email_addr, days in email_addrs_and_days_for_others:
+                self.tickets.create_with_invitation(email_addr, days)
+
+        self.stripe_charge_id = charge_id
+        self.stripe_charge_failure_reason = ''
+        self.status = 'successful'
+
+        self.save()
+
+    def mark_as_failed(self, charge_failure_reason):
+        self.stripe_charge_failure_reason = charge_failure_reason
+        self.status = 'failed'
+
+        self.save()
 
     def all_tickets(self):
         if self.payment_required():
