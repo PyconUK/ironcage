@@ -11,6 +11,25 @@
   </head>
   <body>
     <div class="container">
+      <nav class="navbar navbar-default navbar-static-top">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <!-- TODO add hamburger menu -->
+            <a class="navbar-brand" href="/">PyCon UK</a>
+          </div>
+
+          <div class="collapse navbar-collapse" id="bs-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+              {% if user.is_authenticated %}
+              <li><a href="{% url 'logout' %}">Sign out</a></li>
+              {% else %}
+              <li><a href="{% url 'login' %}">Sign in</a></li>
+              <li><a href="{% url 'register' %}">Sign up</a></li>
+              {% endif %}
+            </ul>
+          </div>
+        </div>
+      </nav>
       <div class="row">
         {% for message in messages %}
         <div class="alert alert-{{ message.tags }}" role="alert">{{ message }}</div>
