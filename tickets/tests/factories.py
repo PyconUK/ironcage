@@ -47,7 +47,7 @@ def create_pending_order_for_self_and_others(user=None, rate=None):
 
 
 def confirm_order(order):
-    actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvw')
+    actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvw', 1495355163)
 
 
 def create_confirmed_order_for_self(user=None, rate=None, num_days=None):

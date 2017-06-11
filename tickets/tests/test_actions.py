@@ -127,9 +127,10 @@ class UpdatePendingOrderTests(TestCase):
 class ConfirmOrderTests(TestCase):
     def test_order_for_self(self):
         order = factories.create_pending_order_for_self()
-        actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvw')
+        actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvw', 1495355163)
 
         self.assertEqual(order.stripe_charge_id, 'ch_abcdefghijklmnopqurstuvw')
+        self.assertEqual(order.stripe_charge_created.timestamp(), 1495355163)
         self.assertEqual(order.stripe_charge_failure_reason, '')
         self.assertEqual(order.status, 'successful')
 
@@ -143,9 +144,10 @@ class ConfirmOrderTests(TestCase):
 
     def test_order_for_others(self):
         order = factories.create_pending_order_for_others()
-        actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvw')
+        actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvw', 1495355163)
 
         self.assertEqual(order.stripe_charge_id, 'ch_abcdefghijklmnopqurstuvw')
+        self.assertEqual(order.stripe_charge_created.timestamp(), 1495355163)
         self.assertEqual(order.stripe_charge_failure_reason, '')
         self.assertEqual(order.status, 'successful')
 
@@ -162,9 +164,10 @@ class ConfirmOrderTests(TestCase):
 
     def test_order_for_self_and_others(self):
         order = factories.create_pending_order_for_self_and_others()
-        actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvw')
+        actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvw', 1495355163)
 
         self.assertEqual(order.stripe_charge_id, 'ch_abcdefghijklmnopqurstuvw')
+        self.assertEqual(order.stripe_charge_created.timestamp(), 1495355163)
         self.assertEqual(order.stripe_charge_failure_reason, '')
         self.assertEqual(order.status, 'successful')
 
@@ -186,9 +189,10 @@ class ConfirmOrderTests(TestCase):
         order = factories.create_pending_order_for_self()
         actions.mark_order_as_failed(order, 'There was a problem')
 
-        actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvw')
+        actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvw', 1495355163)
 
         self.assertEqual(order.stripe_charge_id, 'ch_abcdefghijklmnopqurstuvw')
+        self.assertEqual(order.stripe_charge_created.timestamp(), 1495355163)
         self.assertEqual(order.stripe_charge_failure_reason, '')
         self.assertEqual(order.status, 'successful')
 

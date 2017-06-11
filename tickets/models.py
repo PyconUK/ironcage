@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+
 from django.conf import settings
 from django.contrib.postgres.fields import JSONField
 from django.db import models
@@ -15,6 +17,7 @@ class Order(models.Model):
     rate = models.CharField(max_length=40)
     status = models.CharField(max_length=10)
     stripe_charge_id = models.CharField(max_length=80)
+    stripe_charge_created = models.DateTimeField(null=True)
     stripe_charge_failure_reason = models.CharField(max_length=400, blank=True)
     unconfirmed_details = JSONField()
 
@@ -65,7 +68,7 @@ class Order(models.Model):
         }
         self.save()
 
-    def confirm(self, charge_id):
+    def confirm(self, charge_id, charge_created):
         assert self.payment_required()
 
         days_for_self = self.unconfirmed_details['days_for_self']
@@ -78,6 +81,7 @@ class Order(models.Model):
                 self.tickets.create_with_invitation(email_addr, days)
 
         self.stripe_charge_id = charge_id
+        self.stripe_charge_created = datetime.fromtimestamp(charge_created, tz=timezone.utc)
         self.stripe_charge_failure_reason = ''
         self.status = 'successful'
 

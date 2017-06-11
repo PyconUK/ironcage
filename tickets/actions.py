@@ -26,14 +26,14 @@ def process_stripe_charge(order, token):
     assert order.payment_required()
     try:
         charge = create_charge_for_order(order, token)
-        confirm_order(order, charge.id)
+        confirm_order(order, charge.id, charge.created)
     except stripe.error.CardError as e:
         mark_order_as_failed(order, e._message)
 
 
-def confirm_order(order, charge_id):
+def confirm_order(order, charge_id, charge_created):
     with transaction.atomic():
-        order.confirm(charge_id)
+        order.confirm(charge_id, charge_created)
     send_receipt(order)
     send_ticket_invitations(order)
 
