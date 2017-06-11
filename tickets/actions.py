@@ -2,7 +2,7 @@ import stripe
 
 from django.db import transaction
 
-from .invitation_mailer import send_invitation_mail
+from .mailer import send_invitation_mail
 from .models import Order
 from .stripe_integration import create_charge_for_order
 

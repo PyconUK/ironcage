@@ -5,11 +5,11 @@ from django.test import TestCase
 
 from . import factories
 
-from tickets.invitation_mailer import send_invitation_mail
+from tickets.mailer import send_invitation_mail
 from tickets.models import TicketInvitation
 
 
-class InvitationMailerTests(TestCase):
+class MailerTests(TestCase):
     def test_send_invitation_mail(self):
         factories.create_confirmed_order_for_others()
 
