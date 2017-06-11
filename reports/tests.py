@@ -91,7 +91,7 @@ class TestOrdersReport(TestCase):
         report = views.OrdersReport()
         expected = {
             'title': 'All orders',
-            'headings': ['ID', 'Rate', 'Purchaser', 'Email', 'Tickets', 'Cost', 'Status'],
+            'headings': ['ID', 'Rate', 'Purchaser', 'Email', 'Tickets', 'Cost (incl. VAT)', 'Status'],
             'rows': [
                 [self.order1.order_id, 'individual', 'Alice', 'alice@example.com', 1, '£42', 'pending'],
                 [self.order2.order_id, 'individual', 'Bob', 'bob@example.com', 1, '£66', 'successful'],
@@ -116,7 +116,7 @@ class TestUnpaidOrdersReport(TestCase):
         report = views.UnpaidOrdersReport()
         expected = {
             'title': 'Unpaid orders',
-            'headings': ['ID', 'Rate', 'Purchaser', 'Email', 'Tickets', 'Cost', 'Status'],
+            'headings': ['ID', 'Rate', 'Purchaser', 'Email', 'Tickets', 'Cost (incl. VAT)', 'Status'],
             'rows': [
                 [self.order1.order_id, 'individual', 'Alice', 'alice@example.com', 1, '£42', 'pending'],
             ],
@@ -140,7 +140,7 @@ class TestTicketsReport(TestCase):
         report = views.TicketsReport()
         expected = {
             'title': 'All tickets',
-            'headings': ['ID', 'Rate', 'Ticket holder', 'Days', 'Cost', 'Status'],
+            'headings': ['ID', 'Rate', 'Ticket holder', 'Days', 'Cost (incl. VAT)', 'Status'],
             'rows': [
                 [self.ticket1.ticket_id, 'individual', 'Alice', 'Thursday, Friday, Saturday', '£90', 'Assigned'],
                 [self.ticket2.ticket_id, 'individual', 'bob@example.com', 'Friday, Saturday', '£66', 'Unclaimed'],
@@ -166,7 +166,7 @@ class TestUnclaimedTicketsReport(TestCase):
         report = views.UnclaimedTicketsReport()
         expected = {
             'title': 'Unclaimed tickets',
-            'headings': ['ID', 'Rate', 'Ticket holder', 'Days', 'Cost', 'Status'],
+            'headings': ['ID', 'Rate', 'Ticket holder', 'Days', 'Cost (incl. VAT)', 'Status'],
             'rows': [
                 [self.ticket2.ticket_id, 'individual', 'bob@example.com', 'Friday, Saturday', '£66', 'Unclaimed'],
                 [self.ticket3.ticket_id, 'individual', 'carol@example.com', 'Saturday, Sunday', '£66', 'Unclaimed'],

@@ -11,7 +11,7 @@
 
 <p>You have ordered {{ order.num_tickets }} ticket(s) at the {{ order.rate }} rate.</p>
 
-<p>Total cost: £{{ order.cost }}</p>
+<p>Total cost (incl. VAT): £{{ order.cost_incl_vat }}</p>
 
 <table class="table">
   {% for detail in order.ticket_details %}
@@ -19,7 +19,7 @@
     <td>{{ detail.id }}</td>
     <td>{{ detail.name }}</td>
     <td>{{ detail.days }}</td>
-    <td>£{{ detail.cost }}</td>
+    <td>£{{ detail.cost_incl_vat }}</td>
   </tr>
   {% endfor %}
 </table>

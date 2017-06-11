@@ -76,7 +76,7 @@ class UpdatePendingOrderTests(TestCase):
         self.assertEqual(order.rate, 'corporate')
         self.assertEqual(
             order.ticket_details(),
-            [{'name': 'Alice', 'days': 'Friday, Saturday, Sunday', 'cost': 180}]
+            [{'name': 'Alice', 'days': 'Friday, Saturday, Sunday', 'cost_incl_vat': 180, 'cost_excl_vat': 150}]
         )
 
     def test_order_for_self_to_order_for_others(self):
@@ -95,8 +95,8 @@ class UpdatePendingOrderTests(TestCase):
         self.assertEqual(
             order.ticket_details(),
             [
-                {'name': 'bob@example.com', 'days': 'Friday, Saturday', 'cost': 132},
-                {'name': 'carol@example.com', 'days': 'Saturday, Sunday', 'cost': 132},
+                {'name': 'bob@example.com', 'days': 'Friday, Saturday', 'cost_incl_vat': 132, 'cost_excl_vat': 110},
+                {'name': 'carol@example.com', 'days': 'Saturday, Sunday', 'cost_incl_vat': 132, 'cost_excl_vat': 110},
             ]
         )
 
@@ -117,9 +117,9 @@ class UpdatePendingOrderTests(TestCase):
         self.assertEqual(
             order.ticket_details(),
             [
-                {'name': 'Alice', 'days': 'Friday, Saturday, Sunday', 'cost': 180},
-                {'name': 'bob@example.com', 'days': 'Friday, Saturday', 'cost': 132},
-                {'name': 'carol@example.com', 'days': 'Saturday, Sunday', 'cost': 132},
+                {'name': 'Alice', 'days': 'Friday, Saturday, Sunday', 'cost_incl_vat': 180, 'cost_excl_vat': 150},
+                {'name': 'bob@example.com', 'days': 'Friday, Saturday', 'cost_incl_vat': 132, 'cost_excl_vat': 110},
+                {'name': 'carol@example.com', 'days': 'Saturday, Sunday', 'cost_incl_vat': 132, 'cost_excl_vat': 110},
             ]
         )
 

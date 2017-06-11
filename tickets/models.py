@@ -5,7 +5,8 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.utils.crypto import get_random_string
 
-from .constants import DAYS, RATES
+from .constants import DAYS
+from .prices import cost_excl_vat, cost_incl_vat
 from .utils import Scrambler
 
 
@@ -165,11 +166,14 @@ class Order(models.Model):
     def ticket_details(self):
         return [ticket.details() for ticket in self.all_tickets()]
 
-    def cost(self):
-        return sum(ticket.cost() for ticket in self.all_tickets())
+    def cost_excl_vat(self):
+        return sum(ticket.cost_excl_vat() for ticket in self.all_tickets())
 
-    def cost_pence(self):
-        return 100 * self.cost()
+    def cost_incl_vat(self):
+        return sum(ticket.cost_incl_vat() for ticket in self.all_tickets())
+
+    def cost_pence_incl_vat(self):
+        return 100 * self.cost_incl_vat()
 
     def num_tickets(self):
         return len(self.all_tickets())
@@ -225,11 +229,15 @@ class Ticket(models.Model):
             'id': self.ticket_id,
             'name': self.ticket_holder_name(),
             'days': ', '.join(self.days()),
-            'cost': self.cost(),
+            'cost_excl_vat': self.cost_excl_vat(),
+            'cost_incl_vat': self.cost_incl_vat(),
         }
 
     def days(self):
         return [DAYS[day] for day in DAYS if getattr(self, day)]
+
+    def num_days(self):
+        return len(self.days())
 
     def ticket_holder_name(self):
         if self.owner:
@@ -237,9 +245,11 @@ class Ticket(models.Model):
         else:
             return self.invitation().email_addr
 
-    def cost(self):
-        rate = self.order.rate
-        return RATES[rate]['ticket_price'] + RATES[rate]['day_price'] * len(self.days())
+    def cost_incl_vat(self):
+        return cost_incl_vat(self.order.rate, self.num_days())
+
+    def cost_excl_vat(self):
+        return cost_excl_vat(self.order.rate, self.num_days())
 
     def invitation(self):
         # This will raise an exception if a ticket has multiple invitations
@@ -258,8 +268,12 @@ class UnconfirmedTicket:
         return {
             'name': self.ticket_holder_name(),
             'days': ', '.join(self.days),
-            'cost': self.cost(),
+            'cost_excl_vat': self.cost_excl_vat(),
+            'cost_incl_vat': self.cost_incl_vat(),
         }
+
+    def num_days(self):
+        return len(self.days)
 
     def ticket_holder_name(self):
         if self.owner:
@@ -267,9 +281,11 @@ class UnconfirmedTicket:
         else:
             return self.email_addr
 
-    def cost(self):
-        rate = self.order.rate
-        return RATES[rate]['ticket_price'] + RATES[rate]['day_price'] * len(self.days)
+    def cost_incl_vat(self):
+        return cost_incl_vat(self.order.rate, self.num_days())
+
+    def cost_excl_vat(self):
+        return cost_excl_vat(self.order.rate, self.num_days())
 
 
 class TicketInvitation(models.Model):

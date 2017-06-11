@@ -5,9 +5,9 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
 from .actions import claim_ticket_invitation, create_pending_order, process_stripe_charge, update_pending_order
-from .constants import RATES
 from .forms import TicketForm, TicketForSelfForm, TicketForOthersFormSet
 from .models import Order, Ticket, TicketInvitation
+from .prices import cost_incl_vat
 
 
 def new_order(request):
@@ -210,8 +210,8 @@ def _rates_table_data():
     data.append(['', 'Individual rate', 'Corporate rate'])
     for ix in range(5):
         num_days = ix + 1
-        individual_rate = RATES['individual']['ticket_price'] + RATES['individual']['day_price'] * num_days
-        corporate_rate = RATES['corporate']['ticket_price'] + RATES['corporate']['day_price'] * num_days
+        individual_rate = cost_incl_vat('individual', num_days)
+        corporate_rate = cost_incl_vat('corporate', num_days)
         if num_days == 1:
             data.append(['1 day', f'£{individual_rate}', f'£{corporate_rate}'])
         else:

@@ -2,8 +2,9 @@ from django.views.generic import TemplateView
 from django.shortcuts import render
 from django.utils.text import slugify
 
-from tickets.constants import DAYS, RATES
+from tickets.constants import DAYS
 from tickets.models import Order, Ticket
+from tickets.prices import cost_incl_vat
 
 
 class ReportView(TemplateView):
@@ -73,8 +74,8 @@ class TicketSalesReport(ReportView):
 
         for ix in range(5):
             num_days = ix + 1
-            individual_rate = RATES['individual']['ticket_price'] + RATES['individual']['day_price'] * num_days
-            corporate_rate = RATES['corporate']['ticket_price'] + RATES['corporate']['day_price'] * num_days
+            individual_rate = cost_incl_vat('individual', num_days)
+            corporate_rate = cost_incl_vat('corporate', num_days)
 
             num_tickets = {
                 'individual': 0,
@@ -108,7 +109,7 @@ class TicketSalesReport(ReportView):
 
 
 class OrdersMixin:
-    headings = ['ID', 'Rate', 'Purchaser', 'Email', 'Tickets', 'Cost', 'Status']
+    headings = ['ID', 'Rate', 'Purchaser', 'Email', 'Tickets', 'Cost (incl. VAT)', 'Status']
 
     def presenter(self, order):
         return [
@@ -117,7 +118,7 @@ class OrdersMixin:
             order.purchaser.name,
             order.purchaser.email_addr,
             order.num_tickets(),
-            f'£{order.cost()}',
+            f'£{order.cost_incl_vat()}',
             order.status,
         ]
 
@@ -137,7 +138,7 @@ class UnpaidOrdersReport(ReportView, OrdersMixin):
 
 
 class TicketsMixin:
-    headings = ['ID', 'Rate', 'Ticket holder', 'Days', 'Cost', 'Status']
+    headings = ['ID', 'Rate', 'Ticket holder', 'Days', 'Cost (incl. VAT)', 'Status']
 
     def presenter(self, ticket):
         return [
@@ -145,7 +146,7 @@ class TicketsMixin:
             ticket.order.rate,
             ticket.ticket_holder_name(),
             ', '.join(ticket.days()),
-            f'£{ticket.cost()}',
+            f'£{ticket.cost_incl_vat()}',
             'Assigned' if ticket.owner else 'Unclaimed',
         ]
 
