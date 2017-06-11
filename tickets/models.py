@@ -1,3 +1,4 @@
+from collections import defaultdict
 from datetime import datetime, timezone
 
 from django.conf import settings
@@ -170,11 +171,37 @@ class Order(models.Model):
     def ticket_details(self):
         return [ticket.details() for ticket in self.all_tickets()]
 
+    def ticket_summary(self):
+        num_tickets_by_num_days = defaultdict(int)
+
+        for ticket in self.all_tickets():
+            num_tickets_by_num_days[ticket.num_days()] += 1
+
+        summary = []
+
+        for ix in range(5):
+            num_days = ix + 1
+            if num_tickets_by_num_days[num_days]:
+                num_tickets = num_tickets_by_num_days[num_days]
+                summary.append({
+                    'num_days': num_days,
+                    'num_tickets': num_tickets,
+                    'per_item_cost_excl_vat': cost_excl_vat(self.rate, num_days),
+                    'per_item_cost_incl_vat': cost_incl_vat(self.rate, num_days),
+                    'total_cost_excl_vat': cost_excl_vat(self.rate, num_days) * num_tickets,
+                    'total_cost_incl_vat': cost_incl_vat(self.rate, num_days) * num_tickets,
+                })
+
+        return summary
+
     def cost_excl_vat(self):
         return sum(ticket.cost_excl_vat() for ticket in self.all_tickets())
 
     def cost_incl_vat(self):
         return sum(ticket.cost_incl_vat() for ticket in self.all_tickets())
+
+    def vat(self):
+        return self.cost_incl_vat() - self.cost_excl_vat()
 
     def cost_pence_incl_vat(self):
         return 100 * self.cost_incl_vat()

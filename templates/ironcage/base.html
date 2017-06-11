@@ -11,6 +11,7 @@
   </head>
   <body>
     <div class="container">
+      {% if not no_navbar %}
       <nav class="navbar navbar-default navbar-static-top">
         <div class="container-fluid">
           <div class="navbar-header">
@@ -30,6 +31,7 @@
           </div>
         </div>
       </nav>
+      {% endif %}
       <div class="row">
         {% for message in messages %}
         <div class="alert alert-{{ message.tags }}" role="alert">{{ message }}</div>

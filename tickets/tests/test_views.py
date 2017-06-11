@@ -258,6 +258,69 @@ class OrderPaymentTests(TestCase):
         self.assertContains(rsp, 'Only the purchaser of an order can pay for the order')
 
 
+class OrderReceiptTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.order = factories.create_confirmed_order_for_self_and_others()
+
+    def test_order(self):
+        self.client.force_login(self.order.purchaser)
+        rsp = self.client.get(f'/tickets/orders/{self.order.order_id}/receipt/', follow=True)
+        self.assertContains(rsp, f'Receipt for order {self.order.order_id}')
+        self.assertContains(rsp, '3 tickets for PyCon UK 2017')
+        self.assertContains(rsp, '<th>Date</th><td>May 21, 2017</td>', html=True)
+        self.assertContains(rsp, '<th>Total (excl. VAT)</th><td>£185</td>', html=True)
+        self.assertContains(rsp, '<th>VAT at 20%</th><td>£37</td>', html=True)
+        self.assertContains(rsp, '<th>Total (incl. VAT)</th><td>£222</td>', html=True)
+        self.assertContains(rsp, '''
+            <tr>
+                <td>Ticket for 2 days</td>
+                <td>2</td>
+                <td>£55</td>
+                <td>£66</td>
+                <td>£110</td>
+                <td>£132</td>
+            </tr>''', html=True)
+        self.assertContains(rsp, '''
+            <tr>
+                <td>Ticket for 3 days</td>
+                <td>1</td>
+                <td>£75</td>
+                <td>£90</td>
+                <td>£75</td>
+                <td>£90</td>
+            </tr>''', html=True)
+        self.assertContains(rsp, '''
+            <tr>
+                <th>Total</th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th>£185</th>
+                <th>£222</th>
+            </tr>''', html=True)
+
+    def test_when_not_authenticated(self):
+        rsp = self.client.get(f'/tickets/orders/{self.order.order_id}/receipt/', follow=True)
+        self.assertRedirects(rsp, f'/accounts/login/?next=/tickets/orders/{self.order.order_id}/receipt/')
+        self.assertContains(rsp, 'Please login to see this page.')
+
+    def test_when_not_authorized(self):
+        bob = factories.create_user('Bob')
+        self.client.force_login(bob)
+        rsp = self.client.get(f'/tickets/orders/{self.order.order_id}/receipt/', follow=True)
+        self.assertRedirects(rsp, '/profile/')
+        self.assertContains(rsp, 'Only the purchaser of an order can view the receipt')
+
+    def test_when_already_paid(self):
+        bob = factories.create_user('Bob')
+        order = factories.create_pending_order_for_self(user=bob)
+        self.client.force_login(bob)
+        rsp = self.client.get(f'/tickets/orders/{order.order_id}/receipt/', follow=True)
+        self.assertRedirects(rsp, f'/tickets/orders/{order.order_id}/')
+        self.assertContains(rsp, 'This order has not been paid')
+
+
 class TicketTests(TestCase):
     @classmethod
     def setUpTestData(cls):

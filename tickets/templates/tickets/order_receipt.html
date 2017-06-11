@@ -1,0 +1,87 @@
+{% extends 'ironcage/base.html' %}
+
+{% block content %}
+<h1>Receipt for order {{ order.order_id }}</h1>
+
+<p>Issued by the PyCon UK Society, c/o Acconomy, Arena Business Centre, Holyrood Close, Poole, BH17 7FJ, United Kingdom</p>
+
+<p>Issued to TODO</p>
+
+<p>{{ order.num_tickets }} ticket{{ order.num_tickets|pluralize }} for PyCon UK 2017</p>
+
+<div class="row">
+  <div class="col-md-4">
+    <table class="table table-condensed">
+      <tr>
+        <th>Invoice number</th>
+        <td>TODO</td>
+      </tr>
+
+      <tr>
+        <th>VAT Number</th>
+        <td>249244982</td>
+      </tr>
+
+      <tr>
+        <th>Date</th>
+        <td>{{ order.stripe_charge_created|date }}</td>
+      </tr>
+
+      <tr>
+        <th>Tax point</th>
+        <td>TODO</td>
+      </tr>
+
+      <tr>
+        <th>Total (excl. VAT)</th>
+        <td>£{{ order.cost_excl_vat }}</td>
+      </tr>
+
+      <tr>
+        <th>VAT at 20%</th>
+        <td>£{{ order.vat }}</td>
+      </tr>
+
+      <tr>
+        <th>Total (incl. VAT)</th>
+        <td>£{{ order.cost_incl_vat }}</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<table class="table table-condensed">
+  <thead>
+    <tr>
+      <th>Item</th>
+      <th>Quantity</th>
+      <th>Price per item (excl. VAT)</th>
+      <th>Price per item (incl. VAT)</th>
+      <th>Total (excl. VAT)</th>
+      <th>Total (incl. VAT)</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {% for record in order.ticket_summary %}
+    <tr>
+      <td>Ticket for {{ record.num_days }} day{{ record.num_days|pluralize }}</td>
+      <td>{{ record.num_tickets }}</td>
+      <td>£{{ record.per_item_cost_excl_vat }}</td>
+      <td>£{{ record.per_item_cost_incl_vat }}</td>
+      <td>£{{ record.total_cost_excl_vat }}</td>
+      <td>£{{ record.total_cost_incl_vat }}</td>
+    </tr>
+    {% endfor %}
+
+    <tr>
+      <th>Total</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th>£{{ order.cost_excl_vat }}</th>
+      <th>£{{ order.cost_incl_vat }}</th>
+    </tr>
+  </tbody>
+</table>
+{% endblock %}

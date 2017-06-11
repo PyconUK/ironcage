@@ -64,6 +64,25 @@ class OrderTests(TestCase):
         }]
         self.assertEqual(order.ticket_details(), expected_details)
 
+    def test_ticket_summary(self):
+        order = factories.create_confirmed_order_for_self_and_others()
+        expected_summary = [{
+            'num_days': 2,
+            'num_tickets': 2,
+            'per_item_cost_excl_vat': 55,
+            'per_item_cost_incl_vat': 66,
+            'total_cost_excl_vat': 110,
+            'total_cost_incl_vat': 132,
+        }, {
+            'num_days': 3,
+            'num_tickets': 1,
+            'per_item_cost_excl_vat': 75,
+            'per_item_cost_incl_vat': 90,
+            'total_cost_excl_vat': 75,
+            'total_cost_incl_vat': 90,
+        }]
+        self.assertEqual(order.ticket_summary(), expected_summary)
+
     def test_form_data_for_order_for_self(self):
         order = factories.create_pending_order_for_self()
         expected = {

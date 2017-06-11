@@ -171,6 +171,25 @@ def order_payment(request, order_id):
 
 
 @login_required
+def order_receipt(request, order_id):
+    order = Order.objects.get_by_order_id_or_404(order_id)
+
+    if request.user != order.purchaser:
+        messages.warning(request, 'Only the purchaser of an order can view the receipt')
+        return redirect('accounts:profile')
+
+    if order.payment_required():
+        messages.error(request, 'This order has not been paid')
+        return redirect(order)
+
+    context = {
+        'order': order,
+        'no_navbar': True,
+    }
+    return render(request, 'tickets/order_receipt.html', context)
+
+
+@login_required
 def ticket(request, ticket_id):
     ticket = Ticket.objects.get_by_ticket_id_or_404(ticket_id)
 
