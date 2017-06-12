@@ -3,11 +3,20 @@
 {% block content %}
 <h1>Hello, {{ name }}</h1>
 
-<!-- TODO Show more details about tickets, orders, and profile -->
-
 {% if ticket %}
-You have a ticket for {{ ticket.details.days }}
+<p>You have a ticket for {{ ticket.details.days }}.</p>
+{% endif %}
+
+{% if orders %}
+<p>Your order(s):</p>
+<ul>
+  {% for order in orders %}
+  <li><a href="{% url 'tickets:order' order.order_id %}">Order {{ order.order_id }}</a></li>
+  {% endfor %}
 {% else %}
-You do not have a ticket for PyCon UK 2017.  <a href="{% url 'tickets:new_order' %}">Buy one now!</a>
+{% endif %}
+
+{% if not ticket %}
+<p>You do not have a ticket for PyCon UK 2017.  <a href="{% url 'tickets:new_order' %}">Buy one now!</a></p>
 {% endif %}
 {% endblock %}
