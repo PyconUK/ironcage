@@ -152,3 +152,27 @@ class OrderTests(TestCase):
             'form-1-email_addr': 'carol@example.com',
         }
         self.assertEqual(order.others_formset_data(), expected)
+
+    def test_ticket_for_self_for_order_for_self(self):
+        order = factories.create_confirmed_order_for_self()
+        self.assertIsNotNone(order.ticket_for_self())
+
+    def test_ticket_for_self_for_order_for_self_and_others(self):
+        order = factories.create_confirmed_order_for_self_and_others()
+        self.assertIsNotNone(order.ticket_for_self())
+
+    def test_ticket_for_self_for_order_for_others(self):
+        order = factories.create_confirmed_order_for_others()
+        self.assertIsNone(order.ticket_for_self())
+
+    def test_tickets_for_others_for_order_for_self(self):
+        order = factories.create_confirmed_order_for_self()
+        self.assertEqual(len(order.tickets_for_others()), 0)
+
+    def test_tickets_for_others_for_order_for_self_and_others(self):
+        order = factories.create_confirmed_order_for_self_and_others()
+        self.assertEqual(len(order.tickets_for_others()), 2)
+
+    def test_tickets_for_others_for_order_for_others(self):
+        order = factories.create_confirmed_order_for_others()
+        self.assertEqual(len(order.tickets_for_others()), 2)

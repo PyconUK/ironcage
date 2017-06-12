@@ -140,7 +140,7 @@ class ConfirmOrderTests(TestCase):
         ticket = order.purchaser.ticket()
         self.assertEqual(ticket.days(), ['Thursday', 'Friday', 'Saturday'])
 
-        self.assertEqual(len(mail.outbox), 0)
+        self.assertEqual(len(mail.outbox), 1)
 
     def test_order_for_others(self):
         order = factories.create_pending_order_for_others()
@@ -160,7 +160,7 @@ class ConfirmOrderTests(TestCase):
         ticket = TicketInvitation.objects.get(email_addr='carol@example.com').ticket
         self.assertEqual(ticket.days(), ['Saturday', 'Sunday'])
 
-        self.assertEqual(len(mail.outbox), 2)
+        self.assertEqual(len(mail.outbox), 3)
 
     def test_order_for_self_and_others(self):
         order = factories.create_pending_order_for_self_and_others()
@@ -183,7 +183,7 @@ class ConfirmOrderTests(TestCase):
         ticket = TicketInvitation.objects.get(email_addr='carol@example.com').ticket
         self.assertEqual(ticket.days(), ['Saturday', 'Sunday'])
 
-        self.assertEqual(len(mail.outbox), 2)
+        self.assertEqual(len(mail.outbox), 3)
 
     def test_after_order_marked_as_failed(self):
         order = factories.create_pending_order_for_self()

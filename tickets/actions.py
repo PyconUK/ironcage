@@ -2,7 +2,7 @@ import stripe
 
 from django.db import transaction
 
-from .mailer import send_invitation_mail
+from .mailer import send_invitation_mail, send_order_confirmation_mail
 from .models import Order
 from .stripe_integration import create_charge_for_order
 
@@ -44,8 +44,7 @@ def mark_order_as_failed(order, charge_failure_reason):
 
 
 def send_receipt(order):
-    # TODO
-    pass
+    send_order_confirmation_mail(order)
 
 
 def send_ticket_invitations(order):

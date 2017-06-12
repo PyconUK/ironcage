@@ -1,5 +1,7 @@
 from django.conf import settings
 from django.core.mail import send_mail
+from django.template.loader import get_template
+from django.urls import reverse
 
 
 INVITATION_TEMPLATE = '''
@@ -28,5 +30,27 @@ def send_invitation_mail(invitation):
         body,
         'PyCon UK 2017 <tickets@pyconuk.org>',  # TODO either set up this address, or find another one to use
         [invitation.email_addr],
+        fail_silently=False,
+    )
+
+
+def send_order_confirmation_mail(order):
+    assert not order.payment_required()
+
+    template = get_template('tickets/emails/order-confirmation.txt')
+    context = {
+        'purchaser_name': order.purchaser.name,
+        'num_tickets': order.num_tickets(),
+        'tickets_for_others': order.tickets_for_others(),
+        'ticket_for_self': order.ticket_for_self(),
+        'receipt_url': settings.DOMAIN + reverse('tickets:order_receipt', args=[order.order_id]),
+    }
+    body = template.render(context)
+
+    send_mail(
+        f'PyCon UK 2017 order confirmation ({order.order_id})',
+        body,
+        'PyCon UK 2017 <tickets@pyconuk.org>',  # TODO either set up this address, or find another one to use
+        [order.purchaser.email_addr],
         fail_silently=False,
     )

@@ -212,6 +212,18 @@ class Order(models.Model):
     def unclaimed_tickets(self):
         return self.tickets.filter(owner=None)
 
+    def ticket_for_self(self):
+        tickets = [ticket for ticket in self.all_tickets() if ticket.owner == self.purchaser]
+        if len(tickets) == 0:
+            return None
+        elif len(tickets) == 1:
+            return tickets[0]
+        else:
+            assert False
+
+    def tickets_for_others(self):
+        return [ticket for ticket in self.all_tickets() if ticket.owner != self.purchaser]
+
     def payment_required(self):
         return self.status in ['pending', 'failed']
 

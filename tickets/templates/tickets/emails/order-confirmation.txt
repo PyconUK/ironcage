@@ -1,0 +1,22 @@
+Hi {{ purchaser_name }},
+
+You have purchased {{ num_tickets }} ticket{{ num_tickets|pluralize }} for PyCon UK 2017.
+
+{% if tickets_for_others %}
+Ticket invitations have been sent to the following:
+{% for ticket in tickets_for_others %}
+  * {{ ticket.invitation.email_addr }}
+{% endfor %}
+{% endif %}
+
+You can download a receipt at:
+
+    {{ receipt_url }}
+
+{% if ticket_for_self %}
+We look forward to seeing you in Cardiff!
+{% else %}
+Best wishes,
+{% endif %}
+
+~ The PyCon UK 2017 team
