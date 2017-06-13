@@ -1,6 +1,8 @@
 coverage
 Django
 flake8
+gunicorn
 stripe
 django-dotenv
 psycopg2
+whitenoise
