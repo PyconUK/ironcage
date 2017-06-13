@@ -1,4 +1,5 @@
 coverage
+dj-database-url
 Django
 flake8
 gunicorn
