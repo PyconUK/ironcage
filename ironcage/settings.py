@@ -33,11 +33,10 @@ SECRET_KEY = os.environ.get('SECRET_KEY', ENVVAR_SENTINAL)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['ironcage-dev.herokuapp.com']
 
 # A custom setting for creating full URLs in links in emails
-# TODO possibly read from ALLOWED_HOSTS?
-DOMAIN = 'http://localhost:8000'
+DOMAIN = ALLOWED_HOSTS[0]
 
 # Application definition
 
