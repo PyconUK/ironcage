@@ -24,7 +24,7 @@ class MailerTests(TestCase):
         self.assertEqual(email.from_email, 'PyCon UK 2017 <tickets@pyconuk.org>')
         self.assertEqual(email.subject, f'PyCon UK 2017 ticket invitation ({invitation.ticket.ticket_id})')
         self.assertTrue(re.search(r'Alice has purchased you a ticket for PyCon UK 2017', email.body))
-        self.assertTrue(re.search(r'https://ironcage-dev.herokuapp.com/tickets/invitations/\w{12}/', email.body))
+        self.assertTrue(re.search(r'http://testserver/tickets/invitations/\w{12}/', email.body))
 
     def test_send_order_confirmation_mail_for_order_for_self(self):
         order = factories.create_confirmed_order_for_self()
@@ -39,7 +39,7 @@ class MailerTests(TestCase):
         self.assertEqual(email.from_email, 'PyCon UK 2017 <tickets@pyconuk.org>')
         self.assertEqual(email.subject, f'PyCon UK 2017 order confirmation ({order.order_id})')
         self.assertTrue(re.search(r'You have purchased 1 ticket for PyCon UK 2017', email.body))
-        self.assertTrue(re.search(fr'https://ironcage-dev.herokuapp.com/tickets/orders/{order.order_id}/receipt/', email.body))
+        self.assertTrue(re.search(fr'http://testserver/tickets/orders/{order.order_id}/receipt/', email.body))
         self.assertFalse(re.search('Ticket invitations have been sent to the following', email.body))
         self.assertTrue(re.search('We look forward to seeing you in Cardiff', email.body))
 
@@ -56,7 +56,7 @@ class MailerTests(TestCase):
         self.assertEqual(email.from_email, 'PyCon UK 2017 <tickets@pyconuk.org>')
         self.assertEqual(email.subject, f'PyCon UK 2017 order confirmation ({order.order_id})')
         self.assertTrue(re.search(r'You have purchased 2 tickets for PyCon UK 2017', email.body))
-        self.assertTrue(re.search(fr'https://ironcage-dev.herokuapp.com/tickets/orders/{order.order_id}/receipt/', email.body))
+        self.assertTrue(re.search(fr'http://testserver/tickets/orders/{order.order_id}/receipt/', email.body))
         self.assertTrue(re.search('Ticket invitations have been sent to the following', email.body))
         self.assertTrue(re.search('bob@example.com', email.body))
         self.assertTrue(re.search('carol@example.com', email.body))
@@ -75,7 +75,7 @@ class MailerTests(TestCase):
         self.assertEqual(email.from_email, 'PyCon UK 2017 <tickets@pyconuk.org>')
         self.assertEqual(email.subject, f'PyCon UK 2017 order confirmation ({order.order_id})')
         self.assertTrue(re.search(r'You have purchased 3 tickets for PyCon UK 2017', email.body))
-        self.assertTrue(re.search(fr'https://ironcage-dev.herokuapp.com/tickets/orders/{order.order_id}/receipt/', email.body))
+        self.assertTrue(re.search(fr'http://testserver/tickets/orders/{order.order_id}/receipt/', email.body))
         self.assertTrue(re.search('Ticket invitations have been sent to the following', email.body))
         self.assertTrue(re.search('bob@example.com', email.body))
         self.assertTrue(re.search('carol@example.com', email.body))
