@@ -16,7 +16,6 @@ import dj_database_url
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-print(BASE_DIR)
 
 # Used for distinguishing settings that are unset in production.
 ENVVAR_SENTINAL = 'not-for-production'
@@ -34,12 +33,7 @@ ENVVAR_WATCHED = [
 SECRET_KEY = os.environ.get('SECRET_KEY', ENVVAR_SENTINAL)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ['ironcage-dev.herokuapp.com']
-
-# A custom setting for creating full URLs in links in emails
-DOMAIN = f'https://{ALLOWED_HOSTS[0]}'
+DEBUG = False
 
 # Application definition
 
