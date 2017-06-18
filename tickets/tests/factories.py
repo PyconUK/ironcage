@@ -12,10 +12,20 @@ def create_pending_order_for_self(user=None, rate=None, num_days=None):
     user = user or create_user()
     rate = rate or 'individual'
     num_days = num_days or 3
+
+    if rate == 'corporate':
+        company_details = {
+            'name': 'Sirius Cybernetics Corp.',
+            'addr': 'Eadrax, Sirius Tau',
+        }
+    else:
+        company_details = None
+
     return actions.create_pending_order(
         purchaser=user,
         rate=rate,
-        days_for_self=['thu', 'fri', 'sat', 'sun', 'mon'][:num_days]
+        days_for_self=['thu', 'fri', 'sat', 'sun', 'mon'][:num_days],
+        company_details=company_details,
     )
 
 

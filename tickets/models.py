@@ -16,6 +16,8 @@ from .utils import Scrambler
 class Order(models.Model):
     purchaser = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='orders', on_delete=models.CASCADE)
     rate = models.CharField(max_length=40)
+    company_name = models.CharField(max_length=200, null=True)
+    company_addr = models.TextField(null=True)
     status = models.CharField(max_length=10)
     stripe_charge_id = models.CharField(max_length=80)
     stripe_charge_created = models.DateTimeField(null=True)
@@ -32,8 +34,19 @@ class Order(models.Model):
             id = self.model.id_scrambler.backward(order_id)
             return get_object_or_404(self.model, pk=id)
 
-        def create_pending(self, purchaser, rate, days_for_self=None, email_addrs_and_days_for_others=None):
+        def create_pending(self, purchaser, rate, days_for_self=None, email_addrs_and_days_for_others=None, company_details=None):
             assert days_for_self is not None or email_addrs_and_days_for_others is not None
+
+            if rate == 'corporate':
+                assert company_details is not None
+                company_name = company_details['name']
+                company_addr = company_details['addr']
+            elif rate == 'individual':
+                assert company_details is None
+                company_name = None
+                company_addr = None
+            else:
+                assert False
 
             unconfirmed_details = {
                 'days_for_self': days_for_self,
@@ -43,6 +56,8 @@ class Order(models.Model):
             return self.create(
                 purchaser=purchaser,
                 rate=rate,
+                company_name=company_name,
+                company_addr=company_addr,
                 status='pending',
                 unconfirmed_details=unconfirmed_details,
             )
@@ -58,9 +73,20 @@ class Order(models.Model):
     def get_absolute_url(self):
         return reverse('tickets:order', args=[self.order_id])
 
-    def update(self, rate, days_for_self=None, email_addrs_and_days_for_others=None):
-        assert days_for_self is not None or email_addrs_and_days_for_others is not None
+    def update(self, rate, days_for_self=None, email_addrs_and_days_for_others=None, company_details=None):
         assert self.payment_required()
+        assert days_for_self is not None or email_addrs_and_days_for_others is not None
+
+        if rate == 'corporate':
+            assert company_details is not None
+            self.company_name = company_details['name']
+            self.company_addr = company_details['addr']
+        elif rate == 'individual':
+            assert company_details is None
+            self.company_name = None
+            self.company_addr = None
+        else:
+            assert False
 
         self.rate = rate
         self.unconfirmed_details = {
@@ -168,6 +194,15 @@ class Order(models.Model):
 
         return data
 
+    def company_details_form_data(self):
+        if self.rate == 'corporate':
+            return {
+                'company_name': self.company_name,
+                'company_addr': self.company_addr,
+            }
+        else:
+            return None
+
     def ticket_details(self):
         return [ticket.details() for ticket in self.all_tickets()]
 
@@ -226,6 +261,13 @@ class Order(models.Model):
 
     def payment_required(self):
         return self.status in ['pending', 'failed']
+
+    def company_addr_formatted(self):
+        if self.rate == 'corporate':
+            lines = [line.strip(',') for line in self.company_addr.splitlines() if line]
+            return ', '.join(lines)
+        else:
+            return None
 
 
 class Ticket(models.Model):

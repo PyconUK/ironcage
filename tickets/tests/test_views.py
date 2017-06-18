@@ -19,12 +19,31 @@ class NewOrderTests(TestCase):
         self.assertContains(rsp, '<form method="post" id="order-form">')
         self.assertNotContains(rsp, 'Please create an account to buy a ticket.')
 
-    def test_post_for_self(self):
+    def test_post_for_self_individual(self):
         self.client.force_login(self.alice)
         form_data = {
             'who': 'self',
             'rate': 'individual',
             'days': ['thu', 'fri', 'sat'],
+            # The formset gets POSTed even when order is only for self
+            'form-TOTAL_FORMS': '2',
+            'form-INITIAL_FORMS': '0',
+            'form-MIN_NUM_FORMS': '1',
+            'form-MAX_NUM_FORMS': '1000',
+            'form-0-email_addr': '',
+            'form-1-email_addr': '',
+        }
+        rsp = self.client.post('/tickets/orders/new/', form_data, follow=True)
+        self.assertContains(rsp, 'You are ordering 1 ticket')
+
+    def test_post_for_self_corporate(self):
+        self.client.force_login(self.alice)
+        form_data = {
+            'who': 'self',
+            'rate': 'corporate',
+            'days': ['thu', 'fri', 'sat'],
+            'company_name': 'Sirius Cybernetics Corp.',
+            'company_addr': 'Eadrax, Sirius Tau',
             # The formset gets POSTed even when order is only for self
             'form-TOTAL_FORMS': '2',
             'form-INITIAL_FORMS': '0',
@@ -99,6 +118,8 @@ class OrderEditTests(TestCase):
         form_data = {
             'who': 'self',
             'rate': 'corporate',
+            'company_name': 'Sirius Cybernetics Corp.',
+            'company_addr': 'Eadrax, Sirius Tau',
             'days': ['fri', 'sat', 'sun'],
             # The formset gets POSTed even when order is only for self
             'form-TOTAL_FORMS': '2',
@@ -116,6 +137,8 @@ class OrderEditTests(TestCase):
         form_data = {
             'who': 'others',
             'rate': 'corporate',
+            'company_name': 'Sirius Cybernetics Corp.',
+            'company_addr': 'Eadrax, Sirius Tau',
             'form-TOTAL_FORMS': '2',
             'form-INITIAL_FORMS': '0',
             'form-MIN_NUM_FORMS': '1',
@@ -133,6 +156,8 @@ class OrderEditTests(TestCase):
         form_data = {
             'who': 'self and others',
             'rate': 'corporate',
+            'company_name': 'Sirius Cybernetics Corp.',
+            'company_addr': 'Eadrax, Sirius Tau',
             'days': ['fri', 'sat', 'sun'],
             'form-TOTAL_FORMS': '2',
             'form-INITIAL_FORMS': '0',

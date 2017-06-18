@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
 from .actions import claim_ticket_invitation, create_pending_order, process_stripe_charge, update_pending_order
-from .forms import TicketForm, TicketForSelfForm, TicketForOthersFormSet
+from .forms import CompanyDetailsForm, TicketForm, TicketForSelfForm, TicketForOthersFormSet
 from .models import Order, Ticket, TicketInvitation
 from .prices import cost_incl_vat
 
@@ -18,6 +18,7 @@ def new_order(request):
         form = TicketForm(request.POST)
         self_form = TicketForSelfForm(request.POST)
         others_formset = TicketForOthersFormSet(request.POST)
+        company_details_form = CompanyDetailsForm(request.POST)
 
         if form.is_valid():
             who = form.cleaned_data['who']
@@ -42,11 +43,23 @@ def new_order(request):
                 assert False
 
             if valid:
+                if rate == 'corporate':
+                    valid = company_details_form.is_valid()
+                    if valid:
+                        company_details = {
+                            'name': company_details_form.cleaned_data['company_name'],
+                            'addr': company_details_form.cleaned_data['company_addr'],
+                        }
+                else:
+                    company_details = None
+
+            if valid:
                 order = create_pending_order(
                     purchaser=request.user,
                     rate=rate,
                     days_for_self=days_for_self,
                     email_addrs_and_days_for_others=email_addrs_and_days_for_others,
+                    company_details=company_details,
                 )
 
                 return redirect(order)
@@ -55,11 +68,13 @@ def new_order(request):
         form = TicketForm()
         self_form = TicketForSelfForm()
         others_formset = TicketForOthersFormSet()
+        company_details_form = CompanyDetailsForm()
 
     context = {
         'form': form,
         'self_form': self_form,
         'others_formset': others_formset,
+        'company_details_form': company_details_form,
         'rates_table_data': _rates_table_data(),
         'js_paths': ['tickets/order_form.js'],
     }
@@ -83,6 +98,7 @@ def order_edit(request, order_id):
         form = TicketForm(request.POST)
         self_form = TicketForSelfForm(request.POST)
         others_formset = TicketForOthersFormSet(request.POST)
+        company_details_form = CompanyDetailsForm(request.POST)
 
         if form.is_valid():
             who = form.cleaned_data['who']
@@ -107,11 +123,23 @@ def order_edit(request, order_id):
                 assert False
 
             if valid:
+                if rate == 'corporate':
+                    valid = company_details_form.is_valid()
+                    if valid:
+                        company_details = {
+                            'name': company_details_form.cleaned_data['company_name'],
+                            'addr': company_details_form.cleaned_data['company_addr'],
+                        }
+                else:
+                    company_details = None
+
+            if valid:
                 update_pending_order(
                     order,
                     rate=rate,
                     days_for_self=days_for_self,
                     email_addrs_and_days_for_others=email_addrs_and_days_for_others,
+                    company_details=company_details,
                 )
 
                 return redirect(order)
@@ -120,11 +148,13 @@ def order_edit(request, order_id):
         form = TicketForm(order.form_data())
         self_form = TicketForSelfForm(order.self_form_data())
         others_formset = TicketForOthersFormSet(order.others_formset_data())
+        company_details_form = CompanyDetailsForm(order.company_details_form_data())
 
     context = {
         'form': form,
         'self_form': self_form,
         'others_formset': others_formset,
+        'company_details_form': company_details_form,
         'rates_table_data': _rates_table_data(),
         'js_paths': ['tickets/order_form.js'],
     }

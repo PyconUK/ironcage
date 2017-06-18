@@ -13,7 +13,7 @@ class CreatePendingOrderTests(TestCase):
     def setUpTestData(cls):
         cls.alice = factories.create_user()
 
-    def test_order_for_self(self):
+    def test_order_for_self_individual(self):
         order = actions.create_pending_order(
             self.alice,
             'individual',
@@ -26,6 +26,26 @@ class CreatePendingOrderTests(TestCase):
         self.assertEqual(order.purchaser, self.alice)
         self.assertEqual(order.status, 'pending')
         self.assertEqual(order.rate, 'individual')
+
+    def test_order_for_self_corporate(self):
+        order = actions.create_pending_order(
+            self.alice,
+            'corporate',
+            days_for_self=['thu', 'fri', 'sat'],
+            company_details={
+                'name': 'Sirius Cybernetics Corp.',
+                'addr': 'Eadrax, Sirius Tau',
+            },
+        )
+
+        self.assertEqual(self.alice.orders.count(), 1)
+        self.assertEqual(self.alice.tickets.count(), 0)
+
+        self.assertEqual(order.purchaser, self.alice)
+        self.assertEqual(order.status, 'pending')
+        self.assertEqual(order.rate, 'corporate')
+        self.assertEqual(order.company_name, 'Sirius Cybernetics Corp.')
+        self.assertEqual(order.company_addr, 'Eadrax, Sirius Tau')
 
     def test_order_for_others(self):
         order = actions.create_pending_order(
@@ -68,22 +88,22 @@ class UpdatePendingOrderTests(TestCase):
         order = factories.create_pending_order_for_self()
         actions.update_pending_order(
             order,
-            'corporate',
-            days_for_self=['fri', 'sat', 'sun']
+            'individual',
+            days_for_self=['fri'],
         )
 
         self.assertEqual(order.status, 'pending')
-        self.assertEqual(order.rate, 'corporate')
+        self.assertEqual(order.rate, 'individual')
         self.assertEqual(
             order.ticket_details(),
-            [{'name': 'Alice', 'days': 'Friday, Saturday, Sunday', 'cost_incl_vat': 180, 'cost_excl_vat': 150}]
+            [{'name': 'Alice', 'days': 'Friday', 'cost_incl_vat': 42, 'cost_excl_vat': 35}]
         )
 
     def test_order_for_self_to_order_for_others(self):
         order = factories.create_pending_order_for_self()
         actions.update_pending_order(
             order,
-            'corporate',
+            'individual',
             email_addrs_and_days_for_others=[
                 ('bob@example.com', ['fri', 'sat']),
                 ('carol@example.com', ['sat', 'sun']),
@@ -91,12 +111,12 @@ class UpdatePendingOrderTests(TestCase):
         )
 
         self.assertEqual(order.status, 'pending')
-        self.assertEqual(order.rate, 'corporate')
+        self.assertEqual(order.rate, 'individual')
         self.assertEqual(
             order.ticket_details(),
             [
-                {'name': 'bob@example.com', 'days': 'Friday, Saturday', 'cost_incl_vat': 132, 'cost_excl_vat': 110},
-                {'name': 'carol@example.com', 'days': 'Saturday, Sunday', 'cost_incl_vat': 132, 'cost_excl_vat': 110},
+                {'name': 'bob@example.com', 'days': 'Friday, Saturday', 'cost_incl_vat': 66, 'cost_excl_vat': 55},
+                {'name': 'carol@example.com', 'days': 'Saturday, Sunday', 'cost_incl_vat': 66, 'cost_excl_vat': 55},
             ]
         )
 
@@ -104,7 +124,7 @@ class UpdatePendingOrderTests(TestCase):
         order = factories.create_pending_order_for_self()
         actions.update_pending_order(
             order,
-            'corporate',
+            'individual',
             days_for_self=['fri', 'sat', 'sun'],
             email_addrs_and_days_for_others=[
                 ('bob@example.com', ['fri', 'sat']),
@@ -113,13 +133,55 @@ class UpdatePendingOrderTests(TestCase):
         )
 
         self.assertEqual(order.status, 'pending')
+        self.assertEqual(order.rate, 'individual')
+        self.assertEqual(
+            order.ticket_details(),
+            [
+                {'name': 'Alice', 'days': 'Friday, Saturday, Sunday', 'cost_incl_vat': 90, 'cost_excl_vat': 75},
+                {'name': 'bob@example.com', 'days': 'Friday, Saturday', 'cost_incl_vat': 66, 'cost_excl_vat': 55},
+                {'name': 'carol@example.com', 'days': 'Saturday, Sunday', 'cost_incl_vat': 66, 'cost_excl_vat': 55},
+            ]
+        )
+
+    def test_individual_order_to_corporate_order(self):
+        order = factories.create_pending_order_for_self()
+        actions.update_pending_order(
+            order,
+            'corporate',
+            days_for_self=['fri', 'sat', 'sun'],
+            company_details={
+                'name': 'Sirius Cybernetics Corp.',
+                'addr': 'Eadrax, Sirius Tau',
+            },
+        )
+
+        self.assertEqual(order.status, 'pending')
         self.assertEqual(order.rate, 'corporate')
+        self.assertEqual(order.company_name, 'Sirius Cybernetics Corp.')
+        self.assertEqual(order.company_addr, 'Eadrax, Sirius Tau')
         self.assertEqual(
             order.ticket_details(),
             [
                 {'name': 'Alice', 'days': 'Friday, Saturday, Sunday', 'cost_incl_vat': 180, 'cost_excl_vat': 150},
-                {'name': 'bob@example.com', 'days': 'Friday, Saturday', 'cost_incl_vat': 132, 'cost_excl_vat': 110},
-                {'name': 'carol@example.com', 'days': 'Saturday, Sunday', 'cost_incl_vat': 132, 'cost_excl_vat': 110},
+            ]
+        )
+
+    def test_corporate_order_to_individual_order(self):
+        order = factories.create_pending_order_for_self(rate='corporate')
+        actions.update_pending_order(
+            order,
+            'individual',
+            days_for_self=['fri', 'sat', 'sun'],
+        )
+
+        self.assertEqual(order.status, 'pending')
+        self.assertEqual(order.rate, 'individual')
+        self.assertEqual(order.company_name, None)
+        self.assertEqual(order.company_addr, None)
+        self.assertEqual(
+            order.ticket_details(),
+            [
+                {'name': 'Alice', 'days': 'Friday, Saturday, Sunday', 'cost_incl_vat': 90, 'cost_excl_vat': 75},
             ]
         )
 

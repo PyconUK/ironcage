@@ -6,6 +6,10 @@
   display: none;
 }
 
+#form-panel-company-details {
+  display: none;
+}
+
 #form-panel-submit {
   display: none;
 }

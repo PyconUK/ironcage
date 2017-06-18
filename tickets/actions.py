@@ -7,19 +7,20 @@ from .models import Order
 from .stripe_integration import create_charge_for_order
 
 
-def create_pending_order(purchaser, rate, days_for_self=None, email_addrs_and_days_for_others=None):
+def create_pending_order(purchaser, rate, days_for_self=None, email_addrs_and_days_for_others=None, company_details=None):
     with transaction.atomic():
         return Order.objects.create_pending(
             purchaser,
             rate,
             days_for_self,
-            email_addrs_and_days_for_others
+            email_addrs_and_days_for_others,
+            company_details=company_details,
         )
 
 
-def update_pending_order(order, rate, days_for_self=None, email_addrs_and_days_for_others=None):
+def update_pending_order(order, rate, days_for_self=None, email_addrs_and_days_for_others=None, company_details=None):
     with transaction.atomic():
-        order.update(rate, days_for_self, email_addrs_and_days_for_others)
+        order.update(rate, days_for_self, email_addrs_and_days_for_others, company_details)
 
 
 def process_stripe_charge(order, token):

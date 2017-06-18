@@ -20,6 +20,16 @@
         <th>Date</th>
         <td>{% if order.payment_required %}Unpaid{% else %}{{ order.stripe_charge_created|date }}{% endif %}</td>
       </tr>
+      {% if order.rate == 'corporate' %}
+      <tr>
+        <th>Company</th>
+        <td>{{ order.company_name }}</td>
+      </tr>
+      <tr>
+        <th>Address</th>
+        <td>{{ order.company_addr_formatted }}</td>
+      </tr>
+      {% endif %}
       <tr>
         <th>Total (excl. VAT)</th>
         <td>£{{ order.cost_excl_vat }}</td>

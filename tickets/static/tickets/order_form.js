@@ -42,6 +42,12 @@ var RATES = {
       $('#form-panel-others').show();
     }
 
+    if (rate == 'corporate') {
+      $('#form-panel-company-details').show();
+    } else {
+      $('#form-panel-company-details').hide();
+    }
+
     $('#form-panel-submit').show();
 
     recalculateTotal();

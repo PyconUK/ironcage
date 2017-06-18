@@ -153,6 +153,18 @@ class OrderTests(TestCase):
         }
         self.assertEqual(order.others_formset_data(), expected)
 
+    def test_company_details_form_data_for_individual_order(self):
+        order = factories.create_pending_order_for_self()
+        self.assertEqual(order.company_details_form_data(), None)
+
+    def test_company_details_form_data_for_corporate_order(self):
+        order = factories.create_pending_order_for_self(rate='corporate')
+        expected = {
+            'company_name': 'Sirius Cybernetics Corp.',
+            'company_addr': 'Eadrax, Sirius Tau',
+        }
+        self.assertEqual(order.company_details_form_data(), expected)
+
     def test_ticket_for_self_for_order_for_self(self):
         order = factories.create_confirmed_order_for_self()
         self.assertIsNotNone(order.ticket_for_self())
@@ -176,3 +188,12 @@ class OrderTests(TestCase):
     def test_tickets_for_others_for_order_for_others(self):
         order = factories.create_confirmed_order_for_others()
         self.assertEqual(len(order.tickets_for_others()), 2)
+
+    def test_company_addr_formatted(self):
+        order = factories.create_pending_order_for_self(rate='corporate')
+        order.company_addr = '''
+City Hall,
+Cathays Park
+Cardiff
+'''.strip()
+        self.assertEqual(order.company_addr_formatted(), 'City Hall, Cathays Park, Cardiff')
