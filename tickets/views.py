@@ -20,39 +20,36 @@ def new_order(request):
         others_formset = TicketForOthersFormSet(request.POST)
 
         if form.is_valid():
-            if form.cleaned_data['who'] == 'self':
-                if self_form.is_valid():
-                    order = create_pending_order(
-                        purchaser=request.user,
-                        rate=form.cleaned_data['rate'],
-                        days_for_self=self_form.cleaned_data['days'],
-                    )
+            who = form.cleaned_data['who']
+            rate = form.cleaned_data['rate']
 
-                    return redirect(order)
-
-            elif form.cleaned_data['who'] == 'others':
-                if others_formset.is_valid():
-                    order = create_pending_order(
-                        purchaser=request.user,
-                        rate=form.cleaned_data['rate'],
-                        email_addrs_and_days_for_others=others_formset.email_addrs_and_days,
-                    )
-
-                    return redirect(order)
-
-            elif form.cleaned_data['who'] == 'self and others':
-                if self_form.is_valid() and others_formset.is_valid():
-                    order = create_pending_order(
-                        purchaser=request.user,
-                        rate=form.cleaned_data['rate'],
-                        days_for_self=self_form.cleaned_data['days'],
-                        email_addrs_and_days_for_others=others_formset.email_addrs_and_days,
-                    )
-
-                    return redirect(order)
-
+            if who == 'self':
+                valid = self_form.is_valid()
+                if valid:
+                    days_for_self = self_form.cleaned_data['days']
+                    email_addrs_and_days_for_others = None
+            elif who == 'others':
+                valid = others_formset.is_valid()
+                if valid:
+                    days_for_self = None
+                    email_addrs_and_days_for_others = others_formset.email_addrs_and_days
+            elif who == 'self and others':
+                valid = self_form.is_valid() and others_formset.is_valid()
+                if valid:
+                    days_for_self = self_form.cleaned_data['days']
+                    email_addrs_and_days_for_others = others_formset.email_addrs_and_days
             else:
                 assert False
+
+            if valid:
+                order = create_pending_order(
+                    purchaser=request.user,
+                    rate=rate,
+                    days_for_self=days_for_self,
+                    email_addrs_and_days_for_others=email_addrs_and_days_for_others,
+                )
+
+                return redirect(order)
 
     else:
         form = TicketForm()
@@ -88,39 +85,36 @@ def order_edit(request, order_id):
         others_formset = TicketForOthersFormSet(request.POST)
 
         if form.is_valid():
-            if form.cleaned_data['who'] == 'self':
-                if self_form.is_valid():
-                    update_pending_order(
-                        order,
-                        rate=form.cleaned_data['rate'],
-                        days_for_self=self_form.cleaned_data['days'],
-                    )
+            who = form.cleaned_data['who']
+            rate = form.cleaned_data['rate']
 
-                    return redirect(order)
-
-            elif form.cleaned_data['who'] == 'others':
-                if others_formset.is_valid():
-                    update_pending_order(
-                        order,
-                        rate=form.cleaned_data['rate'],
-                        email_addrs_and_days_for_others=others_formset.email_addrs_and_days,
-                    )
-
-                    return redirect(order)
-
-            elif form.cleaned_data['who'] == 'self and others':
-                if self_form.is_valid() and others_formset.is_valid():
-                    update_pending_order(
-                        order,
-                        rate=form.cleaned_data['rate'],
-                        days_for_self=self_form.cleaned_data['days'],
-                        email_addrs_and_days_for_others=others_formset.email_addrs_and_days,
-                    )
-
-                    return redirect(order)
-
+            if who == 'self':
+                valid = self_form.is_valid()
+                if valid:
+                    days_for_self = self_form.cleaned_data['days']
+                    email_addrs_and_days_for_others = None
+            elif who == 'others':
+                valid = others_formset.is_valid()
+                if valid:
+                    days_for_self = None
+                    email_addrs_and_days_for_others = others_formset.email_addrs_and_days
+            elif who == 'self and others':
+                valid = self_form.is_valid() and others_formset.is_valid()
+                if valid:
+                    days_for_self = self_form.cleaned_data['days']
+                    email_addrs_and_days_for_others = others_formset.email_addrs_and_days
             else:
                 assert False
+
+            if valid:
+                update_pending_order(
+                    order,
+                    rate=rate,
+                    days_for_self=days_for_self,
+                    email_addrs_and_days_for_others=email_addrs_and_days_for_others,
+                )
+
+                return redirect(order)
 
     else:
         form = TicketForm(order.form_data())
