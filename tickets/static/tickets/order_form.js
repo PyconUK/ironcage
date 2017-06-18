@@ -44,8 +44,12 @@ var RATES = {
 
     if (rate == 'corporate') {
       $('#form-panel-company-details').show();
+      $('input[name=company_name]').attr('required', '');
+      $('textarea[name=company_addr]').attr('required', '');
     } else {
       $('#form-panel-company-details').hide();
+      $('input[name=company_name]').removeAttr('required');
+      $('textarea[name=company_addr]').removeAttr('required');
     }
 
     $('#form-panel-submit').show();
