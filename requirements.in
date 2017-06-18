@@ -1,5 +1,6 @@
 coverage
 dj-database-url
+django-bootstrap3
 Django
 flake8
 gunicorn

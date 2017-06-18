@@ -6,6 +6,7 @@
 #
 coverage==4.4.1
 dj-database-url==0.4.2
+django-bootstrap3==8.2.3
 django-dotenv==1.4.1
 django==1.11.1
 flake8==3.3.0
