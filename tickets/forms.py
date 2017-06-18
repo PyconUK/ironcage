@@ -1,6 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from django.forms import widgets
+
+from ironcage.widgets import ButtonsCheckbox, ButtonsRadio, EmailInput
 
 
 WHO_CHOICES = [
@@ -23,19 +24,6 @@ DAY_CHOICES = [
     ('sun', 'Sunday'),
     ('mon', 'Monday'),
 ]
-
-
-class ButtonsRadio(widgets.ChoiceWidget):
-    template_name = 'tickets/widgets/buttons_radio.html'
-
-
-class ButtonsCheckbox(widgets.ChoiceWidget):
-    allow_multiple_selected = True
-    template_name = 'tickets/widgets/buttons_checkbox.html'
-
-
-class EmailInput(widgets.EmailInput):
-    template_name = 'tickets/widgets/email_input.html'
 
 
 class TicketForm(forms.Form):
