@@ -25,6 +25,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     country_of_residence = models.CharField(max_length=100, null=True, blank=True)
     dont_ask_demographics = models.BooleanField(default=False)
 
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
     USERNAME_FIELD = 'email_addr'
     EMAIL_FIELD = 'email_addr'
     REQUIRED_FIELDS = ['name']
