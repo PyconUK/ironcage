@@ -83,11 +83,13 @@ var RATES = {
 
     if (who.match('self')) {
       $('#form-panel-self').show();
-    }
+    };
 
     if (who.match('others')) {
       $('#form-panel-others').show();
-    }
+    } else {
+      $('input[type=email]').removeAttr('required');
+    };
 
     if (rate == 'corporate') {
       $('#form-panel-company-details').show();
@@ -127,6 +129,10 @@ var RATES = {
         if (numDaysForForm > 0) {
           numTickets += 1;
           numDays += numDaysForForm;
+          $(form).find('input[type=email]').attr('required', '');
+          $(form).find('.btn-group').removeClass('error');
+        } else {
+          $(form).find('input[type=email]').removeAttr('required');
         };
       });
     }
