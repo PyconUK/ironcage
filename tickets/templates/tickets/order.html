@@ -9,7 +9,11 @@
 <div class="alert alert-danger" role="alert">Payment for this order failed ({{ order.stripe_charge_failure_reason }})</div>
 {% endif %}
 
-<p>You have ordered {{ order.num_tickets }} ticket(s) at the {{ order.rate }} rate.</p>
+{% if order.status == 'successful' %}
+<p>You have ordered {{ order.num_tickets }} ticket{{ order.num_tickets|pluralize }} at the {{ order.rate }} rate.</p>
+{% else %}
+<p>You are ordering {{ order.num_tickets }} ticket{{ order.num_tickets|pluralize }} at the {{ order.rate }} rate.</p>
+{% endif %}
 
 <p>Total cost (incl. VAT): £{{ order.cost_incl_vat }}</p>
 

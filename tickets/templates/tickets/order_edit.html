@@ -2,23 +2,19 @@
 
 {% block content %}
 <div class="row">
-  <div class="col-xs-10 col-xs-offset-1">
-    <p>Tickets are available for between one and five days of the conference.</p>
-    <p>If you are paying for your own ticket, you should pay at the Individual rate.  If your company is paying for your ticket, you should pay at the Corporate rate.</p>
-    <div class="alert alert-danger" role="alert">These numbers have been pulled out of the air!</div>
-    <table class="table">
-      {% for row in rates_table_data %}
-      <tr>
-        {% for item in row %}
-        <td>{{ item }}</td>
-        {% endfor %}
-      </tr>
-      {% endfor %}
-    </table>
+  <div class="col-md-6 col-md-offset-1">
+    {% include './_ticket_info.html' %}
+  </div>
+
+  <div class="col-md-4">
+    {% include './_ticket_price_table.html' %}
   </div>
 </div>
 
 <div class="row">
-  {% include 'tickets/_order_form.html' %}
+  <div class="col-md-10 col-md-offset-1">
+    {% include 'tickets/_order_form.html' %}
+  </div>
 </div>
 {% endblock %}
+

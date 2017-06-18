@@ -2,28 +2,24 @@
 
 {% block content %}
 <div class="row">
-  <div class="col-xs-10 col-xs-offset-1">
-    <p>Tickets are available for between one and five days of the conference.</p>
-    <p>If you are paying for your own ticket, you should pay at the Individual rate.  If your company is paying for your ticket, you should pay at the Corporate rate.</p>
-    <div class="alert alert-danger" role="alert">These numbers have been pulled out of the air!</div>
-    <table class="table">
-      {% for row in rates_table_data %}
-      <tr>
-        {% for item in row %}
-        <td>{{ item }}</td>
-        {% endfor %}
-      </tr>
-      {% endfor %}
-    </table>
+  <div class="col-md-6 col-md-offset-1">
+    {% if not request.user.is_authenticated %}
+    <p>Please <a href="{% url 'register' %}?next={{ request.path }}">sign up</a> or <a href="{% url 'login' %}?next={{ request.path }}">sign in</a> to buy a ticket.</p>
+    {% endif %}
+
+    {% include './_ticket_info.html' %}
+  </div>
+
+  <div class="col-md-4">
+    {% include './_ticket_price_table.html' %}
   </div>
 </div>
 
 <div class="row">
-  {% if request.user.is_authenticated %}
-  {% include 'tickets/_order_form.html' %}
-  {% else %}
-  <div class="col-xs-10 col-xs-offset-1">
-    <p>Please create an account to buy a ticket.</p>
-  {% endif %}
+  <div class="col-md-10 col-md-offset-1">
+    {% if request.user.is_authenticated %}
+    {% include 'tickets/_order_form.html' %}
+    {% endif %}
+  </div>
 </div>
 {% endblock %}

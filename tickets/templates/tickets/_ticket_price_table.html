@@ -1,0 +1,10 @@
+<div class="alert alert-danger" role="alert">These numbers have been pulled out of the air!</div>
+<table class="table table-condensed table-striped">
+  {% for row in rates_table_data %}
+  <tr>
+    {% for item in row %}
+    <td>{{ item }}</td>
+    {% endfor %}
+  </tr>
+  {% endfor %}
+</table>

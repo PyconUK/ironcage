@@ -1,93 +1,90 @@
 <form method="post" id="order-form">
   {% csrf_token %}
-  <div class="col-xs-10 col-xs-offset-1">
-    <div class="panel panel-default">
-      <div class="panel-heading">About your order</div>
-      <div class="panel-body">
-        <div class="row">
-          <div class="col-xs-4">
-            <label>Who are you buying tickets for?</label>
-          </div>
-          <div class="col-xs-8">
-            {{ form.who }}
-          </div>
+  <div class="panel panel-default">
+    <div class="panel-heading">About your order</div>
+    <div class="panel-body">
+      <div class="row">
+        <div class="col-md-4">
+          <label>Who are you buying tickets for?</label>
         </div>
+        <div class="col-md-8">
+          {{ form.who }}
+        </div>
+      </div>
 
-        <div class="row">
-          <div class="col-xs-4">
-            <label>What rate of tickets are you buying?</label>
-          </div>
-          <div class="col-xs-8">
-            {{ form.rate }}
-          </div>
+      <div class="row">
+        <div class="col-md-4">
+          <label>What rate of tickets are you buying?</label>
+        </div>
+        <div class="col-md-8">
+          {{ form.rate }}
         </div>
       </div>
     </div>
+  </div>
 
-    <div class="panel panel-default" id="form-panel-self">
-      <div class="panel-heading">Your own ticket</div>
-      <div class="panel-body">
-        <div class="row">
-          <div class="col-xs-4">
-            <label>Which days are you coming?</label>
-          </div>
-          <div class="col-xs-8">
-            {{ self_form.days }}
-          </div>
+  <div class="panel panel-default" id="form-panel-self">
+    <div class="panel-heading">Your own ticket</div>
+    <div class="panel-body">
+      <div class="row">
+        <div class="col-md-4">
+          <label>Which days are you coming?</label>
+        </div>
+        <div class="col-md-8">
+          {{ self_form.days }}
         </div>
       </div>
     </div>
+  </div>
 
-    <div class="panel panel-default" id="form-panel-others">
-      <div class="panel-heading">Other people's tickets</div>
-      <div class="panel-body">
-        <div class="row">
-          <div class="col-xs-12">
-            <p>For each person you're buying a ticket for, enter their email address and the days which they are coming.</p>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-xs-4">
-            <label>Email address</label>
-          </div>
-          <div class="col-xs-8">
-            <label>Days</label>
-          </div>
-        </div>
-
-        <div id="formset" data-formset-prefix="{{ others_formset.prefix }}">
-          {{ others_formset.management_form }}
-
-          <div data-formset-body>
-            {% for form in others_formset %}
-            {% include 'tickets/_others_form.html' with form=form %}
-            {% endfor %}
-          </div>
-
-          <script type="form-template" data-formset-empty-form>
-            {% include 'tickets/_others_form.html' with form=others_formset.empty_form %}
-          </script>
-
-          <input type="button" value="Add another" data-formset-add class="btn btn-default">
+  <div class="panel panel-default" id="form-panel-others">
+    <div class="panel-heading">Other people's tickets</div>
+    <div class="panel-body">
+      <div class="row">
+        <div class="col-md-12">
+          <p>For each person you're buying a ticket for, enter their email address and the days which they are coming.</p>
         </div>
       </div>
+
+      <div class="row">
+        <div class="col-md-4">
+          <label>Email address</label>
+        </div>
+        <div class="col-md-8">
+          <label>Days</label>
+        </div>
+      </div>
+
+      <div id="formset" data-formset-prefix="{{ others_formset.prefix }}">
+        {{ others_formset.management_form }}
+
+        <div data-formset-body>
+          {% for form in others_formset %}
+          {% include 'tickets/_others_form.html' with form=form %}
+          {% endfor %}
+        </div>
+
+        <script type="form-template" data-formset-empty-form>
+          {% include 'tickets/_others_form.html' with form=others_formset.empty_form %}
+        </script>
+
+        <input type="button" value="Add another" data-formset-add class="btn btn-default">
+      </div>
     </div>
+  </div>
 
 
-    <div class="panel panel-default" id="form-panel-submit">
-      <div class="panel-heading">Summary</div>
-      <div class="panel-body">
-        <div class="row">
-          <div class="col-xs-12">
-            <p>Total tickets: <span id="num-tickets">0</span></p>
-            <p>Total days: <span id="num-days">0</span></p>
-            <p>Total cost (incl. VAT): &pound;<span id="total-cost">0</span></p>
-            <input type="submit" value="Place my order" class="btn btn-primary" />
-          </div>
+  <div class="panel panel-default" id="form-panel-submit">
+    <div class="panel-heading">Summary</div>
+    <div class="panel-body">
+      <div class="row">
+        <div class="col-md-12">
+          <p>Total tickets: <span id="num-tickets">0</span></p>
+          <p>Total days: <span id="num-days">0</span></p>
+          <p>Total cost (incl. VAT): &pound;<span id="total-cost">0</span></p>
+          <input type="submit" value="Place my order" class="btn btn-primary" />
         </div>
       </div>
     </div>
   </div>
 </form>
-
