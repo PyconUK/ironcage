@@ -213,6 +213,7 @@ class OrderPaymentTests(TestCase):
                 follow=True,
             )
         self.assertContains(rsp, 'Payment for this order has been received')
+        self.assertContains(rsp, '<th>Date</th><td>May 21, 2017</td>', html=True)
         self.assertNotContains(rsp, '<div id="stripe-form">')
 
     def test_stripe_failure(self):
@@ -224,6 +225,7 @@ class OrderPaymentTests(TestCase):
                 follow=True,
             )
         self.assertContains(rsp, 'Payment for this order failed (Your card was declined.)')
+        self.assertContains(rsp, '<th>Date</th><td>Unpaid</td>', html=True)
         self.assertContains(rsp, '<div id="stripe-form">')
 
     def test_when_already_paid(self):
