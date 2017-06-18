@@ -86,6 +86,21 @@ class TicketForOthersFormSetTests(TestCase):
             [{'email_addr': ['This field is required.'], 'days': ['This field is required.']}, {}]
         )
 
+    def test_is_not_valid_with_all_deleted_forms(self):
+        post_data = build_querydict({
+            'form-TOTAL_FORMS': '2',
+            'form-INITIAL_FORMS': '0',
+            'form-MIN_NUM_FORMS': '1',
+            'form-MAX_NUM_FORMS': '1000',
+            'form-0-email_addr': 'test1@example.com',
+            'form-0-DELETE': 'on',
+            'form-1-email_addr': '',
+            'form-1-DELETE': 'on',
+        })
+
+        formset = forms.TicketForOthersFormSet(post_data)
+        self.assertFalse(formset.is_valid())
+
     def test_email_addrs_and_days(self):
         post_data = build_querydict({
             'form-TOTAL_FORMS': '2',
@@ -103,4 +118,23 @@ class TicketForOthersFormSetTests(TestCase):
         self.assertEqual(
             formset.email_addrs_and_days,
             [('test1@example.com', ['thu', 'fri']), ('test2@example.com', ['sat', 'sun', 'mon'])]
+        )
+
+    def test_email_addrs_and_days_with_valid_data_and_deleted_form(self):
+        post_data = build_querydict({
+            'form-TOTAL_FORMS': '2',
+            'form-INITIAL_FORMS': '0',
+            'form-MIN_NUM_FORMS': '1',
+            'form-MAX_NUM_FORMS': '1000',
+            'form-0-email_addr': 'test1@example.com',
+            'form-0-days': ['thu', 'fri'],
+            'form-1-email_addr': '',
+            'form-1-DELETE': 'on',
+        })
+
+        formset = forms.TicketForOthersFormSet(post_data)
+        formset.errors  # Trigger full clean
+        self.assertEqual(
+            formset.email_addrs_and_days,
+            [('test1@example.com', ['thu', 'fri'])]
         )

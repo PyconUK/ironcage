@@ -1,4 +1,5 @@
 from django import forms
+from django.core.exceptions import ValidationError
 from django.forms import widgets
 
 
@@ -67,12 +68,11 @@ class TicketForOtherForm(forms.Form):
 
 class BaseTicketForOthersFormset(forms.BaseFormSet):
     def clean(self):
-        if any(self.errors):
-            # No point cleaning if any forms have errors
-            return
-
         self.email_addrs_and_days = []
         for form in self.forms:
+            if form.errors:
+                continue
+
             if not form.cleaned_data:
                 # This was an empty form, so we ignore it
                 continue
@@ -80,6 +80,9 @@ class BaseTicketForOthersFormset(forms.BaseFormSet):
             email_addr = form.cleaned_data['email_addr']
             days = form.cleaned_data['days']
             self.email_addrs_and_days.append((email_addr, days))
+
+        if not self.email_addrs_and_days:
+            raise ValidationError('No valid forms')
 
 
 TicketForOthersFormSet = forms.formset_factory(
