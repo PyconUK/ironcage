@@ -169,6 +169,10 @@ def order_payment(request, order_id):
 
     token = request.POST['stripeToken']
     process_stripe_charge(order, token)
+
+    if not order.payment_required():
+        messages.success(request, 'Payment for this order has been received.')
+
     return redirect(order)
 
 
