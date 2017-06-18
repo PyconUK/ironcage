@@ -65,6 +65,7 @@ def new_order(request):
         'others_formset': others_formset,
         'rates_table_data': _rates_table_data(),
         'show_order_form': request.user.is_authenticated,
+        'js_paths': ['tickets/order_form.js'],
     }
 
     return render(request, 'tickets/new_order.html', context)
@@ -132,6 +133,7 @@ def order_edit(request, order_id):
         'self_form': self_form,
         'others_formset': others_formset,
         'rates_table_data': _rates_table_data(),
+        'js_paths': ['tickets/order_form.js'],
     }
 
     return render(request, 'tickets/order_edit.html', context)
