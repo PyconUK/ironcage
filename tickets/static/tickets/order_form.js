@@ -12,6 +12,7 @@ var RATES = {
 };
 
 (function($) {
+  $('form#order-form').submit(maybeSubmitform);
   $('input[name=who]').change(maybeShowRestOfForm);
   $('input[name=rate]').change(maybeShowRestOfForm);
   $('input[type=checkbox]').change(recalculateTotal);
@@ -22,6 +23,52 @@ var RATES = {
   $('#formset').on('formAdded', function(e) {
     $('input[type=checkbox]').change(recalculateTotal);
   });
+
+  function maybeSubmitform(e) {
+    var who = $('#order-form')[0].elements.who.value;
+    var valid = true;
+
+    if (who.match('self')) {
+      var numDaysForSelf = $('input[name=days]:checked').length;
+
+      if (numDaysForSelf == 0) {
+        valid = false;
+        $('input[name=days]').closest('.btn-group').addClass('error');
+      };
+    };
+
+    if (who.match('others')) {
+      var numValidForms = 0;
+
+      $('[data-formset-form]').filter(':not([data-formset-form-deleted])').each(function(ix, form) {
+        var numDaysForForm = $(form).find('input:checked').length;
+        var emailAddr = $(form).find('input[type=email]')[0].value;
+
+        if (emailAddr != '' && numDaysForForm == 0) {
+          valid = false;
+          $(form).find('.btn-group').addClass('error');
+        };
+
+        if (emailAddr != '' && numDaysForForm != 0) {
+          numValidForms += 1;
+        };
+      });
+
+      if (numValidForms == 0) {
+        valid = false;
+
+        if ($('[data-formset-form]').filter(':not([data-formset-form-deleted])').length == 0) {
+          $('[data-formset-add]').click()
+        };
+
+        $($('[data-formset-form]').filter(':not([data-formset-form-deleted])')[0]).find('.btn-group').addClass('error');
+      };
+    };
+
+    if (!valid) {
+      e.preventDefault();
+    };
+  };
 
   function maybeShowRestOfForm() {
     var who = $('#order-form')[0].elements.who.value;
@@ -65,8 +112,13 @@ var RATES = {
     var numDays = 0;
 
     if (who.match('self')) {
+      var numDaysForSelf = $('input[name=days]:checked').length;
+      numDays += numDaysForSelf;
       numTickets += 1;
-      numDays += $('input[name=days]:checked').length;
+
+      if (numDaysForSelf != 0) {
+        $('input[name=days]').closest('.btn-group').removeClass('error')
+      };
     }
 
     if (who.match('others')) {

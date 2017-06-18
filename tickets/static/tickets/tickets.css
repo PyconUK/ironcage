@@ -13,3 +13,8 @@
 #form-panel-submit {
   display: none;
 }
+
+.btn-group.error {
+  border: #ff0000 solid 1px;
+  border-radius: 5px;
+}

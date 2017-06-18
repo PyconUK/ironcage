@@ -8,7 +8,9 @@
           <label>Who are you buying tickets for?</label>
         </div>
         <div class="col-md-8">
-          {{ form.who }}
+          <div class="btn-group" data-toggle="buttons">
+            {{ form.who }}
+          </div>
         </div>
       </div>
 
@@ -17,7 +19,9 @@
           <label>What rate of tickets are you buying?</label>
         </div>
         <div class="col-md-8">
-          {{ form.rate }}
+          <div class="btn-group" data-toggle="buttons">
+            {{ form.rate }}
+          </div>
         </div>
       </div>
     </div>
@@ -31,7 +35,9 @@
           <label>Which days are you coming?</label>
         </div>
         <div class="col-md-8">
-          {{ self_form.days }}
+          <div class="btn-group{% if self_form.days.errors %} error{% endif %}" data-toggle="buttons">
+            {{ self_form.days }}
+          </div>
         </div>
       </div>
     </div>

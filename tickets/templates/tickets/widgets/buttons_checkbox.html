@@ -1,9 +1,7 @@
-<div class="btn-group" data-toggle="buttons">
-  {% for group_name, group_choices, group_index in widget.optgroups %}
-  {% for option in group_choices %}
-  <label class="btn btn-default{% if option.selected %} active{% endif %}">
-    <input type="checkbox" name="{{ option.name }}" value="{{ option.value }}"{% if option.selected %} checked{% endif %}>{{ option.label }}
-  </label>
-  {% endfor %}
-  {% endfor %}
-</div>
+{% for group_name, group_choices, group_index in widget.optgroups %}
+{% for option in group_choices %}
+<label class="btn btn-default{% if option.selected %} active{% endif %}">
+  <input type="checkbox" name="{{ option.name }}" value="{{ option.value }}"{% if option.selected %} checked{% endif %}>{{ option.label }}
+</label>
+{% endfor %}
+{% endfor %}

@@ -4,7 +4,9 @@
       {{ form.email_addr }}
     </div>
     <div class="col-xs-6">
-      {{ form.days }}
+      <div class="btn-group{% if form.days.errors %} error{% endif %}" data-toggle="buttons">
+        {{ form.days }}
+      </div>
     </div>
     <div class="col-xs-1">
       <div class="hidden">{{ form.DELETE }}</div>
