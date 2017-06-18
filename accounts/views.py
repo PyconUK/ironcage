@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import redirect, render
 
-from .forms import DemographicsProfileForm, RegisterForm
+from .forms import DemographicsProfileForm, RegisterForm, RequirementsProfileForm
 
 
 with open(os.path.join(settings.BASE_DIR, 'accounts', 'data', 'countries.txt')) as f:
@@ -54,6 +54,25 @@ def edit_profile(request):
         'countries': countries,
     }
     return render(request, 'accounts/edit_profile.html', context)
+
+
+@login_required
+def edit_requirements_profile(request):
+    user = request.user
+
+    if request.method == 'POST':
+        form = RequirementsProfileForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            return redirect('accounts:profile')
+    else:
+        form = RequirementsProfileForm(instance=user)
+
+    context = {
+        'form': form,
+        'js_paths': ['accounts/requirements_form.js'],
+    }
+    return render(request, 'accounts/edit_requirements_profile.html', context)
 
 
 def register(request):

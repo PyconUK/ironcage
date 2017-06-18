@@ -55,3 +55,9 @@ class DemographicsProfileForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['year_of_birth', 'gender', 'ethnicity', 'nationality', 'country_of_residence']
+
+
+class RequirementsProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['accessibility_reqs_yn', 'accessibility_reqs', 'childcare_reqs_yn', 'childcare_reqs', 'dietary_reqs_yn', 'dietary_reqs']

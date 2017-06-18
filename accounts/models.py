@@ -24,6 +24,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     nationality = models.CharField(max_length=100, null=True, blank=True)
     country_of_residence = models.CharField(max_length=100, null=True, blank=True)
     dont_ask_demographics = models.BooleanField(default=False)
+    accessibility_reqs_yn = models.NullBooleanField()
+    accessibility_reqs = models.TextField(null=True, blank=True)
+    childcare_reqs_yn = models.NullBooleanField()
+    childcare_reqs = models.TextField(null=True, blank=True)
+    dietary_reqs_yn = models.NullBooleanField()
+    dietary_reqs = models.TextField(null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
