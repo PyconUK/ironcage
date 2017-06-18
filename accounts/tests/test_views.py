@@ -30,8 +30,47 @@ class ProfileTest(TestCase):
         self.assertContains(rsp, 'You have a ticket for Thursday, Friday, Saturday')
 
 
+class LoginTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.alice = User.objects.create_user(email_addr='alice@example.com', name='Alice', password='Pa55w0rd')
+
+    def test_get(self):
+        rsp = self.client.get('/accounts/login/?next=/tickets/orders/new/')
+        self.assertContains(rsp, '<input type="hidden" name="next" value="/tickets/orders/new/" />', html=True)
+
+    def test_post_success(self):
+        data = {
+            'username': 'alice@example.com',
+            'password': 'Pa55w0rd',
+        }
+        rsp = self.client.post('/accounts/login/', data, follow=True)
+        self.assertContains(rsp, 'Hello, Alice')
+
+    def test_post_failure_wrong_password(self):
+        data = {
+            'username': 'alice@example.com',
+            'password': 'password',
+        }
+        rsp = self.client.post('/accounts/login/', data, follow=True)
+        self.assertContains(rsp, "Your email address and password didn't match")
+
+    def test_post_redirect(self):
+        data = {
+            'username': 'alice@example.com',
+            'password': 'Pa55w0rd',
+            'next': '/tickets/orders/new/'
+        }
+        rsp = self.client.post('/accounts/login/', data, follow=True)
+        self.assertRedirects(rsp, '/tickets/orders/new/')
+
+
 class RegisterTests(TestCase):
-    def test_success(self):
+    def test_get(self):
+        rsp = self.client.get('/accounts/register/?next=/tickets/orders/new/')
+        self.assertContains(rsp, '<input type="hidden" name="next" value="/tickets/orders/new/" />', html=True)
+
+    def test_post_success(self):
         data = {
             'name': 'Alice',
             'email_addr': 'alice@example.com',
@@ -41,7 +80,7 @@ class RegisterTests(TestCase):
         rsp = self.client.post('/accounts/register/', data, follow=True)
         self.assertContains(rsp, 'Hello, Alice')
 
-    def test_password_mismatch(self):
+    def test_post_failure_password_mismatch(self):
         data = {
             'name': 'Alice',
             'email_addr': 'alice@example.com',
@@ -51,7 +90,7 @@ class RegisterTests(TestCase):
         rsp = self.client.post('/accounts/register/', data, follow=True)
         self.assertContains(rsp, "The two password fields didn&#39;t match")
 
-    def test_password_too_short(self):
+    def test_post_failure_password_too_short(self):
         data = {
             'name': 'Alice',
             'email_addr': 'alice@example.com',
@@ -61,7 +100,7 @@ class RegisterTests(TestCase):
         rsp = self.client.post('/accounts/register/', data, follow=True)
         self.assertContains(rsp, 'This password is too short')
 
-    def test_email_taken(self):
+    def test_post_failure_email_taken(self):
         tickets_factories.create_user('Alice')
         data = {
             'name': 'Alice',
@@ -71,3 +110,14 @@ class RegisterTests(TestCase):
         }
         rsp = self.client.post('/accounts/register/', data, follow=True)
         self.assertContains(rsp, 'That email address has already been registered')
+
+    def test_post_redirect(self):
+        data = {
+            'name': 'Alice',
+            'email_addr': 'alice@example.com',
+            'password1': 'Pa55w0rd',
+            'password2': 'Pa55w0rd',
+            'next': '/tickets/orders/new/'
+        }
+        rsp = self.client.post('/accounts/register/', data, follow=True)
+        self.assertRedirects(rsp, '/tickets/orders/new/')

@@ -6,6 +6,8 @@
 
 <form method="post" action="{% url 'register' %}" class="form-horizontal">
   {% csrf_token %}
+  <input type="hidden" name="next" value="{{ next }}" />
+
   <div class="form-group">
     <label for="{{ form.name.auto_id }}" class="col-sm-2 control-label">{{ form.name.label }}</label>
     <div class="col-sm-10">

@@ -24,8 +24,8 @@
               {% if user.is_authenticated %}
               <li><a href="{% url 'logout' %}">Sign out</a></li>
               {% else %}
-              <li><a href="{% url 'login' %}">Sign in</a></li>
-              <li><a href="{% url 'register' %}">Sign up</a></li>
+              <li><a href="{% url 'login' %}?next={{ request.path }}">Sign in</a></li>
+              <li><a href="{% url 'register' %}?next={{ request.path }}">Sign up</a></li>
               {% endif %}
             </ul>
           </div>

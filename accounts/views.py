@@ -33,13 +33,14 @@ def register(request):
             )
             login(request, user)
 
-            return redirect(request.GET.get('next', 'accounts:profile'))
+            return redirect(request.POST.get('next', 'accounts:profile'))
 
     else:
         form = RegisterForm()
 
     context = {
         'form': form,
+        'next': request.GET.get('next', 'accounts:profile'),
     }
 
     return render(request, 'registration/register.html', context)
