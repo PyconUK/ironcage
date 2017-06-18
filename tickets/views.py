@@ -64,7 +64,6 @@ def new_order(request):
         'self_form': self_form,
         'others_formset': others_formset,
         'rates_table_data': _rates_table_data(),
-        'show_order_form': request.user.is_authenticated,
         'js_paths': ['tickets/order_form.js'],
     }
 
