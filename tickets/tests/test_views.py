@@ -34,7 +34,7 @@ class NewOrderTests(TestCase):
             'form-1-email_addr': '',
         }
         rsp = self.client.post('/tickets/orders/new/', form_data, follow=True)
-        self.assertContains(rsp, 'You have ordered 1 ticket(s)')
+        self.assertContains(rsp, 'You are ordering 1 ticket')
 
     def test_post_for_others(self):
         self.client.force_login(self.alice)
@@ -51,7 +51,7 @@ class NewOrderTests(TestCase):
             'form-1-days': ['sat', 'sun', 'mon'],
         }
         rsp = self.client.post('/tickets/orders/new/', form_data, follow=True)
-        self.assertContains(rsp, 'You have ordered 2 ticket(s)')
+        self.assertContains(rsp, 'You are ordering 2 tickets')
 
     def test_post_for_self_and_others(self):
         self.client.force_login(self.alice)
@@ -69,13 +69,13 @@ class NewOrderTests(TestCase):
             'form-1-days': ['sat', 'sun', 'mon'],
         }
         rsp = self.client.post('/tickets/orders/new/', form_data, follow=True)
-        self.assertContains(rsp, 'You have ordered 3 ticket(s)')
+        self.assertContains(rsp, 'You are ordering 3 tickets')
 
     def test_get_when_not_authenticated(self):
         rsp = self.client.get('/tickets/orders/new/')
         self.assertInHTML('<tr><td>5 days</td><td>£138</td><td>£276</td></tr>', rsp.content.decode())
         self.assertNotContains(rsp, '<form method="post" id="order-form">')
-        self.assertContains(rsp, 'Please create an account to buy a ticket.')
+        self.assertContains(rsp, 'Please <a href="/accounts/register/?next=/tickets/orders/new/">sign up</a> or <a href="/accounts/login/?next=/tickets/orders/new/">sign in</a> to buy a ticket.', html=True)
 
     def test_post_when_not_authenticated(self):
         rsp = self.client.post('/tickets/orders/new/', follow=True)
@@ -109,7 +109,7 @@ class OrderEditTests(TestCase):
             'form-1-email_addr': '',
         }
         rsp = self.client.post(f'/tickets/orders/{self.order.order_id}/edit/', form_data, follow=True)
-        self.assertContains(rsp, 'You have ordered 1 ticket(s)')
+        self.assertContains(rsp, 'You are ordering 1 ticket')
 
     def test_post_for_others(self):
         self.client.force_login(self.order.purchaser)
@@ -126,7 +126,7 @@ class OrderEditTests(TestCase):
             'form-1-days': ['sat', 'sun', 'mon'],
         }
         rsp = self.client.post(f'/tickets/orders/{self.order.order_id}/edit/', form_data, follow=True)
-        self.assertContains(rsp, 'You have ordered 2 ticket(s)')
+        self.assertContains(rsp, 'You are ordering 2 tickets')
 
     def test_post_for_self_and_others(self):
         self.client.force_login(self.order.purchaser)
@@ -144,7 +144,7 @@ class OrderEditTests(TestCase):
             'form-1-days': ['sat', 'sun', 'mon'],
         }
         rsp = self.client.post(f'/tickets/orders/{self.order.order_id}/edit/', form_data, follow=True)
-        self.assertContains(rsp, 'You have ordered 3 ticket(s)')
+        self.assertContains(rsp, 'You are ordering 3 tickets')
 
     def test_get_when_not_authenticated(self):
         rsp = self.client.get(f'/tickets/orders/{self.order.order_id}/edit/')
