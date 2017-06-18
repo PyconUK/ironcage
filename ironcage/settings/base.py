@@ -114,9 +114,11 @@ AUTH_PASSWORD_VALIDATORS = [
 AUTH_USER_MODEL = 'accounts.User'
 
 
-# Post-login URL
+# Post-login/out URLs
 
 LOGIN_REDIRECT_URL = '/profile/'
+
+LOGOUT_REDIRECT_URL = '/'
 
 
 # Internationalization

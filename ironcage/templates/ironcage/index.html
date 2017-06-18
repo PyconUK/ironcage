@@ -1,0 +1,20 @@
+{% extends 'ironcage/base.html' %}
+
+{% block content %}
+{% if request.user.is_authenticated %}
+<p>Hello, {{ request.user.name }}</p>
+
+{% endif %}
+<p>Welcome to the PyCon UK 2017 conference control panel.  TODO: come up with a better name than this.</p>
+
+<hr />
+
+<p>Here, you can:</p>
+<ul>
+  <li><a href="{% url 'tickets:new_order' %}">Order conference tickets</a></li>
+  <li>Make a submission to our Call for Participation</li>
+  <li>Apply for financial assistance</li>
+</ul>
+
+<hr />
+{% endblock %}

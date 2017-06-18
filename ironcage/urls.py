@@ -2,6 +2,7 @@ from django.conf.urls import url, include
 from django.contrib import admin
 
 import accounts.views
+import ironcage.views
 
 
 urlpatterns = [
@@ -11,4 +12,5 @@ urlpatterns = [
     url(r'^profile/', include('accounts.urls')),
     url(r'^reports/', include('reports.urls')),
     url(r'^tickets/', include('tickets.urls')),
+    url(r'^$', ironcage.views.index, name='index')
 ]
