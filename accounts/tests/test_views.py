@@ -2,13 +2,13 @@ from django.test import TestCase
 
 from tickets.tests import factories as tickets_factories
 
-from accounts.models import User
+from . import factories
 
 
 class ProfileTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.alice = User.objects.create_user(email_addr='alice@example.com', name='Alice')
+        cls.alice = factories.create_user()
 
     def setUp(self):
         self.client.force_login(self.alice)
@@ -30,10 +30,58 @@ class ProfileTest(TestCase):
         self.assertContains(rsp, 'You have a ticket for Thursday, Friday, Saturday')
 
 
+class EditProfileTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.alice = factories.create_user(year_of_birth=1985)
+
+    def setUp(self):
+        self.alice.refresh_from_db()
+        self.client.force_login(self.alice)
+
+    def test_post_update(self):
+        data = {
+            'year_of_birth': 1986,
+            'gender': 'Female',
+        }
+        self.client.post('/profile/edit/', data, follow=True)
+        self.alice.refresh_from_db()
+
+        self.assertEqual(self.alice.year_of_birth, 1986)
+        self.assertEqual(self.alice.gender, 'Female')
+        self.assertEqual(self.alice.dont_ask_demographics, False)
+
+    def test_post_dont_ask_again(self):
+        data = {
+            'dont-ask-again': '',
+        }
+        self.client.post('/profile/edit/', data, follow=True)
+        self.alice.refresh_from_db()
+
+        self.assertEqual(self.alice.year_of_birth, None)
+        self.assertEqual(self.alice.gender, None)
+        self.assertEqual(self.alice.dont_ask_demographics, True)
+
+    def test_post_update_after_dont_ask_again(self):
+        self.alice.dont_ask_demographics = True
+        self.alice.save()
+
+        data = {
+            'year_of_birth': 1986,
+            'gender': 'Female',
+        }
+        self.client.post('/profile/edit/', data, follow=True)
+        self.alice.refresh_from_db()
+
+        self.assertEqual(self.alice.year_of_birth, 1986)
+        self.assertEqual(self.alice.gender, 'Female')
+        self.assertEqual(self.alice.dont_ask_demographics, False)
+
+
 class LoginTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.alice = User.objects.create_user(email_addr='alice@example.com', name='Alice', password='Pa55w0rd')
+        cls.alice = factories.create_user(password='Pa55w0rd')
 
     def test_get(self):
         rsp = self.client.get('/accounts/login/?next=/tickets/orders/new/')

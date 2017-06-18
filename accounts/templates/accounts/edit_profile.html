@@ -1,0 +1,34 @@
+{% extends 'ironcage/base.html' %}
+
+{% load bootstrap3 %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-6 col-md-offset-3">
+    <h2>Demographic profile</h2>
+
+    <p>All fields are optional, and if you'd prefer not to share this information with us, just click "Don't ask me again" below.</p>
+
+    <form class="form-horizontal" method="post">
+      {% csrf_token %}
+      {% bootstrap_form form layout='horizontal' %}
+
+      <div class="form-group">
+        <div class="col-md-offset-2">
+          <button type="submit" class="btn btn-primary">Update</button>
+          <button type="submit" name="dont-ask-again" class="btn btn-primary">Don't ask me again</button>
+        </div>
+      </div>
+    </form>
+
+    <h3>Why do we collect this information?</h3>
+
+    <p>TODO</p>
+  </div>
+</div>
+{% endblock %}
+
+{% block json_data %}
+var countries = {{ countries|safe }};
+{% endblock %}
+

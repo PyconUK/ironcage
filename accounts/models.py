@@ -18,6 +18,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(max_length=200)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
+    year_of_birth = models.IntegerField(null=True, blank=True)
+    gender = models.CharField(max_length=100, null=True, blank=True)
+    ethnicity = models.CharField(max_length=100, null=True, blank=True)
+    nationality = models.CharField(max_length=100, null=True, blank=True)
+    country_of_residence = models.CharField(max_length=100, null=True, blank=True)
+    dont_ask_demographics = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email_addr'
     EMAIL_FIELD = 'email_addr'

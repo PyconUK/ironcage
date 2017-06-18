@@ -49,3 +49,9 @@ class RegisterForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+
+
+class DemographicsProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['year_of_birth', 'gender', 'ethnicity', 'nationality', 'country_of_residence']
