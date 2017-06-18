@@ -1,5 +1,7 @@
 /**
 * Django formset helper
+*
+* This comes from https://bitbucket.org/tim_heap/django-formset-js
 */
 (function($) {
     "use strict";
