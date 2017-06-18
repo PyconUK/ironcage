@@ -1,10 +1,10 @@
 coverage
 dj-database-url
+django
 django-bootstrap3
-Django
+django-dotenv
 flake8
 gunicorn
-stripe
-django-dotenv
 psycopg2
+stripe
 whitenoise
