@@ -7,7 +7,7 @@ from django.views.decorators.http import require_POST
 from .actions import claim_ticket_invitation, create_pending_order, process_stripe_charge, update_pending_order
 from .forms import CompanyDetailsForm, TicketForm, TicketForSelfForm, TicketForOthersFormSet
 from .models import Order, Ticket, TicketInvitation
-from .prices import cost_incl_vat
+from .prices import PRICES_INCL_VAT, cost_incl_vat
 
 
 def new_order(request):
@@ -76,6 +76,7 @@ def new_order(request):
         'others_formset': others_formset,
         'company_details_form': company_details_form,
         'rates_table_data': _rates_table_data(),
+        'rates_data': _rates_data(),
         'js_paths': ['tickets/order_form.js'],
     }
 
@@ -156,6 +157,7 @@ def order_edit(request, order_id):
         'others_formset': others_formset,
         'company_details_form': company_details_form,
         'rates_table_data': _rates_table_data(),
+        'rates_data': _rates_data(),
         'js_paths': ['tickets/order_form.js'],
     }
 
@@ -251,6 +253,10 @@ def ticket_invitation(request, token):
         assert False
 
     return redirect(ticket)
+
+
+def _rates_data():
+    return PRICES_INCL_VAT
 
 
 def _rates_table_data():

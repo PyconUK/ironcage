@@ -1,16 +1,3 @@
-var RATES = {
-  // These numbers are plucked out of the air
-  // TODO don't hardcode these here
-  individual: {
-    ticketPrice: 18,
-    dayPrice: 24,
-  },
-  corporate: {
-    ticketPrice: 36,
-    dayPrice: 48,
-  },
-};
-
 (function($) {
   $('form#order-form').submit(maybeSubmitform);
   $('input[name=who]').change(maybeShowRestOfForm);
@@ -137,7 +124,7 @@ var RATES = {
       });
     }
 
-    var totalCost = numTickets * RATES[rate]['ticketPrice'] + numDays * RATES[rate]['dayPrice']
+    var totalCost = numTickets * rates[rate]['ticket_price'] + numDays * rates[rate]['day_price']
 
     $('#num-tickets').text(numTickets);
     $('#num-days').text(numDays);
