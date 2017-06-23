@@ -202,24 +202,32 @@ class OrderEditTests(TestCase):
 
 
 class OrderTests(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.order = factories.create_confirmed_order_for_self()
+    def test_for_confirmed_order(self):
+        order = factories.create_confirmed_order_for_self()
+        self.client.force_login(order.purchaser)
+        rsp = self.client.get(f'/tickets/orders/{order.order_id}/', follow=True)
+        self.assertContains(rsp, f'Details of your order ({order.order_id})')
+        self.assertNotContains(rsp, '<div id="stripe-form">')
 
-    def test_order(self):
-        self.client.force_login(self.order.purchaser)
-        rsp = self.client.get(f'/tickets/orders/{self.order.order_id}/', follow=True)
-        self.assertContains(rsp, f'Details of your order ({self.order.order_id})')
+    def test_for_pending_order(self):
+        order = factories.create_pending_order_for_self()
+        self.client.force_login(order.purchaser)
+        rsp = self.client.get(f'/tickets/orders/{order.order_id}/', follow=True)
+        self.assertContains(rsp, f'Details of your order ({order.order_id})')
+        self.assertContains(rsp, '<div id="stripe-form">')
+        self.assertContains(rsp, 'data-amount="9000"')
 
     def test_when_not_authenticated(self):
-        rsp = self.client.get(f'/tickets/orders/{self.order.order_id}/', follow=True)
-        self.assertRedirects(rsp, f'/accounts/login/?next=/tickets/orders/{self.order.order_id}/')
+        order = factories.create_confirmed_order_for_self()
+        rsp = self.client.get(f'/tickets/orders/{order.order_id}/', follow=True)
+        self.assertRedirects(rsp, f'/accounts/login/?next=/tickets/orders/{order.order_id}/')
         self.assertContains(rsp, 'Please login to see this page.')
 
     def test_when_not_authorized(self):
+        order = factories.create_confirmed_order_for_self()
         bob = factories.create_user('Bob')
         self.client.force_login(bob)
-        rsp = self.client.get(f'/tickets/orders/{self.order.order_id}/', follow=True)
+        rsp = self.client.get(f'/tickets/orders/{order.order_id}/', follow=True)
         self.assertRedirects(rsp, '/profile/')
         self.assertContains(rsp, 'Only the purchaser of an order can view the order')
 

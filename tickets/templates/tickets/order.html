@@ -71,14 +71,14 @@
     <script
       src="https://checkout.stripe.com/checkout.js" class="stripe-button"
       data-key="{{ stripe_api_key }}"
-      data-amount="{{ order.cost_pence }}"
+      data-amount="{{ order.cost_pence_incl_vat }}"
       data-currency="gbp"
       data-name="PyCon UK Society Ltd"
       data-description="PyCon UK 2017 order {{ order.order_id }}"
       data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
       data-locale="auto"
       data-zip-code="true"
-      >
+    >
     </script>
 
     <!-- https://stackoverflow.com/a/41527060 -->
