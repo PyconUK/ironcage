@@ -64,6 +64,9 @@ class Order(models.Model):
 
     objects = Manager()
 
+    def __str__(self):
+        return self.order_id
+
     @property
     def order_id(self):
         if self.id is None:
@@ -299,6 +302,9 @@ class Ticket(models.Model):
             ticket.invitations.create(email_addr=email_addr)
 
     objects = Manager()
+
+    def __str__(self):
+        return self.ticket_id
 
     @property
     def ticket_id(self):
