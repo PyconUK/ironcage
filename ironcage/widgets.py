@@ -12,4 +12,3 @@ class ButtonsCheckbox(widgets.ChoiceWidget):
 
 class EmailInput(widgets.EmailInput):
     template_name = 'widgets/email_input.html'
-

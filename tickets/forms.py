@@ -81,6 +81,7 @@ TicketForOthersFormSet = forms.formset_factory(
     can_delete=True
 )
 
+
 class CompanyDetailsForm(forms.Form):
     company_name = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'})
