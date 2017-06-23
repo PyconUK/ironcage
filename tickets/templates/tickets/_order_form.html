@@ -106,10 +106,21 @@
     <div class="panel-heading">Summary</div>
     <div class="panel-body">
       <div class="row">
-        <div class="col-md-12">
-          <p>Total tickets: <span id="num-tickets">0</span></p>
-          <p>Total days: <span id="num-days">0</span></p>
-          <p>Total cost (incl. VAT): &pound;<span id="total-cost">0</span></p>
+        <div class="col-md-4">
+          <table class="table">
+            <tr>
+              <th>Rate</th>
+              <td><span id="rate"></span></td>
+            </tr>
+            <tr>
+              <th>Number of tickets</th>
+              <td><span id="num-tickets">0</span></td>
+            </tr>
+            <tr>
+              <th>Total cost (incl. VAT)</th>
+              <td>&pound;<span id="total-cost">0</span></td>
+            </tr>
+          </table>
           <input type="submit" value="Place my order" class="btn btn-primary" />
         </div>
       </div>

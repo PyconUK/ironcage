@@ -126,8 +126,8 @@
 
     var totalCost = numTickets * rates[rate]['ticket_price'] + numDays * rates[rate]['day_price']
 
+    $('#rate').text(rate);
     $('#num-tickets').text(numTickets);
-    $('#num-days').text(numDays);
     $('#total-cost').text(totalCost);
   };
 
