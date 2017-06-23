@@ -10,3 +10,6 @@ notifications:
 install:
   - pip install -U pip setuptools wheel
   - pip install -r requirements.txt
+
+addons:
+  postgresql: 9.6
