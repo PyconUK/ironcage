@@ -90,7 +90,7 @@ def order_edit(request, order_id):
 
     if request.user != order.purchaser:
         messages.warning(request, 'Only the purchaser of an order can update the order')
-        return redirect('accounts:profile')
+        return redirect('index')
 
     if not order.payment_required():
         messages.error(request, 'This order has already been paid')
@@ -172,7 +172,7 @@ def order(request, order_id):
 
     if request.user != order.purchaser:
         messages.warning(request, 'Only the purchaser of an order can view the order')
-        return redirect('accounts:profile')
+        return redirect('index')
 
     context = {
         'order': order,
@@ -188,7 +188,7 @@ def order_payment(request, order_id):
 
     if request.user != order.purchaser:
         messages.warning(request, 'Only the purchaser of an order can pay for the order')
-        return redirect('accounts:profile')
+        return redirect('index')
 
     if not order.payment_required():
         messages.error(request, 'This order has already been paid')
@@ -209,7 +209,7 @@ def order_receipt(request, order_id):
 
     if request.user != order.purchaser:
         messages.warning(request, 'Only the purchaser of an order can view the receipt')
-        return redirect('accounts:profile')
+        return redirect('index')
 
     if order.payment_required():
         messages.error(request, 'This order has not been paid')
@@ -228,7 +228,7 @@ def ticket(request, ticket_id):
 
     if request.user != ticket.owner:
         messages.warning(request, 'Only the owner of a ticket can view the ticket')
-        return redirect('accounts:profile')
+        return redirect('index')
 
     context = {
         'ticket': ticket,

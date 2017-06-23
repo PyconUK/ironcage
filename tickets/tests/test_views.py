@@ -211,14 +211,14 @@ class OrderEditTests(TestCase):
         bob = factories.create_user('Bob')
         self.client.force_login(bob)
         rsp = self.client.get(f'/tickets/orders/{self.order.order_id}/edit/', follow=True)
-        self.assertRedirects(rsp, '/profile/')
+        self.assertRedirects(rsp, '/')
         self.assertContains(rsp, 'Only the purchaser of an order can update the order')
 
     def test_post_when_not_authorized(self):
         bob = factories.create_user('Bob')
         self.client.force_login(bob)
         rsp = self.client.post(f'/tickets/orders/{self.order.order_id}/edit/', follow=True)
-        self.assertRedirects(rsp, '/profile/')
+        self.assertRedirects(rsp, '/')
         self.assertContains(rsp, 'Only the purchaser of an order can update the order')
 
     def test_get_when_already_paid(self):
@@ -257,7 +257,7 @@ class OrderTests(TestCase):
         bob = factories.create_user('Bob')
         self.client.force_login(bob)
         rsp = self.client.get(f'/tickets/orders/{order.order_id}/', follow=True)
-        self.assertRedirects(rsp, '/profile/')
+        self.assertRedirects(rsp, '/')
         self.assertContains(rsp, 'Only the purchaser of an order can view the order')
 
 
@@ -318,7 +318,7 @@ class OrderPaymentTests(TestCase):
             {'stripeToken': 'tok_abcdefghijklmnopqurstuvwx'},
             follow=True,
         )
-        self.assertRedirects(rsp, '/profile/')
+        self.assertRedirects(rsp, '/')
         self.assertContains(rsp, 'Only the purchaser of an order can pay for the order')
 
 
@@ -373,7 +373,7 @@ class OrderReceiptTests(TestCase):
         bob = factories.create_user('Bob')
         self.client.force_login(bob)
         rsp = self.client.get(f'/tickets/orders/{self.order.order_id}/receipt/', follow=True)
-        self.assertRedirects(rsp, '/profile/')
+        self.assertRedirects(rsp, '/')
         self.assertContains(rsp, 'Only the purchaser of an order can view the receipt')
 
     def test_when_already_paid(self):
@@ -404,7 +404,7 @@ class TicketTests(TestCase):
         bob = factories.create_user('Bob')
         self.client.force_login(bob)
         rsp = self.client.get(f'/tickets/tickets/{self.ticket.ticket_id}/', follow=True)
-        self.assertRedirects(rsp, '/profile/')
+        self.assertRedirects(rsp, '/')
         self.assertContains(rsp, 'Only the owner of a ticket can view the ticket')
 
 
@@ -422,10 +422,10 @@ class TicketInvitationTests(TestCase):
         self.assertNotContains(rsp, 'This invitation has already been claimed', html=True)
 
     def test_for_claimed_invitation(self):
-        self.client.force_login(self.bob)
+        self.client.force_login(factories.create_user('Carol'))
         actions.claim_ticket_invitation(self.bob, self.invitation)
         rsp = self.client.get(f'/tickets/invitations/{self.invitation.token}/', follow=True)
-        self.assertContains(rsp, f'Details of your ticket ({self.invitation.ticket.ticket_id})')
+        self.assertRedirects(rsp, '/')
         self.assertContains(rsp, '<div class="alert alert-info" role="alert">This invitation has already been claimed</div>', html=True)
 
     def test_when_not_authenticated(self):
