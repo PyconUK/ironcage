@@ -243,6 +243,10 @@ def ticket_invitation(request, token):
         messages.info(request, 'You need to create an account to claim your invitation')
         return redirect(settings.LOGIN_URL)
 
+    if request.user.ticket() is not None:
+        messages.error(request, 'You already have a ticket!  Please contact pyconuk-enquiries@python.org to arrange transfer of this invitaiton to somebody else.')
+        return redirect('index')
+
     ticket = invitation.ticket
 
     if invitation.status == 'unclaimed':
