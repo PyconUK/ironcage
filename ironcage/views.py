@@ -2,8 +2,14 @@ from django.shortcuts import render
 
 
 def index(request):
-    if request.user.is_authenticated():
-        pass
+    user = request.user
+
+    if user.is_authenticated():
+        context = {
+            'orders': user.orders.all(),
+            'ticket': user.ticket(),
+        }
     else:
-        pass
-    return render(request, 'ironcage/index.html')
+        context = {}
+
+    return render(request, 'ironcage/index.html', context)
