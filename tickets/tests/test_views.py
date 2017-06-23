@@ -17,7 +17,21 @@ class NewOrderTests(TestCase):
         rsp = self.client.get('/tickets/orders/new/')
         self.assertInHTML('<tr><td>5 days</td><td>£138</td><td>£276</td></tr>', rsp.content.decode())
         self.assertContains(rsp, '<form method="post" id="order-form">')
-        self.assertNotContains(rsp, 'Please create an account to buy a ticket.')
+        self.assertNotContains(rsp, 'to buy a ticket')
+
+    def test_get_when_user_has_order_for_self(self):
+        self.client.force_login(self.alice)
+        factories.create_confirmed_order_for_self(self.alice)
+        rsp = self.client.get('/tickets/orders/new/')
+        self.assertNotContains(rsp, '<input type="radio" name="who" value="self">')
+        self.assertContains(rsp, '<input type="hidden" name="who" value="others">')
+
+    def test_get_when_user_has_order_but_not_for_self(self):
+        self.client.force_login(self.alice)
+        factories.create_confirmed_order_for_others(self.alice)
+        rsp = self.client.get('/tickets/orders/new/')
+        self.assertContains(rsp, '<input type="radio" name="who" value="self">')
+        self.assertNotContains(rsp, '<input type="hidden" name="who" value="others">')
 
     def test_post_for_self_individual(self):
         self.client.force_login(self.alice)
@@ -112,6 +126,20 @@ class OrderEditTests(TestCase):
         self.assertInHTML('<tr><td>5 days</td><td>£138</td><td>£276</td></tr>', rsp.content.decode())
         self.assertContains(rsp, '<form method="post" id="order-form">')
         self.assertNotContains(rsp, 'Please create an account to buy a ticket.')
+
+    def test_get_when_user_has_order_for_self(self):
+        self.client.force_login(self.order.purchaser)
+        factories.create_confirmed_order_for_self(self.order.purchaser)
+        rsp = self.client.get(f'/tickets/orders/{self.order.order_id}/edit/')
+        self.assertNotContains(rsp, '<input type="radio" name="who" value="self">')
+        self.assertContains(rsp, '<input type="hidden" name="who" value="others">')
+
+    def test_get_when_user_has_order_but_not_for_self(self):
+        self.client.force_login(self.order.purchaser)
+        factories.create_confirmed_order_for_others(self.order.purchaser)
+        rsp = self.client.get(f'/tickets/orders/{self.order.order_id}/edit/')
+        self.assertContains(rsp, '<input type="radio" name="who" value="self" checked>')
+        self.assertNotContains(rsp, '<input type="hidden" name="who" value="others">')
 
     def test_post_for_self(self):
         self.client.force_login(self.order.purchaser)

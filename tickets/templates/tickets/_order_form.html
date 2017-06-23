@@ -3,6 +3,7 @@
   <div class="panel panel-default">
     <div class="panel-heading">About your order</div>
     <div class="panel-body">
+      {% if user_can_buy_for_self %}
       <div class="row">
         <div class="col-md-4">
           <label>Who are you buying tickets for?</label>
@@ -13,6 +14,9 @@
           </div>
         </div>
       </div>
+      {% else %}
+      <input type="hidden" name="who" value="others">
+      {% endif %}
 
       <div class="row">
         <div class="col-md-4">
