@@ -216,6 +216,7 @@ class OrderTests(TestCase):
         self.assertContains(rsp, f'Details of your order ({order.order_id})')
         self.assertContains(rsp, '<div id="stripe-form">')
         self.assertContains(rsp, 'data-amount="9000"')
+        self.assertContains(rsp, 'data-email="alice@example.com"')
 
     def test_when_not_authenticated(self):
         order = factories.create_confirmed_order_for_self()
