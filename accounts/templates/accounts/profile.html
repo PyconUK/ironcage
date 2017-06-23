@@ -1,22 +1,95 @@
 {% extends 'ironcage/base.html' %}
 
 {% block content %}
-<h1>Hello, {{ name }}</h1>
+<div class="row">
+  <div class="col-md-6 col-md-offset-3">
+    <div>
+      <h3>Basic information</h3>
+      <table class="table">
+        <tr>
+          <th class="col-md-4">Name</th>
+          <td>{{ user.name }}</td>
+        </tr>
+        <tr>
+          <th class="col-md-4">Email</th>
+          <td>{{ user.email_addr }}</td>
+        </tr>
+      </table>
+    </div>
 
-{% if ticket %}
-<p>You have a ticket for {{ ticket.details.days }}.</p>
-{% endif %}
+    <div>
+      <h3>Requirements</h3>
+      <table class="table">
+        <tr>
+          <th class="col-md-4">Accessibility</th>
+          <td>
+            {% if user.accessibility_reqs_yn == None %}
+            unknown
+            {% elif user.accessibility_reqs_yn %}
+            {{ user.accessibility_reqs }}
+            {% else %}
+            none
+            {% endif %}
+          </td>
+        </tr>
+        <tr>
+          <th class="col-md-4">Childcare</th>
+          <td>
+            {% if user.childcare_reqs_yn == None %}
+            unknown
+            {% elif user.childcare_reqs_yn %}
+            {{ user.childcare_reqs }}
+            {% else %}
+            none
+            {% endif %}
+          </td>
+        </tr>
+        <tr>
+          <th class="col-md-4">Dietary</th>
+          <td>
+            {% if user.dietary_reqs_yn == None %}
+            unknown
+            {% elif user.dietary_reqs_yn %}
+            {{ user.dietary_reqs }}
+            {% else %}
+            none
+            {% endif %}
+          </td>
+        </tr>
+      </table>
+    </div>
 
-{% if orders %}
-<p>Your order(s):</p>
-<ul>
-  {% for order in orders %}
-  <li><a href="{% url 'tickets:order' order.order_id %}">Order {{ order.order_id }}</a></li>
-  {% endfor %}
-{% else %}
-{% endif %}
+    <div>
+      <h3>Demographics</h3>
+      {% if user.dont_ask_demographics %}
+      <p>You have opted not to share demographic information with us.</p>
+      {% else %}
+      <table class="table">
+        <tr>
+          <th class="col-md-4">Year of birth</th>
+          <td>{{ user.year_of_birth|default:"unknown" }}</td>
+        </tr>
+        <tr>
+          <th class="col-md-4">Gender</th>
+          <td>{{ user.gender|default:"unknown" }}</td>
+        </tr>
+        <tr>
+          <th class="col-md-4">Ethnicity</th>
+          <td>{{ user.ethnicity|default:"unknown" }}</td>
+        </tr>
+        <tr>
+          <th class="col-md-4">Nationality</th>
+          <td>{{ user.nationality|default:"unknown" }}</td>
+        </tr>
+        <tr>
+          <th class="col-md-4">Country of residence</th>
+          <td>{{ user.country_of_residence|default:"unknown" }}</td>
+        </tr>
+      </table>
+      {% endif %}
+    </div>
 
-{% if not ticket %}
-<p>You do not have a ticket for PyCon UK 2017.  <a href="{% url 'tickets:new_order' %}">Buy one now!</a></p>
-{% endif %}
+    <a href="{% url 'accounts:edit_profile' %}" type="button" class="btn btn-primary">Update my profile</a>
+  </div>
+</div>
 {% endblock %}

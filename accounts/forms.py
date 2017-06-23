@@ -51,13 +51,34 @@ class RegisterForm(forms.ModelForm):
         return user
 
 
-class DemographicsProfileForm(forms.ModelForm):
+class ProfileForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['year_of_birth', 'gender', 'ethnicity', 'nationality', 'country_of_residence']
+        fields = [
+            'name',
+            'email_addr',
+            'accessibility_reqs_yn',
+            'accessibility_reqs',
+            'childcare_reqs_yn',
+            'childcare_reqs',
+            'dietary_reqs_yn',
+            'dietary_reqs',
+            'dont_ask_demographics',
+            'year_of_birth',
+            'gender',
+            'ethnicity',
+            'nationality',
+            'country_of_residence',
+        ]
 
-
-class RequirementsProfileForm(forms.ModelForm):
-    class Meta:
-        model = User
-        fields = ['accessibility_reqs_yn', 'accessibility_reqs', 'childcare_reqs_yn', 'childcare_reqs', 'dietary_reqs_yn', 'dietary_reqs']
+    def clean(self):
+        super().clean()
+        if self.cleaned_data.get('dont_ask_demographics'):
+            for key in [
+                'year_of_birth',
+                'gender',
+                'ethnicity',
+                'nationality',
+                'country_of_residence',
+            ]:
+                self.cleaned_data[key] = None

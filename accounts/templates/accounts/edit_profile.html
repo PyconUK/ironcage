@@ -5,25 +5,109 @@
 {% block content %}
 <div class="row">
   <div class="col-md-6 col-md-offset-3">
-    <h2>Demographic profile</h2>
-
-    <p>All fields are optional, and if you'd prefer not to share this information with us, just click "Don't ask me again" below.</p>
-
-    <form class="form-horizontal" method="post">
+    <form method="post">
       {% csrf_token %}
-      {% bootstrap_form form layout='horizontal' %}
-
-      <div class="form-group">
-        <div class="col-md-offset-2">
-          <button type="submit" class="btn btn-primary">Update</button>
-          <button type="submit" name="dont-ask-again" class="btn btn-primary">Don't ask me again</button>
-        </div>
+      <div>
+        <h3>Basic information</h3>
+        <table class="table">
+          <tr>
+            <th class="col-md-4">Name</th>
+            <td>{% bootstrap_field form.name layout='inline' %}</td>
+          </tr>
+          <tr>
+            <th class="col-md-4">Email address</th>
+            <td>{% bootstrap_field form.email_addr layout='inline' %}</td>
+          </tr>
+        </table>
       </div>
+
+      <div>
+        <h3>Requirements</h3>
+        <table class="table">
+          <tr>
+            <th class="col-md-4">Do you have any accessibility requirements?</th>
+            <td>
+              <div class="btn-group" data-toggle="buttons">
+                <label class="btn btn-default{% if form.accessibility_reqs_yn.value == True %} active{% endif %}">
+                  <input type="radio" name="accessibility_reqs_yn" value="2" {% if form.accessibility_reqs_yn.value == True %} checked{% endif %}>Yes
+                </label>
+                <label class="btn btn-default{% if form.accessibility_reqs_yn.value == False %} active{% endif %}">
+                  <input type="radio" name="accessibility_reqs_yn" value="3" {% if form.accessibility_reqs_yn.value == False %} checked{% endif %}>No
+                </label>
+              </div>
+              {% bootstrap_field form.accessibility_reqs layout='inline' placeholder='Please tell us more' %}
+            </td>
+          </tr>
+
+          <tr>
+            <th class="col-md-4">Do you have any childcare requirements?</th>
+            <td>
+              <div class="btn-group" data-toggle="buttons">
+                <label class="btn btn-default{% if form.childcare_reqs_yn.value == True %} active{% endif %}">
+                  <input type="radio" name="childcare_reqs_yn" value="2" {% if form.childcare_reqs_yn.value == True %} checked{% endif %}>Yes
+                </label>
+                <label class="btn btn-default{% if form.childcare_reqs_yn.value == False %} active{% endif %}">
+                  <input type="radio" name="childcare_reqs_yn" value="3" {% if form.childcare_reqs_yn.value == False %} checked{% endif %}>No
+                </label>
+              </div>
+              {% bootstrap_field form.childcare_reqs layout='inline' placeholder='Please tell us more' %}
+            </td>
+          </tr>
+
+          <tr>
+            <th class="col-md-4">Do you have any dietary requirements?</th>
+            <td>
+              <div class="btn-group" data-toggle="buttons">
+                <label class="btn btn-default{% if form.dietary_reqs_yn.value == True %} active{% endif %}">
+                  <input type="radio" name="dietary_reqs_yn" value="2" {% if form.dietary_reqs_yn.value == True %} checked{% endif %}>Yes
+                </label>
+                <label class="btn btn-default{% if form.dietary_reqs_yn.value == False %} active{% endif %}">
+                  <input type="radio" name="dietary_reqs_yn" value="3" {% if form.dietary_reqs_yn.value == False %} checked{% endif %}>No
+                </label>
+              </div>
+              {% bootstrap_field form.dietary_reqs layout='inline' placeholder='Please tell us more' %}
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <div>
+        <h3>Demographics</h3>
+
+        <p>All fields are optional, and if you'd prefer not to share this information with us, just click "Don't ask me about this" below.</p>
+
+        <p><a href="">Why do we collect this information?</a></p>
+
+        <table class="table">
+          <tr>
+            <th class="col-md-4">Don't ask me about this</th>
+            <td><input type="checkbox" name="dont_ask_demographics" id="id_dont_ask_demographics"{% if form.dont_ask_demographics.value == True %} checked{% endif %} /></td>
+          </tr>
+          <tr class="demographics-field">
+            <th class="col-md-4">Year of birth</th>
+            <td>{% bootstrap_field form.year_of_birth layout='inline' %}</td>
+          </tr>
+          <tr class="demographics-field">
+            <th class="col-md-4">Gender</th>
+            <td>{% bootstrap_field form.gender layout='inline' %}</td>
+          </tr>
+          <tr class="demographics-field">
+            <th class="col-md-4">Ethnicity</th>
+            <td>{% bootstrap_field form.ethnicity layout='inline' %}</td>
+          </tr>
+          <tr class="demographics-field">
+            <th class="col-md-4">Nationality</th>
+            <td>{% bootstrap_field form.nationality layout='inline' %}</td>
+          </tr>
+          <tr class="demographics-field">
+            <th class="col-md-4">Country of residence</th>
+            <td>{% bootstrap_field form.country_of_residence layout='inline' %}</td>
+          </tr>
+        </table>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Update my profile</button>
     </form>
-
-    <h3>Why do we collect this information?</h3>
-
-    <p>TODO</p>
   </div>
 </div>
 {% endblock %}

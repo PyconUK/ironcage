@@ -1,81 +1,107 @@
 from django.test import TestCase
 
-from tickets.tests import factories as tickets_factories
-
 from . import factories
 
 
-class ProfileTest(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.alice = factories.create_user()
-
-    def setUp(self):
-        self.client.force_login(self.alice)
-
+class ProfileTests(TestCase):
     def test_get_profile_when_not_authenticated(self):
-        self.client.logout()
         rsp = self.client.get('/profile/', follow=True)
         self.assertRedirects(rsp, '/accounts/login/?next=/profile/')
 
-    def test_get_profile_with_no_ticket(self):
+    def test_get_profile_for_user_with_empty_profile(self):
+        self.client.force_login(factories.create_user())
         rsp = self.client.get('/profile/')
-        self.assertContains(rsp, '<a href="/tickets/orders/new/">Buy one now!</a>', html=True)
+        for k, v in [
+            ['Name', 'Alice'],
+            ['Email', 'alice@example.com'],
+            ['Accessibility', 'unknown'],
+            ['Childcare', 'unknown'],
+            ['Dietary', 'unknown'],
+            ['Year of birth', 'unknown'],
+            ['Gender', 'unknown'],
+            ['Ethnicity', 'unknown'],
+            ['Nationality', 'unknown'],
+            ['Country of residence', 'unknown'],
+        ]:
+            self.assertContains(rsp, f'<tr><th class="col-md-4">{k}</th><td>{v}</td></tr>', html=True)
+        self.assertNotContains(rsp, 'You have opted not to share demographic information with us')
 
-    def test_get_profile_with_ticket(self):
-        tickets_factories.create_ticket(self.alice)
-
+    def test_get_profile_for_user_with_full_profile(self):
+        self.client.force_login(factories.create_user_with_full_profile())
         rsp = self.client.get('/profile/')
-        self.assertNotContains(rsp, '<a href="/tickets/orders/new/">Buy one now!</a>', html=True)
-        self.assertContains(rsp, 'You have a ticket for Thursday, Friday, Saturday')
+        for k, v in [
+            ['Name', 'Alice'],
+            ['Email', 'alice@example.com'],
+            ['Accessibility', 'none'],
+            ['Childcare', 'none'],
+            ['Dietary', 'Vegan'],
+            ['Year of birth', '1985'],
+            ['Gender', 'Female'],
+            ['Ethnicity', 'Mixed'],
+            ['Nationality', 'British'],
+            ['Country of residence', 'United Kingdom'],
+        ]:
+            self.assertContains(rsp, f'<tr><th class="col-md-4">{k}</th><td>{v}</td></tr>', html=True)
+        self.assertNotContains(rsp, 'You have opted not to share demographic information with us')
+
+    def test_get_profile_for_user_with_dont_ask_demographics_set(self):
+        self.client.force_login(factories.create_user_with_dont_ask_demographics_set())
+        rsp = self.client.get('/profile/')
+        self.assertContains(rsp, 'You have opted not to share demographic information with us')
 
 
 class EditProfileTests(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.alice = factories.create_user(year_of_birth=1985)
-
-    def setUp(self):
-        self.alice.refresh_from_db()
-        self.client.force_login(self.alice)
-
     def test_post_update(self):
+        alice = factories.create_user(year_of_birth=1985)
+        self.client.force_login(alice)
+
         data = {
+            'name': 'Alice',
+            'email_addr': 'alice@example.com',
             'year_of_birth': 1986,
             'gender': 'Female',
         }
         self.client.post('/profile/edit/', data, follow=True)
-        self.alice.refresh_from_db()
+        alice.refresh_from_db()
 
-        self.assertEqual(self.alice.year_of_birth, 1986)
-        self.assertEqual(self.alice.gender, 'Female')
-        self.assertEqual(self.alice.dont_ask_demographics, False)
+        self.assertEqual(alice.year_of_birth, 1986)
+        self.assertEqual(alice.gender, 'Female')
+        self.assertEqual(alice.dont_ask_demographics, False)
 
-    def test_post_dont_ask_again(self):
+    def test_post_dont_ask_demographics(self):
+        alice = factories.create_user(year_of_birth=1985)
+        self.client.force_login(alice)
+
         data = {
-            'dont-ask-again': '',
+            'name': 'Alice',
+            'email_addr': 'alice@example.com',
+            'dont_ask_demographics': 'on',
+            'year_of_birth': 1986,
+            'gender': 'Female',
         }
         self.client.post('/profile/edit/', data, follow=True)
-        self.alice.refresh_from_db()
+        alice.refresh_from_db()
 
-        self.assertEqual(self.alice.year_of_birth, None)
-        self.assertEqual(self.alice.gender, None)
-        self.assertEqual(self.alice.dont_ask_demographics, True)
+        self.assertEqual(alice.year_of_birth, None)
+        self.assertEqual(alice.gender, None)
+        self.assertEqual(alice.dont_ask_demographics, True)
 
     def test_post_update_after_dont_ask_again(self):
-        self.alice.dont_ask_demographics = True
-        self.alice.save()
+        alice = factories.create_user_with_dont_ask_demographics_set(year_of_birth=1985)
+        self.client.force_login(alice)
 
         data = {
+            'name': 'Alice',
+            'email_addr': 'alice@example.com',
             'year_of_birth': 1986,
             'gender': 'Female',
         }
         self.client.post('/profile/edit/', data, follow=True)
-        self.alice.refresh_from_db()
+        alice.refresh_from_db()
 
-        self.assertEqual(self.alice.year_of_birth, 1986)
-        self.assertEqual(self.alice.gender, 'Female')
-        self.assertEqual(self.alice.dont_ask_demographics, False)
+        self.assertEqual(alice.year_of_birth, 1986)
+        self.assertEqual(alice.gender, 'Female')
+        self.assertEqual(alice.dont_ask_demographics, False)
 
 
 class LoginTests(TestCase):
@@ -149,7 +175,7 @@ class RegisterTests(TestCase):
         self.assertContains(rsp, 'This password is too short')
 
     def test_post_failure_email_taken(self):
-        tickets_factories.create_user('Alice')
+        factories.create_user()
         data = {
             'name': 'Alice',
             'email_addr': 'alice@example.com',
