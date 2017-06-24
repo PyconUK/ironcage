@@ -7,15 +7,12 @@
 {% if orders|length == 0 %}
 <li{% if sidebar %} role="presentation"{% endif %}><a href="{% url 'tickets:new_order' %}">Order conference tickets</a></li>
 {% elif orders|length == 1 %}
-<li{% if sidebar %} role="presentation"{% endif %}><a href="{% url 'tickets:order' orders.0.order_id %}">View your order{{ orders|pluralize }}</a></li>
+<li{% if sidebar %} role="presentation"{% endif %}><a href="{% url 'tickets:order' orders.0.order_id %}">View your order</a></li>
 <li{% if sidebar %} role="presentation"{% endif %}><a href="{% url 'tickets:new_order' %}">Order more conference tickets</a></li>
 {% else %}
-<li{% if sidebar %} role="presentation"{% endif %}>View your orders</li>
-<ul>
-  {% for order in orders %}
-  <li{% if sidebar %} role="presentation"{% endif %}><a href="{% url 'tickets:order' order.order_id %}">{{ order.order_id }}</a></li>
-  {% endfor %}
-</ul>
+{% for order in orders %}
+<li{% if sidebar %} role="presentation"{% endif %}><a href="{% url 'tickets:order' order.order_id %}">View order {{ order.order_id }}</a></li>
+{% endfor %}
 <li{% if sidebar %} role="presentation"{% endif %}><a href="{% url 'tickets:new_order' %}">Order more conference tickets</a></li>
 {% endif %}
 
