@@ -411,6 +411,8 @@ class TicketTests(TestCase):
         self.client.force_login(self.ticket.owner)
         rsp = self.client.get(f'/tickets/tickets/{self.ticket.ticket_id}/', follow=True)
         self.assertContains(rsp, f'Details of your ticket ({self.ticket.ticket_id})')
+        self.assertContains(rsp, 'Your profile is incomplete')
+        self.assertContains(rsp, 'Update your profile')
 
     def test_when_not_authenticated(self):
         rsp = self.client.get(f'/tickets/tickets/{self.ticket.ticket_id}/', follow=True)

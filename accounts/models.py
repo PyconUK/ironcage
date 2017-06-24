@@ -53,3 +53,22 @@ class User(AbstractBaseUser, PermissionsMixin):
             return self.tickets.get()
         except Ticket.DoesNotExist:
             return None
+
+    def profile_complete(self):
+        if any(v is None for v in [
+            self.accessibility_reqs_yn,
+            self.childcare_reqs_yn,
+            self.dietary_reqs_yn,
+        ]):
+            return False
+
+        if self.dont_ask_demographics:
+            return True
+
+        return all(v for v in [
+            self.year_of_birth,
+            self.gender,
+            self.ethnicity,
+            self.nationality,
+            self.country_of_residence
+        ])

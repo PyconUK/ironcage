@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.shortcuts import render
 
 
@@ -9,6 +10,9 @@ def index(request):
             'orders': user.orders.all(),
             'ticket': user.ticket(),
         }
+
+        if not user.profile_complete():
+            messages.warning(request, 'Your profile is incomplete')
     else:
         context = {}
 
