@@ -174,8 +174,13 @@ def order(request, order_id):
         messages.warning(request, 'Only the purchaser of an order can view the order')
         return redirect('index')
 
+    ticket = request.user.ticket()
+    if ticket is not None and ticket.order != order:
+        ticket = None
+
     context = {
         'order': order,
+        'ticket': ticket,
         'stripe_api_key': settings.STRIPE_API_KEY_PUBLISHABLE,
     }
     return render(request, 'tickets/order.html', context)
@@ -229,6 +234,9 @@ def ticket(request, ticket_id):
     if request.user != ticket.owner:
         messages.warning(request, 'Only the owner of a ticket can view the ticket')
         return redirect('index')
+
+    if not request.user.profile_complete():
+        messages.warning(request, 'Your profile is incomplete')
 
     context = {
         'ticket': ticket,

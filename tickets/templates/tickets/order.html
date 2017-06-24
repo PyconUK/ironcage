@@ -93,6 +93,9 @@
 <div class="row">
   <div class="col-md-6">
     <a href="{% url 'tickets:order_receipt' order.order_id %}" class="btn btn-primary">View receipt</a>
+    {% if ticket %}
+    <a href="{% url 'tickets:ticket' ticket.ticket_id %}" class="btn btn-primary">View your ticket</a>
+    {% endif %}
   </div>
 </div>
 {% endif %}

@@ -230,12 +230,29 @@ class OrderEditTests(TestCase):
 
 
 class OrderTests(TestCase):
-    def test_for_confirmed_order(self):
+    def test_for_confirmed_order_for_self(self):
         order = factories.create_confirmed_order_for_self()
         self.client.force_login(order.purchaser)
         rsp = self.client.get(f'/tickets/orders/{order.order_id}/', follow=True)
         self.assertContains(rsp, f'Details of your order ({order.order_id})')
         self.assertNotContains(rsp, '<div id="stripe-form">')
+        self.assertContains(rsp, 'View your ticket')
+
+    def test_for_confirmed_order_for_others(self):
+        order = factories.create_confirmed_order_for_others()
+        self.client.force_login(order.purchaser)
+        rsp = self.client.get(f'/tickets/orders/{order.order_id}/', follow=True)
+        self.assertContains(rsp, f'Details of your order ({order.order_id})')
+        self.assertNotContains(rsp, '<div id="stripe-form">')
+        self.assertNotContains(rsp, 'View your ticket')
+
+    def test_for_confirmed_order_for_self_and_others(self):
+        order = factories.create_confirmed_order_for_self_and_others()
+        self.client.force_login(order.purchaser)
+        rsp = self.client.get(f'/tickets/orders/{order.order_id}/', follow=True)
+        self.assertContains(rsp, f'Details of your order ({order.order_id})')
+        self.assertNotContains(rsp, '<div id="stripe-form">')
+        self.assertContains(rsp, 'View your ticket')
 
     def test_for_pending_order(self):
         order = factories.create_pending_order_for_self()
