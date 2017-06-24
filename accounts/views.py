@@ -21,6 +21,7 @@ def profile(request):
         'name': user.name,
         'orders': user.orders.all(),
         'ticket': user.ticket(),
+        'show_sidebar': True,
     }
     return render(request, 'accounts/profile.html', context)
 
@@ -39,6 +40,7 @@ def edit_profile(request):
         'form': form,
         'js_paths': ['accounts/profile_form.js'],
         'countries': countries,
+        'show_sidebar': True,
     }
     return render(request, 'accounts/edit_profile.html', context)
 

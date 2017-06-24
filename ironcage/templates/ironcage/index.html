@@ -15,28 +15,7 @@
 
 <p>Here, you can:</p>
 <ul>
-  {% if ticket %}
-  <li><a href="{% url 'tickets:ticket' ticket.ticket_id %}">View your conference ticket</a></li>
-  <li><a href="{% url 'accounts:profile' %}">Update your profile</a></li>
-  {% endif %}
-
-  {% if orders|length == 0 %}
-  <li><a href="{% url 'tickets:new_order' %}">Order conference tickets</a></li>
-  {% elif orders|length == 1 %}
-  <li><a href="{% url 'tickets:order' orders.0.order_id %}">View your order{{ orders|pluralize }}</a></li>
-  <li><a href="{% url 'tickets:new_order' %}">Order more conference tickets</a></li>
-  {% else %}
-  <li>View your orders</li>
-  <ul>
-    {% for order in orders %}
-    <li><a href="{% url 'tickets:order' order.order_id %}">{{ order.order_id }}</a></li>
-    {% endfor %}
-  </ul>
-  <li><a href="{% url 'tickets:new_order' %}">Order more conference tickets</a></li>
-  {% endif %}
-
-  <li>Make a submission to our Call for Participation</li>
-  <li>Apply for financial assistance</li>
+  {% include './_actions.html' %}
 </ul>
 
 {% endblock %}

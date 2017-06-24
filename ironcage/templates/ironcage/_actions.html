@@ -1,0 +1,24 @@
+{% with ticket=user.ticket orders=user.orders.all %}
+{% if ticket %}
+<li{% if sidebar %} role="presentation"{% endif %}><a href="{% url 'tickets:ticket' ticket.ticket_id %}">View your conference ticket</a></li>
+<li{% if sidebar %} role="presentation"{% endif %}><a href="{% url 'accounts:profile' %}">Update your profile</a></li>
+{% endif %}
+
+{% if orders|length == 0 %}
+<li{% if sidebar %} role="presentation"{% endif %}><a href="{% url 'tickets:new_order' %}">Order conference tickets</a></li>
+{% elif orders|length == 1 %}
+<li{% if sidebar %} role="presentation"{% endif %}><a href="{% url 'tickets:order' orders.0.order_id %}">View your order{{ orders|pluralize }}</a></li>
+<li{% if sidebar %} role="presentation"{% endif %}><a href="{% url 'tickets:new_order' %}">Order more conference tickets</a></li>
+{% else %}
+<li{% if sidebar %} role="presentation"{% endif %}>View your orders</li>
+<ul>
+  {% for order in orders %}
+  <li{% if sidebar %} role="presentation"{% endif %}><a href="{% url 'tickets:order' order.order_id %}">{{ order.order_id }}</a></li>
+  {% endfor %}
+</ul>
+<li{% if sidebar %} role="presentation"{% endif %}><a href="{% url 'tickets:new_order' %}">Order more conference tickets</a></li>
+{% endif %}
+
+<li{% if sidebar %} role="presentation"{% endif %}><a>Make a submission to our Call for Participation</a></li>
+<li{% if sidebar %} role="presentation"{% endif %}><a>Apply for financial assistance</a></li>
+{% endwith %}
