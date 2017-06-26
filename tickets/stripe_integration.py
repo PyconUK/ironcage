@@ -17,3 +17,8 @@ def create_charge_for_order(order, token):
         source=token,
         # TODO Should we use include idempotent_key here?
     )
+
+
+def refund_charge(charge_id):
+    set_stripe_api_key()
+    stripe.Refund.create(charge=charge_id)

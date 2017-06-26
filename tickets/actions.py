@@ -1,10 +1,11 @@
 import stripe
 
 from django.db import transaction
+from django.db.utils import IntegrityError
 
 from .mailer import send_invitation_mail, send_order_confirmation_mail
 from .models import Order
-from .stripe_integration import create_charge_for_order
+from .stripe_integration import create_charge_for_order, refund_charge
 
 
 def create_pending_order(purchaser, rate, days_for_self=None, email_addrs_and_days_for_others=None, company_details=None):
@@ -30,6 +31,9 @@ def process_stripe_charge(order, token):
         confirm_order(order, charge.id, charge.created)
     except stripe.error.CardError as e:
         mark_order_as_failed(order, e._message)
+    except IntegrityError:
+        refund_charge(charge.id)
+        mark_order_as_errored_after_charge(order, charge.id)
 
 
 def confirm_order(order, charge_id, charge_created):
@@ -42,6 +46,11 @@ def confirm_order(order, charge_id, charge_created):
 def mark_order_as_failed(order, charge_failure_reason):
     with transaction.atomic():
         order.mark_as_failed(charge_failure_reason)
+
+
+def mark_order_as_errored_after_charge(order, charge_id):
+    with transaction.atomic():
+        order.march_as_errored_after_charge(charge_id)
 
 
 def send_receipt(order):

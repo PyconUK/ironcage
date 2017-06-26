@@ -275,6 +275,16 @@ class MarkOrderAsFailed(TestCase):
         self.assertEqual(order.status, 'failed')
 
 
+class MarkOrderAsErroredAfterCharge(TestCase):
+    def test_mark_order_as_errored_after_charge(self):
+        order = factories.create_pending_order_for_self()
+
+        actions.mark_order_as_errored_after_charge(order, 'ch_abcdefghijklmnopqurstuvw')
+
+        self.assertEqual(order.stripe_charge_id, 'ch_abcdefghijklmnopqurstuvw')
+        self.assertEqual(order.status, 'errored')
+
+
 class ProcessStripeChargeTests(TestCase):
     def setUp(self):
         self.order = factories.create_pending_order_for_self()
@@ -293,6 +303,16 @@ class ProcessStripeChargeTests(TestCase):
         self.order.refresh_from_db()
         self.assertEqual(self.order.status, 'failed')
 
+    def test_process_stripe_charge_error_after_charge(self):
+        factories.create_confirmed_order_for_self(self.order.purchaser)
+        token = 'tok_ abcdefghijklmnopqurstuvwx'
+
+        with utils.patched_charge_creation_success(), utils.patched_refund_creation_expected():
+            actions.process_stripe_charge(self.order, token)
+
+        self.order.refresh_from_db()
+        self.assertEqual(self.order.status, 'errored')
+        self.assertEqual(self.order.stripe_charge_id, 'ch_abcdefghijklmnopqurstuvw')
 
 class TicketInvitationTests(TestCase):
     def test_claim_ticket_invitation(self):

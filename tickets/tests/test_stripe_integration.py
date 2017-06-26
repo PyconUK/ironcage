@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 import stripe
 
 from django.test import TestCase
@@ -27,3 +29,8 @@ class StripeIntegrationTests(TestCase):
         with self.assertRaises(stripe.error.CardError):
             with utils.patched_charge_creation_failure():
                 stripe_integration.create_charge_for_order(self.order, token)
+
+    def test_refund_charge(self):
+        with utils.patched_refund_creation_expected() as mock:
+            stripe_integration.refund_charge('ch_abcdefghijklmnopqurstuvw')
+        mock.assert_called_with(charge='ch_abcdefghijklmnopqurstuvw')

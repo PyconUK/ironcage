@@ -38,3 +38,10 @@ def patched_charge_creation_failure():
     with patch('stripe.Charge.create') as mock:
         mock.side_effect = card_error
         yield
+
+
+@contextmanager
+def patched_refund_creation_expected():
+    with patch('stripe.Refund.create') as mock:
+        yield mock
+    mock.assert_called()
