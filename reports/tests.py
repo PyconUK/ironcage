@@ -44,7 +44,6 @@ class TestAttendanceByDayReport(TestCase):
 class TestTicketSalesReport(TestCase):
     @classmethod
     def setUpTestData(cls):
-        user = tickets_factories.create_user()
         tickets_factories.create_ticket(num_days=1)
         tickets_factories.create_ticket(num_days=2, rate='corporate')
         tickets_factories.create_ticket(num_days=3)

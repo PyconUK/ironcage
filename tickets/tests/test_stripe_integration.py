@@ -1,5 +1,3 @@
-from unittest.mock import patch
-
 import stripe
 
 from django.test import TestCase

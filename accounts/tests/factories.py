@@ -3,6 +3,7 @@ from accounts.models import User
 
 email_ix = 0
 
+
 def create_user(name='Alice', **kwargs):
     if 'email_addr' not in kwargs:
         global email_ix

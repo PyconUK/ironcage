@@ -29,7 +29,7 @@ class IndexTests(TestCase):
 
     def test_when_has_ticket_and_full_profile(self):
         user = account_factories.create_user_with_full_profile()
-        ticket = ticket_factories.create_ticket(user)
+        ticket_factories.create_ticket(user)
         self.client.force_login(user)
 
         rsp = self.client.get('/')
@@ -59,4 +59,5 @@ class IndexTests(TestCase):
 
         rsp = self.client.get('/')
         self.assertContains(rsp, f'<a href="/tickets/orders/{order1.order_id}/">View order {order1.order_id}</a>', html=True)
+        self.assertContains(rsp, f'<a href="/tickets/orders/{order2.order_id}/">View order {order2.order_id}</a>', html=True)
         self.assertContains(rsp, '<a href="/tickets/orders/new/">Order more conference tickets</a>', html=True)

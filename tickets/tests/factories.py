@@ -5,6 +5,7 @@ from tickets import actions
 
 email_ix = 0
 
+
 def create_user(name='Alice', email_addr=None):
     if email_addr is None:
         global email_ix

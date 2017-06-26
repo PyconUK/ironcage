@@ -314,6 +314,7 @@ class ProcessStripeChargeTests(TestCase):
         self.assertEqual(self.order.status, 'errored')
         self.assertEqual(self.order.stripe_charge_id, 'ch_abcdefghijklmnopqurstuvw')
 
+
 class TicketInvitationTests(TestCase):
     def test_claim_ticket_invitation(self):
         factories.create_confirmed_order_for_others()
