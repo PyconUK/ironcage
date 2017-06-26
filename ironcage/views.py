@@ -7,5 +7,11 @@ def index(request):
 
     if user.is_authenticated() and not user.profile_complete():
         messages.warning(request, 'Your profile is incomplete')
+        context = {
+            'ticket': user.get_ticket(),
+            'orders': user.orders.all(),
+        }
+    else:
+        context = {}
 
-    return render(request, 'ironcage/index.html')
+    return render(request, 'ironcage/index.html', context)

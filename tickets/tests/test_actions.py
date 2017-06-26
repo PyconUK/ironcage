@@ -21,7 +21,7 @@ class CreatePendingOrderTests(TestCase):
         )
 
         self.assertEqual(self.alice.orders.count(), 1)
-        self.assertEqual(self.alice.tickets.count(), 0)
+        self.assertIsNone(self.alice.get_ticket())
 
         self.assertEqual(order.purchaser, self.alice)
         self.assertEqual(order.status, 'pending')
@@ -39,7 +39,7 @@ class CreatePendingOrderTests(TestCase):
         )
 
         self.assertEqual(self.alice.orders.count(), 1)
-        self.assertEqual(self.alice.tickets.count(), 0)
+        self.assertIsNone(self.alice.get_ticket())
 
         self.assertEqual(order.purchaser, self.alice)
         self.assertEqual(order.status, 'pending')
@@ -58,7 +58,7 @@ class CreatePendingOrderTests(TestCase):
         )
 
         self.assertEqual(self.alice.orders.count(), 1)
-        self.assertEqual(self.alice.tickets.count(), 0)
+        self.assertIsNone(self.alice.get_ticket())
 
         self.assertEqual(order.purchaser, self.alice)
         self.assertEqual(order.status, 'pending')
@@ -76,7 +76,7 @@ class CreatePendingOrderTests(TestCase):
         )
 
         self.assertEqual(self.alice.orders.count(), 1)
-        self.assertEqual(self.alice.tickets.count(), 0)
+        self.assertIsNone(self.alice.get_ticket())
 
         self.assertEqual(order.purchaser, self.alice)
         self.assertEqual(order.status, 'pending')
@@ -197,9 +197,9 @@ class ConfirmOrderTests(TestCase):
         self.assertEqual(order.status, 'successful')
 
         self.assertEqual(order.purchaser.orders.count(), 1)
-        self.assertEqual(order.purchaser.tickets.count(), 1)
+        self.assertIsNotNone(order.purchaser.get_ticket())
 
-        ticket = order.purchaser.ticket()
+        ticket = order.purchaser.get_ticket()
         self.assertEqual(ticket.days(), ['Thursday', 'Friday', 'Saturday'])
 
         self.assertEqual(len(mail.outbox), 1)
@@ -214,7 +214,7 @@ class ConfirmOrderTests(TestCase):
         self.assertEqual(order.status, 'successful')
 
         self.assertEqual(order.purchaser.orders.count(), 1)
-        self.assertEqual(order.purchaser.tickets.count(), 0)
+        self.assertIsNone(order.purchaser.get_ticket())
 
         ticket = TicketInvitation.objects.get(email_addr='bob@example.com').ticket
         self.assertEqual(ticket.days(), ['Friday', 'Saturday'])
@@ -234,9 +234,9 @@ class ConfirmOrderTests(TestCase):
         self.assertEqual(order.status, 'successful')
 
         self.assertEqual(order.purchaser.orders.count(), 1)
-        self.assertEqual(order.purchaser.tickets.count(), 1)
+        self.assertIsNotNone(order.purchaser.get_ticket())
 
-        ticket = order.purchaser.ticket()
+        ticket = order.purchaser.get_ticket()
         self.assertEqual(ticket.days(), ['Thursday', 'Friday', 'Saturday'])
 
         ticket = TicketInvitation.objects.get(email_addr='bob@example.com').ticket
@@ -259,9 +259,9 @@ class ConfirmOrderTests(TestCase):
         self.assertEqual(order.status, 'successful')
 
         self.assertEqual(order.purchaser.orders.count(), 1)
-        self.assertEqual(order.purchaser.tickets.count(), 1)
+        self.assertIsNotNone(order.purchaser.get_ticket())
 
-        ticket = order.purchaser.ticket()
+        ticket = order.purchaser.get_ticket()
         self.assertEqual(ticket.days(), ['Thursday', 'Friday', 'Saturday'])
 
 
@@ -302,4 +302,4 @@ class TicketInvitationTests(TestCase):
         invitation = TicketInvitation.objects.get(email_addr='bob@example.com')
         actions.claim_ticket_invitation(bob, invitation)
 
-        self.assertIsNotNone(bob.tickets.get())
+        self.assertIsNotNone(bob.get_ticket())

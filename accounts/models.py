@@ -48,9 +48,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         '''This is used by the admin.'''
         return self.name
 
-    def ticket(self):
+    def get_ticket(self):
         try:
-            return self.tickets.get()
+            return self.ticket
         except Ticket.DoesNotExist:
             return None
 

@@ -275,7 +275,7 @@ class Order(models.Model):
 
 class Ticket(models.Model):
     order = models.ForeignKey(Order, related_name='tickets', on_delete=models.CASCADE)
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='tickets', null=True, on_delete=models.CASCADE)
+    owner = models.OneToOneField(settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE)
     thu = models.BooleanField()
     fri = models.BooleanField()
     sat = models.BooleanField()

@@ -39,7 +39,7 @@ class UserTests(TestCase):
 
         tickets_factories.create_ticket(user)
 
-        self.assertIsNotNone(user.ticket())
+        self.assertIsNotNone(user.get_ticket())
 
     def test_ticket_when_none(self):
         user = User.objects.create_user(
@@ -48,4 +48,4 @@ class UserTests(TestCase):
             password='secret',
         )
 
-        self.assertIsNone(user.ticket())
+        self.assertIsNone(user.get_ticket())

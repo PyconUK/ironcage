@@ -1,4 +1,3 @@
-{% with ticket=user.ticket orders=user.orders.all %}
 {% if ticket %}
 <li{% if sidebar %} role="presentation"{% endif %}><a href="{% url 'tickets:ticket' ticket.ticket_id %}">View your conference ticket</a></li>
 <li{% if sidebar %} role="presentation"{% endif %}><a href="{% url 'accounts:profile' %}">Update your profile</a></li>
@@ -18,4 +17,3 @@
 
 <li{% if sidebar %} role="presentation"{% endif %}><a>Make a submission to our Call for Participation</a></li>
 <li{% if sidebar %} role="presentation"{% endif %}><a>Apply for financial assistance</a></li>
-{% endwith %}

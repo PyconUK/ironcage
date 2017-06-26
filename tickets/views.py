@@ -75,7 +75,7 @@ def new_order(request):
         'self_form': self_form,
         'others_formset': others_formset,
         'company_details_form': company_details_form,
-        'user_can_buy_for_self': request.user.is_authenticated() and not request.user.ticket(),
+        'user_can_buy_for_self': request.user.is_authenticated() and not request.user.get_ticket(),
         'rates_table_data': _rates_table_data(),
         'rates_data': _rates_data(),
         'js_paths': ['tickets/order_form.js'],
@@ -157,7 +157,7 @@ def order_edit(request, order_id):
         'self_form': self_form,
         'others_formset': others_formset,
         'company_details_form': company_details_form,
-        'user_can_buy_for_self': not request.user.ticket(),
+        'user_can_buy_for_self': not request.user.get_ticket(),
         'rates_table_data': _rates_table_data(),
         'rates_data': _rates_data(),
         'js_paths': ['tickets/order_form.js'],
@@ -174,7 +174,7 @@ def order(request, order_id):
         messages.warning(request, 'Only the purchaser of an order can view the order')
         return redirect('index')
 
-    ticket = request.user.ticket()
+    ticket = request.user.get_ticket()
     if ticket is not None and ticket.order != order:
         ticket = None
 
@@ -253,7 +253,7 @@ def ticket_invitation(request, token):
         messages.info(request, 'You need to create an account to claim your invitation')
         return redirect(settings.LOGIN_URL)
 
-    if request.user.ticket() is not None:
+    if request.user.get_ticket() is not None:
         messages.error(request, 'You already have a ticket!  Please contact pyconuk-enquiries@python.org to arrange transfer of this invitaiton to somebody else.')
         return redirect('index')
 
