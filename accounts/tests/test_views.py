@@ -9,7 +9,7 @@ class ProfileTests(TestCase):
         self.assertRedirects(rsp, '/accounts/login/?next=/profile/')
 
     def test_get_profile_for_user_with_empty_profile(self):
-        self.client.force_login(factories.create_user())
+        self.client.force_login(factories.create_user(email_addr='alice@example.com'))
         rsp = self.client.get('/profile/')
         for k, v in [
             ['Name', 'Alice'],
@@ -27,7 +27,7 @@ class ProfileTests(TestCase):
         self.assertNotContains(rsp, 'You have opted not to share demographic information with us')
 
     def test_get_profile_for_user_with_full_profile(self):
-        self.client.force_login(factories.create_user_with_full_profile())
+        self.client.force_login(factories.create_user_with_full_profile(email_addr='alice@example.com'))
         rsp = self.client.get('/profile/')
         for k, v in [
             ['Name', 'Alice'],
@@ -107,7 +107,7 @@ class EditProfileTests(TestCase):
 class LoginTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.alice = factories.create_user(password='Pa55w0rd')
+        cls.alice = factories.create_user(email_addr='alice@example.com', password='Pa55w0rd')
 
     def test_get(self):
         rsp = self.client.get('/accounts/login/?next=/tickets/orders/new/')
@@ -175,7 +175,7 @@ class RegisterTests(TestCase):
         self.assertContains(rsp, 'This password is too short')
 
     def test_post_failure_email_taken(self):
-        factories.create_user()
+        factories.create_user(email_addr='alice@example.com')
         data = {
             'name': 'Alice',
             'email_addr': 'alice@example.com',
