@@ -174,6 +174,11 @@ def order(request, order_id):
         messages.warning(request, 'Only the purchaser of an order can view the order')
         return redirect('index')
 
+    if order.payment_required():
+        if request.user.get_ticket() is not None and order.unconfirmed_details['days_for_self']:
+            messages.warning(request, 'You already have a ticket.  Please amend your order.')
+            return redirect('tickets:order_edit', order.order_id)
+
     if order.status == 'failed':
         messages.error(request, f'Payment for this order failed ({order.stripe_charge_failure_reason})')
     elif order.status == 'errored':
@@ -204,6 +209,10 @@ def order_payment(request, order_id):
     if not order.payment_required():
         messages.error(request, 'This order has already been paid')
         return redirect(order)
+
+    if request.user.get_ticket() is not None and order.unconfirmed_details['days_for_self']:
+        messages.warning(request, 'You already have a ticket.  Please amend your order.  Your card has not been charged.')
+        return redirect('tickets:order_edit', order.order_id)
 
     token = request.POST['stripeToken']
     process_stripe_charge(order, token)

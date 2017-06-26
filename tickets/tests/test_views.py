@@ -257,12 +257,21 @@ class OrderTests(TestCase):
     def test_for_pending_order(self):
         user = factories.create_user(email_addr='alice@example.com')
         order = factories.create_pending_order_for_self(user)
-        self.client.force_login(order.purchaser)
+        self.client.force_login(user)
         rsp = self.client.get(f'/tickets/orders/{order.order_id}/', follow=True)
         self.assertContains(rsp, f'Details of your order ({order.order_id})')
         self.assertContains(rsp, '<div id="stripe-form">')
         self.assertContains(rsp, 'data-amount="9000"')
         self.assertContains(rsp, 'data-email="alice@example.com"')
+
+    def test_for_pending_order_for_self_when_already_has_ticket(self):
+        user = factories.create_user(email_addr='alice@example.com')
+        factories.create_confirmed_order_for_self(user)
+        order = factories.create_pending_order_for_self(user)
+        self.client.force_login(user)
+        rsp = self.client.get(f'/tickets/orders/{order.order_id}/', follow=True)
+        self.assertRedirects(rsp, f'/tickets/orders/{order.order_id}/edit/')
+        self.assertContains(rsp, 'You already have a ticket.  Please amend your order.')
 
     def test_for_failed_order(self):
         order = factories.create_failed_order()
@@ -325,6 +334,17 @@ class OrderPaymentTests(TestCase):
         self.assertContains(rsp, 'Payment for this order failed (Your card was declined.)')
         self.assertContains(rsp, '<th>Date</th><td>Unpaid</td>', html=True)
         self.assertContains(rsp, '<div id="stripe-form">')
+
+    def test_when_already_has_ticket(self):
+        factories.create_confirmed_order_for_self(self.order.purchaser)
+        self.client.force_login(self.order.purchaser)
+        rsp = self.client.post(
+            f'/tickets/orders/{self.order.order_id}/payment/',
+            {'stripeToken': 'tok_abcdefghijklmnopqurstuvwx'},
+            follow=True,
+        )
+        self.assertRedirects(rsp, f'/tickets/orders/{self.order.order_id}/edit/')
+        self.assertContains(rsp, 'You already have a ticket.  Please amend your order.  Your card has not been charged.')
 
     def test_when_already_paid(self):
         factories.confirm_order(self.order)
