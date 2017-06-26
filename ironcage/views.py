@@ -6,7 +6,8 @@ def index(request):
     user = request.user
 
     if user.is_authenticated() and not user.profile_complete():
-        messages.warning(request, 'Your profile is incomplete')
+        if user.get_ticket() is not None:
+            messages.warning(request, 'Your profile is incomplete')
         context = {
             'ticket': user.get_ticket(),
             'orders': user.orders.all(),
