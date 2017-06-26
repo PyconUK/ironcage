@@ -255,7 +255,8 @@ class OrderTests(TestCase):
         self.assertContains(rsp, 'View your ticket')
 
     def test_for_pending_order(self):
-        order = factories.create_pending_order_for_self()
+        user = factories.create_user(email_addr='alice@example.com')
+        order = factories.create_pending_order_for_self(user)
         self.client.force_login(order.purchaser)
         rsp = self.client.get(f'/tickets/orders/{order.order_id}/', follow=True)
         self.assertContains(rsp, f'Details of your order ({order.order_id})')

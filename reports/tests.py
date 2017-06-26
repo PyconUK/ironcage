@@ -15,12 +15,11 @@ class TestIndex(TestCase):
 class TestAttendanceByDayReport(TestCase):
     @classmethod
     def setUpTestData(cls):
-        user = tickets_factories.create_user()
-        tickets_factories.create_ticket(user, num_days=1)
-        tickets_factories.create_ticket(user, num_days=2, rate='corporate')
-        tickets_factories.create_ticket(user, num_days=3)
-        tickets_factories.create_ticket(user, num_days=4, rate='corporate')
-        tickets_factories.create_ticket(user, num_days=5)
+        tickets_factories.create_ticket(num_days=1)
+        tickets_factories.create_ticket(num_days=2, rate='corporate')
+        tickets_factories.create_ticket(num_days=3)
+        tickets_factories.create_ticket(num_days=4, rate='corporate')
+        tickets_factories.create_ticket(num_days=5)
 
     def test_get_context_data(self):
         report = views.AttendanceByDayReport()
@@ -46,11 +45,11 @@ class TestTicketSalesReport(TestCase):
     @classmethod
     def setUpTestData(cls):
         user = tickets_factories.create_user()
-        tickets_factories.create_ticket(user, num_days=1)
-        tickets_factories.create_ticket(user, num_days=2, rate='corporate')
-        tickets_factories.create_ticket(user, num_days=3)
-        tickets_factories.create_ticket(user, num_days=4, rate='corporate')
-        tickets_factories.create_ticket(user, num_days=5)
+        tickets_factories.create_ticket(num_days=1)
+        tickets_factories.create_ticket(num_days=2, rate='corporate')
+        tickets_factories.create_ticket(num_days=3)
+        tickets_factories.create_ticket(num_days=4, rate='corporate')
+        tickets_factories.create_ticket(num_days=5)
 
     def test_get_context_data(self):
         report = views.TicketSalesReport()
@@ -82,8 +81,8 @@ class TestTicketSalesReport(TestCase):
 class TestOrdersReport(TestCase):
     @classmethod
     def setUpTestData(cls):
-        alice = tickets_factories.create_user('Alice')
-        bob = tickets_factories.create_user('Bob')
+        alice = tickets_factories.create_user('Alice', 'alice@example.com')
+        bob = tickets_factories.create_user('Bob', 'bob@example.com')
         cls.order1 = tickets_factories.create_pending_order_for_self(alice, num_days=1)
         cls.order2 = tickets_factories.create_confirmed_order_for_self(bob, num_days=2)
 
@@ -107,8 +106,8 @@ class TestOrdersReport(TestCase):
 class TestUnpaidOrdersReport(TestCase):
     @classmethod
     def setUpTestData(cls):
-        alice = tickets_factories.create_user('Alice')
-        bob = tickets_factories.create_user('Bob')
+        alice = tickets_factories.create_user('Alice', 'alice@example.com')
+        bob = tickets_factories.create_user('Bob', 'bob@example.com')
         cls.order1 = tickets_factories.create_pending_order_for_self(alice, num_days=1)
         tickets_factories.create_confirmed_order_for_self(bob, num_days=2)
 
