@@ -3,14 +3,10 @@
 {% block content %}
 <h1>Details of your order ({{ order.order_id }})</h1>
 
-{% if order.status == 'failed' %}
-<div class="alert alert-danger" role="alert">Payment for this order failed ({{ order.stripe_charge_failure_reason }})</div>
-{% endif %}
-
-{% if order.status == 'successful' %}
-<p>You have ordered {{ order.num_tickets }} ticket{{ order.num_tickets|pluralize }} at the {{ order.rate }} rate.</p>
-{% else %}
+{% if order.payment_required %}
 <p>You are ordering {{ order.num_tickets }} ticket{{ order.num_tickets|pluralize }} at the {{ order.rate }} rate.</p>
+{% else %}
+<p>You have ordered {{ order.num_tickets }} ticket{{ order.num_tickets|pluralize }} at the {{ order.rate }} rate.</p>
 {% endif %}
 
 <div class="row">
@@ -89,7 +85,7 @@
   </form>
 
 </div>
-{% else %}
+{% elif not order.status == 'errored' %}
 <div class="row">
   <div class="col-md-6">
     <a href="{% url 'tickets:order_receipt' order.order_id %}" class="btn btn-primary">View receipt</a>

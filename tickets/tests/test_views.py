@@ -264,6 +264,24 @@ class OrderTests(TestCase):
         self.assertContains(rsp, 'data-amount="9000"')
         self.assertContains(rsp, 'data-email="alice@example.com"')
 
+    def test_for_failed_order(self):
+        order = factories.create_failed_order()
+        self.client.force_login(order.purchaser)
+        rsp = self.client.get(f'/tickets/orders/{order.order_id}/', follow=True)
+        self.assertContains(rsp, f'Details of your order ({order.order_id})')
+        self.assertContains(rsp, 'Payment for this order failed (Your card was declined.)')
+        self.assertContains(rsp, '<div id="stripe-form">')
+        self.assertNotContains(rsp, 'View your ticket')
+
+    def test_for_errored_order(self):
+        order = factories.create_errored_order()
+        self.client.force_login(order.purchaser)
+        rsp = self.client.get(f'/tickets/orders/{order.order_id}/', follow=True)
+        self.assertContains(rsp, f'Details of your order ({order.order_id})')
+        self.assertContains(rsp, 'There was an error creating your order')
+        self.assertNotContains(rsp, '<div id="stripe-form">')
+        self.assertNotContains(rsp, 'View your ticket')
+
     def test_when_not_authenticated(self):
         order = factories.create_confirmed_order_for_self()
         rsp = self.client.get(f'/tickets/orders/{order.order_id}/', follow=True)

@@ -174,6 +174,11 @@ def order(request, order_id):
         messages.warning(request, 'Only the purchaser of an order can view the order')
         return redirect('index')
 
+    if order.status == 'failed':
+        messages.error(request, f'Payment for this order failed ({order.stripe_charge_failure_reason})')
+    elif order.status == 'errored':
+        messages.error(request, 'There was an error creating your order.  You card may have been charged, but if so the charge will have been refunded.  Please make a new order.')
+
     ticket = request.user.get_ticket()
     if ticket is not None and ticket.order != order:
         ticket = None

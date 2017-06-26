@@ -65,6 +65,14 @@ def confirm_order(order):
     actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvw', 1495355163)
 
 
+def mark_order_as_failed(order):
+    actions.mark_order_as_failed(order, 'Your card was declined.')
+
+
+def mark_order_as_errored_after_charge(order):
+    actions.mark_order_as_errored_after_charge(order, 'ch_abcdefghijklmnopqurstuvw')
+
+
 def create_confirmed_order_for_self(user=None, rate=None, num_days=None):
     order = create_pending_order_for_self(user, rate, num_days)
     confirm_order(order)
@@ -80,6 +88,18 @@ def create_confirmed_order_for_others(user=None, rate=None):
 def create_confirmed_order_for_self_and_others(user=None, rate=None):
     order = create_pending_order_for_self_and_others(user, rate)
     confirm_order(order)
+    return order
+
+
+def create_failed_order(user=None, rate=None):
+    order = create_pending_order_for_self(user, rate)
+    mark_order_as_failed(order)
+    return order
+
+
+def create_errored_order(user=None, rate=None):
+    order = create_pending_order_for_self(user, rate)
+    mark_order_as_errored_after_charge(order)
     return order
 
 
