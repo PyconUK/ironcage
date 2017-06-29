@@ -8,9 +8,10 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.utils.crypto import get_random_string
 
+from ironcage.utils import Scrambler
+
 from .constants import DAYS
 from .prices import cost_excl_vat, cost_incl_vat
-from .utils import Scrambler
 
 
 class Order(models.Model):
