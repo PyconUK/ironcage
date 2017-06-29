@@ -1,0 +1,51 @@
+{% extends 'ironcage/base.html' %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-6 col-md-offset-3">
+    <h3>{{ proposal.full_title }}</h3>
+    <hr />
+
+    {% if not proposal.session_type == 'other' %}
+    <div>This is a proposal for a {{ proposal.session_type }}.</div>
+    <hr />
+    {% endif %}
+
+    <h4>{{ form.description.label }}</h4>
+    <div>{{ proposal.description }}</div>
+    <hr />
+
+    <h4>{{ form.description_private.label }}</h4>
+    <div>{{ proposal.description_private }}</div>
+    <hr />
+
+    <ul>
+      {% if proposal.aimed_at_new_programmers %}
+      <li>This talk is suitable for new programmers.</li>
+      {% endif %}
+
+      {% if proposal.aimed_at_teachers %}
+      <li>This talk is suitable for teachers.</li>
+      {% endif %}
+
+      {% if proposal.aimed_at_data_scientists %}
+      <li>This talk is suitable for data scientists.</li>
+      {% endif %}
+
+      {% if proposal.would_like_mentor %}
+      <li>You have requested assistance from a mentor.</li>
+      {% endif %}
+
+      {% if proposal.would_like_longer_slot %}
+      <li>You have requested a longer talk slot if available.</li>
+      {% endif %}
+    </ul>
+
+    {% if proposal.aimed_at_new_programmers or proposal.aimed_at_teachers or proposal.aimed_at_data_scientists or proposal.would_like_mentor or proposal.would_like_longer_slot %}
+    <hr />
+    {% endif %}
+
+    <a href="{% url 'cfp:proposal_edit' proposal.proposal_id %}" class="btn btn-primary">Update your proposal</a>
+  </div>
+</div>
+{% endblock %}

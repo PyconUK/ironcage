@@ -1,0 +1,23 @@
+{% extends 'ironcage/base.html' %}
+
+{% load bootstrap3 %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-6 col-md-offset-3">
+    <h1>New proposal</h1>
+    <hr />
+    <p>PyCon UK is a community conference, and we're looking for proposals of all sorts for talks, workshops, posters — or anything else — from all parts of the community.</p>
+
+    <p><a href="http://2017.pyconuk.org/cfp/">Read more about our Call for Participation</a>.</p>
+
+    <p>The Call for Participation will close at 1200 BST on August 10th.</p>
+    <hr />
+    {% if not request.user.is_authenticated %}
+    <p>Please <a href="{% url 'register' %}?next={{ request.path }}">sign up</a> or <a href="{% url 'login' %}?next={{ request.path }}">sign in</a> to make a submission.</p>
+    {% else %}
+    {% include './_proposal_form.html' %}
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% load bootstrap3 %}
+
+<form method="post">
+  {% csrf_token %}
+
+  {% bootstrap_field form.session_type %}
+  <hr />
+  {% bootstrap_field form.title %}
+  <hr />
+  {% bootstrap_field form.subtitle %}
+  <hr />
+  {% bootstrap_field form.copresenter_names %}
+  <hr />
+  {% bootstrap_field form.description %}
+  <hr />
+  {% bootstrap_field form.description_private %}
+  <hr />
+  <p>Is your session particularly suitable for:</p>
+  <div class="col-md-offset-1">
+    {% bootstrap_field form.aimed_at_new_programmers %}
+    {% bootstrap_field form.aimed_at_teachers %}
+    {% bootstrap_field form.aimed_at_data_scientists %}
+  </div>
+  <hr />
+  <p>Please tick if you would:</p>
+  <div class="col-md-offset-1">
+    {% bootstrap_field form.would_like_mentor %}
+    {% bootstrap_field form.would_like_longer_slot %}
+  </div>
+  <hr />
+  {% buttons %}
+  <button type="submit" class="btn btn-primary">Submit</button>
+  {% endbuttons %}
+</form>
+
