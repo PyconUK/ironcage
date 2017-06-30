@@ -34,3 +34,5 @@ class ErrorReportingTests(TestCase):
             self.client.get('/500/')
 
         self.assertEqual(len(mail.outbox), 1)
+        email = mail.outbox[0]
+        self.assertEqual(email.subject, '[Django] ERROR (EXTERNAL IP): Internal Server Error: /500/')
