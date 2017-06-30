@@ -8,3 +8,6 @@ DOMAIN = f'https://{ALLOWED_HOSTS[0]}'
 # SSL
 SECURE_SSL_REDIRECT = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# Slack
+SLACK_USERNAME = 'ironcage-log-bot-staging'
