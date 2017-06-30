@@ -2,6 +2,7 @@ from django.views.generic import TemplateView
 from django.shortcuts import render
 from django.utils.text import slugify
 
+from cfp.models import Proposal
 from tickets.constants import DAYS
 from tickets.models import Order, Ticket
 from tickets.prices import cost_incl_vat
@@ -165,6 +166,38 @@ class UnclaimedTicketsReport(ReportView, TicketsMixin):
         return Ticket.objects.filter(owner=None)
 
 
+class CFPSubmissionsReport(ReportView):
+    title = 'CFP Submissions'
+
+    headings = [
+        'ID',
+        'Title',
+        'Type',
+        'Proposer',
+        'New programmers?',
+        'Teachers?',
+        'Data scientists?',
+        'Mentor?',
+        'Longer slot?',
+    ]
+
+    def get_queryset(self):
+        return Proposal.objects.all()
+
+    def presenter(self, proposal):
+        return [
+            proposal.proposal_id,
+            proposal.full_title(),
+            proposal.session_type,
+            proposal.proposer.name,
+            '✔' if proposal.aimed_at_new_programmers else '✘',
+            '✔' if proposal.aimed_at_teachers else '✘',
+            '✔' if proposal.aimed_at_data_scientists else '✘',
+            '✔' if proposal.would_like_mentor else '✘',
+            '✔' if proposal.would_like_longer_slot else '✘',
+        ]
+
+
 reports = [
     AttendanceByDayReport,
     TicketSalesReport,
@@ -172,6 +205,7 @@ reports = [
     UnpaidOrdersReport,
     TicketsReport,
     UnclaimedTicketsReport,
+    CFPSubmissionsReport,
 ]
 
 
