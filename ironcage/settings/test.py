@@ -5,3 +5,7 @@ DOMAIN = 'http://testserver'
 
 # Disable sending Slack messaages in tests
 SLACK_BACKEND = 'ironcage.tests.slack_backends.TestBackend'
+
+# Admins for mailing errors to
+
+ADMINS = ['admin@example.com']

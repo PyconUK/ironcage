@@ -16,3 +16,7 @@ def index(request):
         context = {}
 
     return render(request, 'ironcage/index.html', context)
+
+
+def error(request):
+    1 / 0

@@ -159,10 +159,19 @@ LOGGING = {
         'console': {
             'class': 'logging.StreamHandler',
         },
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
+            'include_html': True,
+        },
+        'slack_admins': {
+            'level': 'ERROR',
+            'class': 'django_slack.log.SlackExceptionHandler',
+        },
     },
     'loggers': {
         'django': {
-            'handlers': ['console'],
+            'handlers': ['console', 'mail_admins', 'slack_admins'],
             'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
         },
     },
@@ -188,3 +197,8 @@ EMAIL_USE_TLS = True
 SLACK_TOKEN = os.environ.get('SLACK_TOKEN', ENVVAR_SENTINAL)
 SLACK_CHANNEL = '#ironcage-logs'
 SLACK_USERNAME = 'ironcage-log-bot'
+
+
+# Admins for mailing errors to
+
+ADMINS = os.environ.get('ADMINS', '').split(',')
