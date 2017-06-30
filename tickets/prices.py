@@ -1,13 +1,11 @@
 PRICES_EXCL_VAT = {
-    # These numbers are plucked out of the air
-    # If these values change, also update tickets.js
     'individual': {
         'ticket_price': 15,
-        'day_price': 20,
+        'day_price': 30,
     },
     'corporate': {
         'ticket_price': 30,
-        'day_price': 40,
+        'day_price': 60,
     },
 }
 

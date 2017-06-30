@@ -63,11 +63,11 @@ class TestTicketSalesReport(TestCase):
                 [5, 1, 0, 1],
             ],
             'ticket_cost_rows': [
-                [1, '£42', '£0', '£42'],
-                [2, '£0', '£132', '£132'],
-                [3, '£90', '£0', '£90'],
-                [4, '£0', '£228', '£228'],
-                [5, '£138', '£0', '£138'],
+                [1, '£54', '£0', '£54'],
+                [2, '£0', '£180', '£180'],
+                [3, '£126', '£0', '£126'],
+                [4, '£0', '£324', '£324'],
+                [5, '£198', '£0', '£198'],
             ]
         }
         self.assertEqual(report.get_context_data(), expected)
@@ -91,8 +91,8 @@ class TestOrdersReport(TestCase):
             'title': 'All orders',
             'headings': ['ID', 'Rate', 'Purchaser', 'Email', 'Tickets', 'Cost (incl. VAT)', 'Status'],
             'rows': [
-                [self.order1.order_id, 'individual', 'Alice', 'alice@example.com', 1, '£42', 'pending'],
-                [self.order2.order_id, 'individual', 'Bob', 'bob@example.com', 1, '£66', 'successful'],
+                [self.order1.order_id, 'individual', 'Alice', 'alice@example.com', 1, '£54', 'pending'],
+                [self.order2.order_id, 'individual', 'Bob', 'bob@example.com', 1, '£90', 'successful'],
             ],
         }
         self.assertEqual(report.get_context_data(), expected)
@@ -116,7 +116,7 @@ class TestUnpaidOrdersReport(TestCase):
             'title': 'Unpaid orders',
             'headings': ['ID', 'Rate', 'Purchaser', 'Email', 'Tickets', 'Cost (incl. VAT)', 'Status'],
             'rows': [
-                [self.order1.order_id, 'individual', 'Alice', 'alice@example.com', 1, '£42', 'pending'],
+                [self.order1.order_id, 'individual', 'Alice', 'alice@example.com', 1, '£54', 'pending'],
             ],
         }
         self.assertEqual(report.get_context_data(), expected)
@@ -140,9 +140,9 @@ class TestTicketsReport(TestCase):
             'title': 'All tickets',
             'headings': ['ID', 'Rate', 'Ticket holder', 'Days', 'Cost (incl. VAT)', 'Status'],
             'rows': [
-                [self.ticket1.ticket_id, 'individual', 'Alice', 'Thursday, Friday, Saturday', '£90', 'Assigned'],
-                [self.ticket2.ticket_id, 'individual', 'bob@example.com', 'Friday, Saturday', '£66', 'Unclaimed'],
-                [self.ticket3.ticket_id, 'individual', 'carol@example.com', 'Saturday, Sunday', '£66', 'Unclaimed'],
+                [self.ticket1.ticket_id, 'individual', 'Alice', 'Thursday, Friday, Saturday', '£126', 'Assigned'],
+                [self.ticket2.ticket_id, 'individual', 'bob@example.com', 'Friday, Saturday', '£90', 'Unclaimed'],
+                [self.ticket3.ticket_id, 'individual', 'carol@example.com', 'Saturday, Sunday', '£90', 'Unclaimed'],
             ],
         }
         self.assertEqual(report.get_context_data(), expected)
@@ -166,8 +166,8 @@ class TestUnclaimedTicketsReport(TestCase):
             'title': 'Unclaimed tickets',
             'headings': ['ID', 'Rate', 'Ticket holder', 'Days', 'Cost (incl. VAT)', 'Status'],
             'rows': [
-                [self.ticket2.ticket_id, 'individual', 'bob@example.com', 'Friday, Saturday', '£66', 'Unclaimed'],
-                [self.ticket3.ticket_id, 'individual', 'carol@example.com', 'Saturday, Sunday', '£66', 'Unclaimed'],
+                [self.ticket2.ticket_id, 'individual', 'bob@example.com', 'Friday, Saturday', '£90', 'Unclaimed'],
+                [self.ticket3.ticket_id, 'individual', 'carol@example.com', 'Saturday, Sunday', '£90', 'Unclaimed'],
             ],
         }
         self.assertEqual(report.get_context_data(), expected)

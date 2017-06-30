@@ -6,19 +6,19 @@ from . import factories
 class OrderTests(TestCase):
     def test_cost_incl_vat_for_confirmed_order(self):
         order = factories.create_confirmed_order_for_self_and_others()
-        self.assertEqual(order.cost_incl_vat(), 222)  # 222 == 3 * 18 + 7 * 24
+        self.assertEqual(order.cost_incl_vat(), 306)  # 306 == 3 * 18 + 7 * 24
 
     def test_cost_incl_vat_for_unconfirmed_order(self):
         order = factories.create_pending_order_for_self_and_others()
-        self.assertEqual(order.cost_incl_vat(), 222)  # 222 == 3 * 18 + 7 * 24
+        self.assertEqual(order.cost_incl_vat(), 306)  # 306 == 3 * 18 + 7 * 24
 
     def test_cost_excl_vat_for_confirmed_order(self):
         order = factories.create_confirmed_order_for_self_and_others()
-        self.assertEqual(order.cost_excl_vat(), 185)  # 185 == 3 * 15 + 7 * 20
+        self.assertEqual(order.cost_excl_vat(), 255)  # 255 == 3 * 15 + 7 * 20
 
     def test_cost_excl_vat_for_unconfirmed_order(self):
         order = factories.create_pending_order_for_self_and_others()
-        self.assertEqual(order.cost_excl_vat(), 185)  # 185 == 3 * 15 + 7 * 20
+        self.assertEqual(order.cost_excl_vat(), 255)  # 255 == 3 * 15 + 7 * 20
 
     def test_ticket_details_for_confirmed_order(self):
         order = factories.create_confirmed_order_for_self_and_others()
@@ -27,20 +27,20 @@ class OrderTests(TestCase):
             'id': ticket_ids[0],
             'name': 'Alice',
             'days': 'Thursday, Friday, Saturday',
-            'cost_incl_vat': 90,
-            'cost_excl_vat': 75,
+            'cost_incl_vat': 126,
+            'cost_excl_vat': 105,
         }, {
             'id': ticket_ids[1],
             'name': 'bob@example.com',
             'days': 'Friday, Saturday',
-            'cost_incl_vat': 66,
-            'cost_excl_vat': 55,
+            'cost_incl_vat': 90,
+            'cost_excl_vat': 75,
         }, {
             'id': ticket_ids[2],
             'name': 'carol@example.com',
             'days': 'Saturday, Sunday',
-            'cost_incl_vat': 66,
-            'cost_excl_vat': 55,
+            'cost_incl_vat': 90,
+            'cost_excl_vat': 75,
         }]
         self.assertEqual(order.ticket_details(), expected_details)
 
@@ -49,18 +49,18 @@ class OrderTests(TestCase):
         expected_details = [{
             'name': 'Alice',
             'days': 'Thursday, Friday, Saturday',
-            'cost_incl_vat': 90,
-            'cost_excl_vat': 75,
+            'cost_incl_vat': 126,
+            'cost_excl_vat': 105,
         }, {
             'name': 'bob@example.com',
             'days': 'Friday, Saturday',
-            'cost_incl_vat': 66,
-            'cost_excl_vat': 55,
+            'cost_incl_vat': 90,
+            'cost_excl_vat': 75,
         }, {
             'name': 'carol@example.com',
             'days': 'Saturday, Sunday',
-            'cost_incl_vat': 66,
-            'cost_excl_vat': 55,
+            'cost_incl_vat': 90,
+            'cost_excl_vat': 75,
         }]
         self.assertEqual(order.ticket_details(), expected_details)
 
@@ -69,17 +69,17 @@ class OrderTests(TestCase):
         expected_summary = [{
             'num_days': 2,
             'num_tickets': 2,
-            'per_item_cost_excl_vat': 55,
-            'per_item_cost_incl_vat': 66,
-            'total_cost_excl_vat': 110,
-            'total_cost_incl_vat': 132,
+            'per_item_cost_excl_vat': 75,
+            'per_item_cost_incl_vat': 90,
+            'total_cost_excl_vat': 150,
+            'total_cost_incl_vat': 180,
         }, {
             'num_days': 3,
             'num_tickets': 1,
-            'per_item_cost_excl_vat': 75,
-            'per_item_cost_incl_vat': 90,
-            'total_cost_excl_vat': 75,
-            'total_cost_incl_vat': 90,
+            'per_item_cost_excl_vat': 105,
+            'per_item_cost_incl_vat': 126,
+            'total_cost_excl_vat': 105,
+            'total_cost_incl_vat': 126,
         }]
         self.assertEqual(order.ticket_summary(), expected_summary)
 
