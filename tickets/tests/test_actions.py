@@ -1,3 +1,5 @@
+from django_slack.utils import get_backend as get_slack_backend
+
 from django.core import mail
 from django.test import TestCase
 
@@ -263,6 +265,18 @@ class ConfirmOrderTests(TestCase):
 
         ticket = order.purchaser.get_ticket()
         self.assertEqual(ticket.days(), ['Thursday', 'Friday', 'Saturday'])
+
+    def test_sends_slack_message(self):
+        backend = get_slack_backend()
+        order = factories.create_pending_order_for_self()
+        backend.reset_messages()
+
+        actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvw', 1495355163)
+
+        messages = backend.retrieve_messages()
+        self.assertEqual(len(messages), 1)
+        text = messages[0]['text']
+        self.assertIn('Alice has just placed an order for 1 ticket at the individual rate', text)
 
 
 class MarkOrderAsFailed(TestCase):

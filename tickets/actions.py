@@ -1,3 +1,4 @@
+from django_slack import slack_message
 import stripe
 
 from django.db import transaction
@@ -41,6 +42,7 @@ def confirm_order(order, charge_id, charge_created):
         order.confirm(charge_id, charge_created)
     send_receipt(order)
     send_ticket_invitations(order)
+    slack_message('tickets/order_created.slack', {'order': order})
 
 
 def mark_order_as_failed(order, charge_failure_reason):

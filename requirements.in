@@ -3,6 +3,7 @@ dj-database-url
 django
 django-bootstrap3
 django-dotenv
+django-slack
 flake8
 gunicorn
 psycopg2

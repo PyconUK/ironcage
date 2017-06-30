@@ -1,0 +1,7 @@
+{% extends django_slack %}
+
+{% block text %}
+New proposal {{ proposal.proposal_id }}
+
+{{ proposal.proposer.name }} has just submitted a proposal for a {{ proposal.session_type }} ({{ proposal.full_title }})
+{% endblock %}

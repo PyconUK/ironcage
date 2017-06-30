@@ -1,3 +1,5 @@
+from django_slack.utils import get_backend as get_slack_backend
+
 from django.test import TestCase
 
 from cfp.models import Proposal
@@ -38,6 +40,28 @@ class NewProposalTests(TestCase):
 
         proposal = Proposal.objects.get(title='Python is brilliant')
         self.assertEqual(proposal.proposer, self.alice)
+
+    def test_post_sends_slack_message(self):
+        backend = get_slack_backend()
+        backend.reset_messages()
+
+        self.client.force_login(self.alice)
+        form_data = {
+            'session_type': 'talk',
+            'title': 'Python is brilliant',
+            'subtitle': 'From abs to ZeroDivisionError',
+            'copresenter_names': '',
+            'description': 'Let me tell you why Python is brilliant',
+            'description_private': 'I am well placed to tell you why Python is brilliant',
+            'aimed_at_new_programmers': True,
+            'would_like_mentor': True,
+        }
+        rsp = self.client.post('/cfp/proposals/new/', form_data, follow=True)
+
+        messages = backend.retrieve_messages()
+        self.assertEqual(len(messages), 1)
+        text = messages[0]['text']
+        self.assertIn('Alice has just submitted a proposal for a talk (Python is brilliant: From abs to ZeroDivisionError)', text)
 
     def test_post_when_not_authenticated(self):
         rsp = self.client.post('/cfp/proposals/new/', follow=True)

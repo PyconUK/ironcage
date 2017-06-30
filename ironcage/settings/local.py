@@ -10,3 +10,6 @@ AUTH_PASSWORD_VALIDATORS = []
 
 # Write emails to the console
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# Write Slack messages to the console
+SLACK_BACKEND = 'django_slack.backends.ConsoleBackend'

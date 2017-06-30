@@ -1,3 +1,5 @@
+from django_slack import slack_message
+
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -18,6 +20,7 @@ def new_proposal(request):
             proposal.proposer = request.user
             proposal.save()
             messages.success(request, 'Thank you for submitting your proposal')
+            slack_message('cfp/proposal_created.slack', {'proposal': proposal})
             return redirect(proposal)
     else:
         form = ProposalForm()

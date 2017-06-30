@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'tickets',
 
     'bootstrap3',
+    'django_slack',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -180,3 +181,10 @@ EMAIL_PORT = os.environ.get('MAILGUN_SMTP_PORT', ENVVAR_SENTINAL)
 EMAIL_HOST_USER = os.environ.get('MAILGUN_SMTP_LOGIN', ENVVAR_SENTINAL)
 EMAIL_HOST_PASSWORD = os.environ.get('MAILGUN_SMTP_PASSWORD', ENVVAR_SENTINAL)
 EMAIL_USE_TLS = True
+
+
+# Slack
+
+SLACK_TOKEN = os.environ.get('SLACK_TOKEN', ENVVAR_SENTINAL)
+SLACK_CHANNEL = '#ironcage-logs'
+SLACK_USERNAME = 'ironcage-log-bot'
