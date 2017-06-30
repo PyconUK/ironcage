@@ -201,4 +201,4 @@ SLACK_USERNAME = 'ironcage-log-bot'
 
 # Admins for mailing errors to
 
-ADMINS = os.environ.get('ADMINS', '').split(',')
+ADMINS = [['-', email_addr] for email_addr in os.environ.get('ADMINS', '').split(',')]
