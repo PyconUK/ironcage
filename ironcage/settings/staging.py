@@ -11,3 +11,6 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Slack
 SLACK_USERNAME = 'ironcage-log-bot-staging'
+
+# Email address to send error mails from
+SERVER_EMAIL = f'noreply@{ALLOWED_HOSTS[0]'

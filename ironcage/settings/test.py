@@ -7,5 +7,4 @@ DOMAIN = 'http://testserver'
 SLACK_BACKEND = 'ironcage.tests.slack_backends.TestBackend'
 
 # Admins for mailing errors to
-
 ADMINS = ['admin@example.com']
