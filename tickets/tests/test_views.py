@@ -295,7 +295,6 @@ class OrderTests(TestCase):
         order = factories.create_confirmed_order_for_self()
         rsp = self.client.get(f'/tickets/orders/{order.order_id}/', follow=True)
         self.assertRedirects(rsp, f'/accounts/login/?next=/tickets/orders/{order.order_id}/')
-        self.assertContains(rsp, 'Please login to see this page.')
 
     def test_when_not_authorized(self):
         order = factories.create_confirmed_order_for_self()
@@ -364,7 +363,6 @@ class OrderPaymentTests(TestCase):
             follow=True,
         )
         self.assertRedirects(rsp, f'/accounts/login/?next=/tickets/orders/{self.order.order_id}/payment/')
-        self.assertContains(rsp, 'Please login to see this page.')
 
     def test_when_not_authorized(self):
         bob = factories.create_user('Bob')
@@ -423,7 +421,6 @@ class OrderReceiptTests(TestCase):
     def test_when_not_authenticated(self):
         rsp = self.client.get(f'/tickets/orders/{self.order.order_id}/receipt/', follow=True)
         self.assertRedirects(rsp, f'/accounts/login/?next=/tickets/orders/{self.order.order_id}/receipt/')
-        self.assertContains(rsp, 'Please login to see this page.')
 
     def test_when_not_authorized(self):
         bob = factories.create_user('Bob')
@@ -456,7 +453,6 @@ class TicketTests(TestCase):
     def test_when_not_authenticated(self):
         rsp = self.client.get(f'/tickets/tickets/{self.ticket.ticket_id}/', follow=True)
         self.assertRedirects(rsp, f'/accounts/login/?next=/tickets/tickets/{self.ticket.ticket_id}/')
-        self.assertContains(rsp, 'Please login to see this page.')
 
     def test_when_not_authorized(self):
         bob = factories.create_user('Bob')
