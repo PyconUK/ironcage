@@ -7,13 +7,17 @@ PRICES_EXCL_VAT = {
         'ticket_price': 30,
         'day_price': 60,
     },
+    'education': {
+        'ticket_price': 5,
+        'day_price': 10,
+    },
 }
 
 VAT_RATE = 0.2
 
 PRICES_INCL_VAT = {}
 
-for rate in ['individual', 'corporate']:
+for rate in PRICES_EXCL_VAT:
     PRICES_INCL_VAT[rate] = {}
     for price_type in ['ticket_price', 'day_price']:
         cost = PRICES_EXCL_VAT[rate][price_type] * (1 + VAT_RATE)

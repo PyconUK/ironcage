@@ -15,7 +15,7 @@ class NewOrderTests(TestCase):
     def test_get(self):
         self.client.force_login(self.alice)
         rsp = self.client.get('/tickets/orders/new/')
-        self.assertInHTML('<tr><td>5 days</td><td>£198</td><td>£396</td></tr>', rsp.content.decode())
+        self.assertInHTML('<tr><td class="text-center">5 days</td><td class="text-center">£198</td><td class="text-center">£396</td><td class="text-center">£66</td></tr>', rsp.content.decode())
         self.assertContains(rsp, '<form method="post" id="order-form">')
         self.assertNotContains(rsp, 'to buy a ticket')
 
@@ -106,7 +106,7 @@ class NewOrderTests(TestCase):
 
     def test_get_when_not_authenticated(self):
         rsp = self.client.get('/tickets/orders/new/')
-        self.assertInHTML('<tr><td>5 days</td><td>£198</td><td>£396</td></tr>', rsp.content.decode())
+        self.assertInHTML('<tr><td class="text-center">5 days</td><td class="text-center">£198</td><td class="text-center">£396</td><td class="text-center">£66</td></tr>', rsp.content.decode())
         self.assertNotContains(rsp, '<form method="post" id="order-form">')
         self.assertContains(rsp, 'Please <a href="/accounts/register/?next=/tickets/orders/new/">sign up</a> or <a href="/accounts/login/?next=/tickets/orders/new/">sign in</a> to buy a ticket.', html=True)
 
@@ -123,7 +123,7 @@ class OrderEditTests(TestCase):
     def test_get(self):
         self.client.force_login(self.order.purchaser)
         rsp = self.client.get(f'/tickets/orders/{self.order.order_id}/edit/')
-        self.assertInHTML('<tr><td>5 days</td><td>£198</td><td>£396</td></tr>', rsp.content.decode())
+        self.assertInHTML('<tr><td class="text-center">5 days</td><td class="text-center">£198</td><td class="text-center">£396</td><td class="text-center">£66</td></tr>', rsp.content.decode())
         self.assertContains(rsp, '<form method="post" id="order-form">')
         self.assertNotContains(rsp, 'Please create an account to buy a ticket.')
 

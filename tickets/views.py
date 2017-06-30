@@ -291,14 +291,18 @@ def _rates_data():
 
 def _rates_table_data():
     data = []
-    data.append(['', 'Individual rate', 'Corporate rate'])
+    data.append(['', 'Individual rate', 'Corporate rate', "Education Rate"])
     for ix in range(5):
         num_days = ix + 1
         individual_rate = cost_incl_vat('individual', num_days)
         corporate_rate = cost_incl_vat('corporate', num_days)
+        education_rate = cost_incl_vat('education', num_days)
+        row = []
         if num_days == 1:
-            data.append(['1 day', f'£{individual_rate}', f'£{corporate_rate}'])
+            row.append('1 day')
         else:
-            data.append([f'{num_days} days', f'£{individual_rate}', f'£{corporate_rate}'])
+            row.append(f'{num_days} days')
+        row.extend([f'£{individual_rate}', f'£{corporate_rate}', f'£{education_rate}'])
+        data.append(row)
 
     return data

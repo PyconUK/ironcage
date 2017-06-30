@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="row">
-  <div class="col-md-7">
+  <div class="col-md-6">
     {% if not request.user.is_authenticated %}
     <p>Please <a href="{% url 'register' %}?next={{ request.path }}">sign up</a> or <a href="{% url 'login' %}?next={{ request.path }}">sign in</a> to buy a ticket.</p>
     {% endif %}
@@ -10,7 +10,7 @@
     {% include './_ticket_info.html' %}
   </div>
 
-  <div class="col-md-5">
+  <div class="col-md-6">
     {% include './_ticket_price_table.html' %}
   </div>
 </div>

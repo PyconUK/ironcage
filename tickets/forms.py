@@ -14,6 +14,7 @@ WHO_CHOICES = [
 RATE_CHOICES = [
     ('individual', 'Individual'),
     ('corporate', 'Corporate'),
+    ('education', 'Education'),
 ]
 
 
