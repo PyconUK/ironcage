@@ -161,7 +161,7 @@ LOGGING = {
         },
         'mail_admins': {
             'level': 'ERROR',
-            'class': 'django.utils.log.AdminEmailHandler',
+            'class': 'ironcage.log.AdminEmailHandler',
             'include_html': True,
         },
         'slack_admins': {
