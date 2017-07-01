@@ -2,6 +2,7 @@ from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.db import models
 
+from grants.models import Application
 from tickets.models import Ticket
 
 from .managers import UserManager
@@ -52,6 +53,12 @@ class User(AbstractBaseUser, PermissionsMixin):
         try:
             return self.ticket
         except Ticket.DoesNotExist:
+            return None
+
+    def get_grant_application(self):
+        try:
+            return self.grant_application
+        except Application.DoesNotExist:
             return None
 
     def profile_complete(self):
