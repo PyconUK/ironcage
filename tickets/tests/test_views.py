@@ -384,7 +384,7 @@ class OrderReceiptTests(TestCase):
     def test_order_receipt(self):
         self.client.force_login(self.order.purchaser)
         rsp = self.client.get(f'/tickets/orders/{self.order.order_id}/receipt/', follow=True)
-        self.assertContains(rsp, f'Receipt for order {self.order.order_id}')
+        self.assertContains(rsp, f'Receipt for PyCon UK 2017 order {self.order.order_id}')
         self.assertContains(rsp, '3 tickets for PyCon UK 2017')
         self.assertContains(rsp, '<th>Date</th><td>May 21, 2017</td>', html=True)
         self.assertContains(rsp, '<th>Total (excl. VAT)</th><td>£255</td>', html=True)
