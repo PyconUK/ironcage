@@ -30,7 +30,7 @@ def send_invitation_mail(invitation):
     send_mail(
         f'PyCon UK 2017 ticket invitation ({ticket.ticket_id})',
         body,
-        'PyCon UK 2017 <tickets@pyconuk.org>',  # TODO either set up this address, or find another one to use
+        'PyCon UK 2017 <noreply@pyconuk.org>',
         [invitation.email_addr],
         fail_silently=False,
     )
@@ -53,7 +53,7 @@ def send_order_confirmation_mail(order):
     send_mail(
         f'PyCon UK 2017 order confirmation ({order.order_id})',
         body,
-        'PyCon UK 2017 <tickets@pyconuk.org>',  # TODO either set up this address, or find another one to use
+        'PyCon UK 2017 <noreply@pyconuk.org>',
         [order.purchaser.email_addr],
         fail_silently=False,
     )

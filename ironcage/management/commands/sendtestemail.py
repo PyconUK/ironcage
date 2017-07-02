@@ -12,7 +12,7 @@ class Command(BaseCommand):
         send_mail(
             'PyCon UK 2017 test email',
             f'This is a test, generated at {datetime.now()}',
-            'PyCon UK 2017 <tickets@pyconuk.org>',  # TODO either set up this address, or find another one to use
+            'PyCon UK 2017 <noreply@pyconuk.org>',
             [kwargs['to_addr']],
             fail_silently=False,
         )
