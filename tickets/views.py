@@ -290,7 +290,7 @@ def _rates_data():
 
 def _rates_table_data():
     data = []
-    data.append(['', 'Individual rate', 'Corporate rate', "Education Rate"])
+    data.append(['', 'Individual rate', 'Corporate rate', "Education rate"])
     for ix in range(5):
         num_days = ix + 1
         individual_rate = cost_incl_vat('individual', num_days)
