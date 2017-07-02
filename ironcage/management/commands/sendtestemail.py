@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from django.conf import settings
 from django.core.mail import send_mail
 from django.core.management import BaseCommand
 
@@ -12,7 +13,7 @@ class Command(BaseCommand):
         send_mail(
             'PyCon UK 2017 test email',
             f'This is a test, generated at {datetime.now()}',
-            'PyCon UK 2017 <noreply@pyconuk.org>',
+            f'PyCon UK 2017 <{settings.SERVER_EMAIL}>',
             [kwargs['to_addr']],
             fail_silently=False,
         )
