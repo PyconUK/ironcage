@@ -1,3 +1,31 @@
+United Kingdom
+Austria
+Belgium
+Bulgaria
+Croatia
+Cyprus
+Czech Republic
+Denmark
+Estonia
+Finland
+France
+Germany
+Greece
+Hungary
+Ireland
+Italy
+Latvia
+Lithuania
+Luxembourg
+Malta
+Netherlands
+Poland
+Portugal
+Romania
+Slovakia
+Slovenia
+Spain
+Sweden
 Afghanistan
 Albania
 Algeria
@@ -7,14 +35,11 @@ Antigua and Barbuda
 Argentina
 Armenia
 Australia
-Austria
 Azerbaijan
-The Bahamas
 Bahrain
 Bangladesh
 Barbados
 Belarus
-Belgium
 Belize
 Benin
 Bhutan
@@ -23,49 +48,39 @@ Bosnia and Herzegovina
 Botswana
 Brazil
 Brunei
-Bulgaria
 Burkina Faso
 Burma
 Burundi
-Cape Verde
 Cambodia
 Cameroon
 Canada
+Cape Verde
 Central African Republic
 Chad
 Chile
 China
 Colombia
 Comoros
+Democratic Republic of the Congo
 Republic of the Congo
 Costa Rica
-Ivory Coast
-Croatia
 Cuba
-Cyprus
-Czech Republic
-North Korea
-Democratic Republic of the Congo
-Denmark
 Djibouti
 Dominica
 Dominican Republic
+East Timor
 Ecuador
 Egypt
 El Salvador
 Equatorial Guinea
 Eritrea
-Estonia
 Ethiopia
+Federated States of Micronesia
 Fiji
-Finland
-France
 Gabon
 Gambia
 Georgia
-Germany
 Ghana
-Greece
 Grenada
 Guatemala
 Guinea
@@ -73,15 +88,13 @@ Guinea-Bissau
 Guyana
 Haiti
 Honduras
-Hungary
 Iceland
 India
 Indonesia
 Iran
 Iraq
-Ireland
 Israel
-Italy
+Ivory Coast
 Jamaica
 Japan
 Jordan
@@ -91,25 +104,22 @@ Kiribati
 Kuwait
 Kyrgyzstan
 Laos
-Latvia
 Lebanon
 Lesotho
 Liberia
 Libya
 Liechtenstein
-Lithuania
-Luxembourg
+Macedonia
 Madagascar
 Malawi
 Malaysia
 Maldives
 Mali
-Malta
 Marshall Islands
 Mauritania
 Mauritius
 Mexico
-Federated States of Micronesia
+Moldova
 Monaco
 Mongolia
 Montenegro
@@ -118,11 +128,11 @@ Mozambique
 Namibia
 Nauru
 Nepal
-Netherlands
 New Zealand
 Nicaragua
 Niger
 Nigeria
+North Korea
 Norway
 Oman
 Pakistan
@@ -133,12 +143,7 @@ Papua New Guinea
 Paraguay
 Peru
 Philippines
-Poland
-Portugal
 Qatar
-South Korea
-Moldova
-Romania
 Russia
 Rwanda
 Saint Kitts and Nevis
@@ -146,31 +151,28 @@ Saint Lucia
 Saint Vincent and the Grenadines
 Samoa
 San Marino
-São Tomé and Príncipe
 Saudi Arabia
 Senegal
 Serbia
 Seychelles
 Sierra Leone
 Singapore
-Slovakia
-Slovenia
 Solomon Islands
 Somalia
 South Africa
+South Korea
 South Sudan
-Spain
 Sri Lanka
 Sudan
 Suriname
 Swaziland
-Sweden
 Switzerland
 Syria
+São Tomé and Príncipe
 Tajikistan
+Tanzania
 Thailand
-Macedonia
-East Timor
+The Bahamas
 Togo
 Tonga
 Trinidad and Tobago
@@ -181,8 +183,6 @@ Tuvalu
 Uganda
 Ukraine
 United Arab Emirates
-United Kingdom
-Tanzania
 United States
 Uruguay
 Uzbekistan

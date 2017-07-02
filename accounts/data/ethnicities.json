@@ -1,0 +1,45 @@
+[
+    [
+        "White",
+        [
+            "English / Welsh / Scottish / Northern Irish / British",
+            "Irish",
+            "Gypsy or Irish Traveller",
+            "Any other White background, please describe"
+        ]
+    ],
+    [
+        "Mixed / Multiple ethnic groups",
+        [
+            "White and Black Caribbean",
+            "White and Black African",
+            "White and Asian",
+            "Any other Mixed / Multiple ethnic background, please describe"
+        ]
+    ],
+    [
+        "Asian / Asian British",
+        [
+            "Indian",
+            "Pakistani",
+            "Bangladeshi",
+            "Chinese",
+            "Any other Asian background, please describe"
+        ]
+    ],
+    [
+        "Black / African / Caribbean / Black British",
+        [
+            "African",
+            "Caribbean",
+            "Any other Black / African / Caribbean background, please describe"
+        ]
+    ],
+    [
+        "Other ethnic group",
+        [
+            "Arab",
+            "Any other ethnic group, please describe"
+        ]
+    ]
+]

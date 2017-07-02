@@ -75,7 +75,13 @@
         </tr>
         <tr>
           <th class="col-md-4">Ethnicity</th>
-          <td>{{ user.ethnicity|default:"unknown" }}</td>
+          <td>
+            {% if 'please describe' in user.ethnicity %}
+            {{ user.ethnicity_free_text }}
+            {% else %}
+            {{ user.ethnicity|default:"unknown" }}
+            {% endif %}
+          </td>
         </tr>
         <tr>
           <th class="col-md-4">Nationality</th>

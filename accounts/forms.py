@@ -1,3 +1,5 @@
+from contextlib import suppress
+
 from django import forms
 from django.contrib.auth import password_validation
 
@@ -67,18 +69,67 @@ class ProfileForm(forms.ModelForm):
             'year_of_birth',
             'gender',
             'ethnicity',
+            'ethnicity_free_text',
             'nationality',
             'country_of_residence',
         ]
 
-    def clean(self):
-        super().clean()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # If user has chosen a gender/nationality/country_of_residence that's
+        # not in the initial list of choices, we add it to the list here so
+        # that they see in in the dropdown when they edit their profile.
+        for key in ['gender', 'nationality', 'country_of_residence']:
+            widget = self.fields[key].widget
+            choices = [choice[0] for choice in widget.choices]
+            value = getattr(self.instance, key)
+            if value is not None and value not in choices:
+                widget.choices.insert(1, [value, value])
+
+    def _post_clean(self):
+        super()._post_clean()
+
         if self.cleaned_data.get('dont_ask_demographics'):
+            # We don't care abour errors from the demographic fields if user
+            # has selected dont_ask_demographics.
             for key in [
                 'year_of_birth',
                 'gender',
                 'ethnicity',
+                'ethnicity_free_text',
+                'nationality',
+                'country_of_residence',
+            ]:
+                with suppress(KeyError):
+                    del self._errors[key]
+        else:
+            # If user has chosen a gender/nationality/country_of_residence
+            # that's not in the initial list of choices, Django will raise a
+            # ValidationError, and won't set the corresponding model attribute,
+            # so we remove the error and set the attribute manually.
+            for key in ['gender', 'nationality', 'country_of_residence']:
+                with suppress(KeyError):
+                    del self._errors[key]
+
+                if key in self.data:
+                    self.cleaned_data[key] = self.data[key]
+                    setattr(self.instance, key, self.data[key])
+
+    def clean(self):
+        super().clean()
+
+        if self.cleaned_data.get('dont_ask_demographics'):
+            # If user has selected dont_ask_demographics, clear out all
+            # demographic fields so they get cleared on the model instance.
+            for key in [
+                'year_of_birth',
+                'gender',
+                'ethnicity',
+                'ethnicity_free_text',
                 'nationality',
                 'country_of_residence',
             ]:
                 self.cleaned_data[key] = None
+
+        return self.cleaned_data

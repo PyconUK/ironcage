@@ -37,7 +37,7 @@ class ProfileTests(TestCase):
             ['Dietary', 'Vegan'],
             ['Year of birth', '1985'],
             ['Gender', 'Female'],
-            ['Ethnicity', 'Mixed'],
+            ['Ethnicity', 'White and Black Caribbean'],
             ['Nationality', 'British'],
             ['Country of residence', 'United Kingdom'],
         ]:
@@ -52,55 +52,79 @@ class ProfileTests(TestCase):
 
 class EditProfileTests(TestCase):
     def test_post_update(self):
-        alice = factories.create_user(year_of_birth=1985)
+        alice = factories.create_user(year_of_birth='1985')
         self.client.force_login(alice)
 
         data = {
             'name': 'Alice',
             'email_addr': 'alice@example.com',
-            'year_of_birth': 1986,
-            'gender': 'Female',
+            'year_of_birth': '1986',
+            'gender': 'agender',
+            'ethnicity': 'Any other ethnic group, please describe',
+            'ethnicity_free_text': 'Abkhazian',
+            'country_of_residence': 'Abkhazia',
+            'nationality': 'Abkhazian',
         }
         self.client.post('/profile/edit/', data, follow=True)
         alice.refresh_from_db()
 
-        self.assertEqual(alice.year_of_birth, 1986)
-        self.assertEqual(alice.gender, 'Female')
+        self.assertEqual(alice.year_of_birth, '1986')
+        self.assertEqual(alice.gender, 'agender')
+        self.assertEqual(alice.ethnicity, 'Any other ethnic group, please describe')
+        self.assertEqual(alice.ethnicity_free_text, 'Abkhazian')
+        self.assertEqual(alice.country_of_residence, 'Abkhazia')
+        self.assertEqual(alice.nationality, 'Abkhazian')
         self.assertEqual(alice.dont_ask_demographics, False)
 
     def test_post_dont_ask_demographics(self):
-        alice = factories.create_user(year_of_birth=1985)
+        alice = factories.create_user(year_of_birth='1985')
         self.client.force_login(alice)
 
         data = {
             'name': 'Alice',
             'email_addr': 'alice@example.com',
+            'year_of_birth': '1986',
+            'gender': 'agender',
+            'ethnicity': 'Any other ethnic group, please describe',
+            'ethnicity_free_text': 'Abkhazian',
+            'country_of_residence': 'Abkhazia',
+            'nationality': 'Abkhazian',
             'dont_ask_demographics': 'on',
-            'year_of_birth': 1986,
-            'gender': 'Female',
         }
         self.client.post('/profile/edit/', data, follow=True)
         alice.refresh_from_db()
 
-        self.assertEqual(alice.year_of_birth, None)
-        self.assertEqual(alice.gender, None)
+        self.assertIsNone(alice.year_of_birth)
+        self.assertIsNone(alice.gender)
+        self.assertIsNone(alice.ethnicity)
+        self.assertIsNone(alice.ethnicity_free_text)
+        self.assertIsNone(alice.country_of_residence)
+        self.assertIsNone(alice.nationality)
         self.assertEqual(alice.dont_ask_demographics, True)
 
     def test_post_update_after_dont_ask_again(self):
-        alice = factories.create_user_with_dont_ask_demographics_set(year_of_birth=1985)
+        alice = factories.create_user_with_dont_ask_demographics_set(year_of_birth='1985')
         self.client.force_login(alice)
 
         data = {
             'name': 'Alice',
             'email_addr': 'alice@example.com',
-            'year_of_birth': 1986,
-            'gender': 'Female',
+            'year_of_birth': '1986',
+            'gender': 'agender',
+            'ethnicity': 'Any other ethnic group, please describe',
+            'ethnicity_free_text': 'Abkhazian',
+            'country_of_residence': 'Abkhazia',
+            'nationality': 'Abkhazian',
         }
         self.client.post('/profile/edit/', data, follow=True)
         alice.refresh_from_db()
 
-        self.assertEqual(alice.year_of_birth, 1986)
-        self.assertEqual(alice.gender, 'Female')
+        self.assertEqual(alice.year_of_birth, '1986')
+        self.assertEqual(alice.gender, 'agender')
+        self.assertEqual(alice.ethnicity, 'Any other ethnic group, please describe')
+        self.assertEqual(alice.ethnicity_free_text, 'Abkhazian')
+        self.assertEqual(alice.country_of_residence, 'Abkhazia')
+        self.assertEqual(alice.nationality, 'Abkhazian')
         self.assertEqual(alice.dont_ask_demographics, False)
 
 

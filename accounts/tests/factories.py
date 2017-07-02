@@ -16,7 +16,7 @@ def create_user_with_full_profile(name='Alice', email_addr=None):
     kwargs = {
         'year_of_birth': 1985,
         'gender': 'Female',
-        'ethnicity': 'Mixed',
+        'ethnicity': 'White and Black Caribbean',
         'nationality': 'British',
         'country_of_residence': 'United Kingdom',
         'dont_ask_demographics': False,

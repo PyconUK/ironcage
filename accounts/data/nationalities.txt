@@ -1,3 +1,31 @@
+British
+Austrian
+Belgian
+Bulgarian
+Croatian
+Cypriot
+Czech
+Danish
+Dutch
+Estonian
+Finnish
+French
+German
+Greek
+Hungarian
+Irish
+Italian
+Latvian
+Lithuanian
+Luxembourg
+Maltese
+Polish
+Portuguese
+Romanian
+Slovak
+Slovenian
+Spanish
+Swedish
 Afghan
 Albanian
 Algerian
@@ -8,7 +36,6 @@ Antiguan
 Argentine
 Armenian
 Australian
-Austrian
 Azerbaijani
 Bahamian
 Bahraini
@@ -16,7 +43,6 @@ Bangladeshi
 Barbadian
 Basotho
 Belarusian
-Belgian
 Belizean
 Beninese
 Bhutanese
@@ -24,9 +50,7 @@ Bissau-Guinean
 Bolivian
 Bosnian
 Brazilian
-British
 Bruneian
-Bulgarian
 Burkinabé
 Burmese
 Burundian
@@ -43,48 +67,35 @@ Comoran
 Congolese
 Congolese
 Costa Rican
-Croatian
 Cuban
-Cypriot
-Czech
-Danish
 Djiboutian
 Dominican
 Dominican
-Dutch
 Ecuadorian
 Egyptian
 Emirati
 Equatorial Guinean
 Eritrean
-Estonian
 Ethiopian
 Fijian
 Filipino
-Finnish
-French
 Gabonese
 Gambian
 Georgian
-German
 Ghanaian
-Greek
 Grenadian
 Guatemalan
 Guinean
 Guyanese
 Haitian
 Honduran
-Hungarian
 I-Kiribati
 Icelandic
 Indian
 Indonesian
 Iranian
 Iraqi
-Irish
 Israeli
-Italian
 Ivorian
 Jamaican
 Japanese
@@ -95,20 +106,16 @@ Kittitian
 Kuwaiti
 Kyrgyzstani
 Lao
-Latvian
 Lebanese
 Liberian
 Libyan
 Liechtensteiner
-Lithuanian
-Luxembourg
 Macedonian
 Malagasy
 Malawian
 Malaysian
 Maldivian
 Malian
-Maltese
 Marshallese
 Mauritanian
 Mauritian
@@ -139,10 +146,7 @@ Panamanian
 Papua New Guinean
 Paraguayan
 Peruvian
-Polish
-Portuguese
 Qatari
-Romanian
 Russian
 Rwandan
 Saint Lucian
@@ -156,19 +160,15 @@ Serbian
 Seychellois
 Sierra Leonean
 Singapore
-Slovak
-Slovenian
 Solomon Island
 Somali
 South African
 South Korean
 South Sudanese
-Spanish
 Sri Lankan
 Sudanese
 Surinamese
 Swazi
-Swedish
 Swiss
 Syrian
 São Toméan
