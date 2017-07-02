@@ -15,7 +15,6 @@ def create_charge_for_order(order, token):
         currency='gbp',
         description=f'PyCon UK 2017 order {order.order_id}',
         source=token,
-        # TODO Should we use include idempotent_key here?
     )
 
 
