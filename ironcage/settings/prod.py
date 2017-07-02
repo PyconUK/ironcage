@@ -9,5 +9,12 @@ DOMAIN = f'https://{ALLOWED_HOSTS[0]}'
 SECURE_SSL_REDIRECT = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
+# Misc. security settings
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
+X_FRAME_OPTIONS = 'DENY'
+
 # Email address to send error mails from
 SERVER_EMAIL = f'noreply@{ALLOWED_HOSTS[0]}'
