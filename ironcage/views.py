@@ -1,5 +1,10 @@
+import structlog
+
 from django.contrib import messages
-from django.shortcuts import render
+from django.shortcuts import redirect, render
+
+
+logger = structlog.get_logger()
 
 
 def index(request):
@@ -22,3 +27,8 @@ def index(request):
 
 def error(request):
     1 / 0
+
+
+def log(request):
+    logger.info('Test log')
+    return redirect('index')

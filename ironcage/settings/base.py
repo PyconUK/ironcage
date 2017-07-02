@@ -183,10 +183,14 @@ LOGGING = {
         },
     },
     'loggers': {
-        '': {
+        'django': {
             'handlers': ['console', 'mail_admins', 'slack_admins'],
-            'level': os.getenv('LOG_LEVEL', 'DEBUG'),
-            'propagate': True,
+            'level': os.getenv('LOG_LEVEL', 'INFO'),
+            'propagate': False,
+        },
+        '': {
+            'handlers': ['console'],
+            'level': os.getenv('LOG_LEVEL', 'INFO'),
         },
     },
 }
