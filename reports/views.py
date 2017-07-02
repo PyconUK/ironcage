@@ -1,6 +1,8 @@
-from django.views.generic import TemplateView
+from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render
+from django.utils.decorators import method_decorator
 from django.utils.text import slugify
+from django.views.generic import TemplateView
 
 from cfp.models import Proposal
 from tickets.constants import DAYS
@@ -8,6 +10,7 @@ from tickets.models import Order, Ticket
 from tickets.prices import cost_incl_vat
 
 
+@method_decorator(staff_member_required(login_url='login'), name='dispatch')
 class ReportView(TemplateView):
     template_name = 'reports/report.html'
 
@@ -209,5 +212,6 @@ reports = [
 ]
 
 
+@staff_member_required(login_url='login')
 def index(request):
     return render(request, 'reports/index.html', {'reports': reports})

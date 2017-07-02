@@ -1,20 +1,51 @@
 from django.test import TestCase
 
+from accounts.tests import factories as accounts_factories
 from tickets.tests import factories as tickets_factories
 
 from reports import views
 
 
-class TestIndex(TestCase):
+class ReportsTestCase(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.alice = accounts_factories.create_user(
+            name='Alice',
+            email_addr='alice@example.com',
+            is_staff=True
+        )
+        cls.bob = accounts_factories.create_user(
+            name='Bob',
+            email_addr='bob@example.com',
+            is_staff=False
+        )
+
+    def setUp(self):
+        self.client.force_login(self.alice)
+
+
+class TestIndex(ReportsTestCase):
     def test_get(self):
         rsp = self.client.get('/reports/')
         self.assertEqual(rsp.status_code, 200)
         self.assertContains(rsp, '<li><a href="/reports/attendance-by-day/">Attendance by day</a></li>', html=True)
 
+    def test_get_when_not_staff(self):
+        self.client.force_login(self.bob)
+        rsp = self.client.get('/reports/', follow=True)
+        self.assertContains(rsp, "Your account doesn't have access to this page")
+        self.assertRedirects(rsp, '/accounts/login/?next=/reports/')
 
-class TestAttendanceByDayReport(TestCase):
+    def test_get_when_not_authenticated(self):
+        self.client.logout()
+        rsp = self.client.get('/reports/', follow=True)
+        self.assertRedirects(rsp, '/accounts/login/?next=/reports/')
+
+
+class TestAttendanceByDayReport(ReportsTestCase):
     @classmethod
     def setUpTestData(cls):
+        super().setUpTestData()
         tickets_factories.create_ticket(num_days=1)
         tickets_factories.create_ticket(num_days=2, rate='corporate')
         tickets_factories.create_ticket(num_days=3)
@@ -40,10 +71,22 @@ class TestAttendanceByDayReport(TestCase):
         rsp = self.client.get('/reports/attendance-by-day/')
         self.assertEqual(rsp.status_code, 200)
 
+    def test_get_when_not_staff(self):
+        self.client.force_login(self.bob)
+        rsp = self.client.get('/reports/attendance-by-day/', follow=True)
+        self.assertContains(rsp, "Your account doesn't have access to this page")
+        self.assertRedirects(rsp, '/accounts/login/?next=/reports/attendance-by-day/')
 
-class TestTicketSalesReport(TestCase):
+    def test_get_when_not_authenticated(self):
+        self.client.logout()
+        rsp = self.client.get('/reports/attendance-by-day/', follow=True)
+        self.assertRedirects(rsp, '/accounts/login/?next=/reports/attendance-by-day/')
+
+
+class TestTicketSalesReport(ReportsTestCase):
     @classmethod
     def setUpTestData(cls):
+        super().setUpTestData()
         tickets_factories.create_ticket(num_days=1)
         tickets_factories.create_ticket(num_days=2, rate='corporate')
         tickets_factories.create_ticket(num_days=3)
@@ -77,13 +120,12 @@ class TestTicketSalesReport(TestCase):
         self.assertEqual(rsp.status_code, 200)
 
 
-class TestOrdersReport(TestCase):
+class TestOrdersReport(ReportsTestCase):
     @classmethod
     def setUpTestData(cls):
-        alice = tickets_factories.create_user('Alice', 'alice@example.com')
-        bob = tickets_factories.create_user('Bob', 'bob@example.com')
-        cls.order1 = tickets_factories.create_pending_order_for_self(alice, num_days=1)
-        cls.order2 = tickets_factories.create_confirmed_order_for_self(bob, num_days=2)
+        super().setUpTestData()
+        cls.order1 = tickets_factories.create_pending_order_for_self(cls.alice, num_days=1)
+        cls.order2 = tickets_factories.create_confirmed_order_for_self(cls.bob, num_days=2)
 
     def test_get_context_data(self):
         report = views.OrdersReport()
@@ -102,13 +144,12 @@ class TestOrdersReport(TestCase):
         self.assertEqual(rsp.status_code, 200)
 
 
-class TestUnpaidOrdersReport(TestCase):
+class TestUnpaidOrdersReport(ReportsTestCase):
     @classmethod
     def setUpTestData(cls):
-        alice = tickets_factories.create_user('Alice', 'alice@example.com')
-        bob = tickets_factories.create_user('Bob', 'bob@example.com')
-        cls.order1 = tickets_factories.create_pending_order_for_self(alice, num_days=1)
-        tickets_factories.create_confirmed_order_for_self(bob, num_days=2)
+        super().setUpTestData()
+        cls.order1 = tickets_factories.create_pending_order_for_self(cls.alice, num_days=1)
+        tickets_factories.create_confirmed_order_for_self(cls.bob, num_days=2)
 
     def test_get_context_data(self):
         report = views.UnpaidOrdersReport()
@@ -126,12 +167,12 @@ class TestUnpaidOrdersReport(TestCase):
         self.assertEqual(rsp.status_code, 200)
 
 
-class TestTicketsReport(TestCase):
+class TestTicketsReport(ReportsTestCase):
     @classmethod
     def setUpTestData(cls):
-        alice = tickets_factories.create_user('Alice')
-        cls.ticket1 = tickets_factories.create_ticket(alice)
-        order = tickets_factories.create_confirmed_order_for_others(alice)
+        super().setUpTestData()
+        cls.ticket1 = tickets_factories.create_ticket(cls.alice)
+        order = tickets_factories.create_confirmed_order_for_others(cls.alice)
         cls.ticket2, cls.ticket3 = order.all_tickets()
 
     def test_get_context_data(self):
@@ -152,12 +193,12 @@ class TestTicketsReport(TestCase):
         self.assertEqual(rsp.status_code, 200)
 
 
-class TestUnclaimedTicketsReport(TestCase):
+class TestUnclaimedTicketsReport(ReportsTestCase):
     @classmethod
     def setUpTestData(cls):
-        alice = tickets_factories.create_user('Alice')
-        tickets_factories.create_ticket(alice)
-        order = tickets_factories.create_confirmed_order_for_others(alice)
+        super().setUpTestData()
+        tickets_factories.create_ticket(cls.alice)
+        order = tickets_factories.create_confirmed_order_for_others(cls.alice)
         cls.ticket2, cls.ticket3 = order.all_tickets()
 
     def test_get_context_data(self):
