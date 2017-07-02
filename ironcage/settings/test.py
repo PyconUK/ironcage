@@ -8,3 +8,6 @@ SLACK_BACKEND = 'ironcage.tests.slack_backends.TestBackend'
 
 # Admins for mailing errors to
 ADMINS = ['admin@example.com']
+
+# Don't log to the console
+LOGGING['loggers']['']['handlers'].remove('console')

@@ -8,4 +8,5 @@ flake8
 gunicorn
 psycopg2
 stripe
+structlog[dev]
 whitenoise
