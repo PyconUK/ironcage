@@ -236,7 +236,7 @@ def order_receipt(request, order_id):
 
     context = {
         'order': order,
-        'title': f'PyCon UK 2017 Receipt for order {order.order_id}',
+        'title': f'PyCon UK 2017 receipt for order {order.order_id}',
         'no_navbar': True,
     }
     return render(request, 'tickets/order_receipt.html', context)
