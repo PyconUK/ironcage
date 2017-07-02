@@ -1,5 +1,7 @@
 {% extends 'ironcage/base.html' %}
 
+{% load static %}
+
 {% block content %}
 <h1>Details of your order ({{ order.order_id }})</h1>
 
@@ -63,13 +65,13 @@
 <div id="stripe-form">
   <form action="{% url 'tickets:order_payment' order_id=order.order_id %}" method="POST">
     {% csrf_token %}
-    <!-- TODO Use PyCon UK logo for data-image -->
     <script
       src="https://checkout.stripe.com/checkout.js" class="stripe-button"
       data-key="{{ stripe_api_key }}"
       data-amount="{{ order.cost_pence_incl_vat }}"
       data-currency="gbp"
       data-name="PyCon UK Society Ltd"
+      data-image="{% static 'ironcage/img/yellow.png' %}"
       data-description="PyCon UK 2017 order {{ order.order_id }}"
       data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
       data-locale="auto"
