@@ -20,4 +20,4 @@ X_FRAME_OPTIONS = 'DENY'
 SLACK_USERNAME = 'ironcage-log-bot-staging'
 
 # Email address to send error mails from
-SERVER_EMAIL = f'noreply@{ALLOWED_HOSTS[0]}'
+SERVER_EMAIL = f'PyCon UK 2017 <noreply@{ALLOWED_HOSTS[0]}>'

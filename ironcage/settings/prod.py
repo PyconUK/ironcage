@@ -16,5 +16,5 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
 X_FRAME_OPTIONS = 'DENY'
 
-# Email address to send error mails from
-SERVER_EMAIL = f'noreply@{ALLOWED_HOSTS[0]}'
+# Email address to send mail from
+SERVER_EMAIL = f'PyCon UK 2017 <noreply@{ALLOWED_HOSTS[0]}>'

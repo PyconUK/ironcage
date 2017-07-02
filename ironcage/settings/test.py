@@ -9,5 +9,8 @@ SLACK_BACKEND = 'ironcage.tests.slack_backends.TestBackend'
 # Admins for mailing errors to
 ADMINS = ['admin@example.com']
 
-# Don't log to the console
+# Don't spam logs to the console
 LOGGING['loggers']['']['handlers'].remove('console')
+
+# Email address to send mail from
+SERVER_EMAIL = 'PyCon UK 2017 <noreply@pyconuk.org>'
