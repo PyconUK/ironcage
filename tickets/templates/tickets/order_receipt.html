@@ -1,11 +1,15 @@
 {% extends 'ironcage/base.html' %}
 
 {% block content %}
-<h1>Receipt for order {{ order.order_id }}</h1>
+<h1>Receipt for PyCon UK 2017 order {{ order.order_id }}</h1>
 
-<p>Issued by the PyCon UK Society, c/o Acconomy, Arena Business Centre, Holyrood Close, Poole, BH17 7FJ, United Kingdom</p>
+<p>Issued by the PyCon UK Society Ltd, c/o Acconomy, Arena Business Centre, Holyrood Close, Poole, BH17 7FJ, United Kingdom (VAT Number 249244982)</p>
 
-<p>Issued to TODO</p>
+{% if order.rate == 'corporate' %}
+<p>Issued to {{ order.company_name }}, {{ order.company_addr_formatted }}</p>
+{% else %}
+<p>Issued to {{ order.purchaser.name }}, {{ order.purchaser.email_addr }}</p>
+{% endif %}
 
 <p>{{ order.num_tickets }} ticket{{ order.num_tickets|pluralize }} for PyCon UK 2017</p>
 
@@ -13,23 +17,13 @@
   <div class="col-md-4">
     <table class="table table-condensed">
       <tr>
-        <th>Invoice number</th>
-        <td>TODO</td>
-      </tr>
-
-      <tr>
-        <th>VAT Number</th>
-        <td>249244982</td>
-      </tr>
-
-      <tr>
         <th>Date</th>
         <td>{{ order.stripe_charge_created|date }}</td>
       </tr>
 
       <tr>
-        <th>Tax point</th>
-        <td>TODO</td>
+        <th>Invoice number</th>
+        <td>{{ order.id }}</td>
       </tr>
 
       <tr>
