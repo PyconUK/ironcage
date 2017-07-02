@@ -7,7 +7,7 @@
 
 <p>Welcome to the PyCon UK 2017 conference HQ.</p>
 
-<p>The conference takes place at <a href="http://2017.pyconuk.org/venue/">Cardiff City Hall</a> from Thursday 26th to Monday 30th October 2017.</p>
+<p>The conference takes place at <a href="http://2017.pyconuk.org/venue/">Cardiff City Hall</a> from Thursday 26th to Monday 30th October 2017.  You can find out more about the conference <a href="http://2017.pyconuk.org/">on our website</a>.</p>
 
 {% if ticket %}
 <p>You have a ticket for {{ ticket.details.days }}.</p>
@@ -26,14 +26,42 @@
 <li><a href="{% url 'tickets:order' orders.0.order_id %}">View your order</a></li>
 <li><a href="{% url 'tickets:new_order' %}">Order more conference tickets</a></li>
 {% else %}
-{% for order in orders %}
-<li><a href="{% url 'tickets:order' order.order_id %}">View order {{ order.order_id }}</a></li>
-{% endfor %}
+<li>View your orders:</li>
+<ul>
+  {% for order in orders %}
+  <li><a href="{% url 'tickets:order' order.order_id %}">Order {{ order.order_id }}</a> ({{ order.brief_summary }})</li>
+  {% endfor %}
+</ul>
 <li><a href="{% url 'tickets:new_order' %}">Order more conference tickets</a></li>
 {% endif %}
 
-<li><a>Make a submission to our Call for Participation</a></li>
-<li><a>Apply for financial assistance</a></li>
+{% if proposals|length == 0 %}
+<li><a href="{% url 'cfp:new_proposal' %}">Make a proposal to our Call for Participation</a></li>
+{% elif proposals|length == 1 %}
+<li><a href="{% url 'cfp:proposal' proposals.0.proposal_id %}">View your proposal to our Call for Participation</a> ({{ proposals.0.title }})</li>
+<li><a href="{% url 'cfp:new_proposal' %}">Make another proposal to our Call for Participation</a></li>
+{% else %}
+<li>View your proposals to our Call for Participation</li>
+<ul>
+  {% for proposal in proposals %}
+  <li><a href="{% url 'cfp:proposal' proposal.proposal_id %}">{{ proposal.title }}</a></li>
+  {% endfor %}
+</ul>
+<li><a href="{% url 'cfp:new_proposal' %}">Make another proposal to our Call for Participation</a></li>
+{% endif %}
+
+{% if grant_application %}
+<li><a href="{% url 'grants:application' grant_application.application_id %}">View your application for financial assistance</a></li>
+{% else %}
+<li><a href="{% url 'grants:new_application' %}">Apply for financial assistance</a></li>
+{% endif %}
 </ul>
 
+{% if ticket %}
+<p>We look forward to seeing you in Cardiff!</p>
+{% else %}
+<p>We hope to see you in Cardiff!</p>
+{% endif %}
+
+<p>~ The PyCon UK Committee</p>
 {% endblock %}

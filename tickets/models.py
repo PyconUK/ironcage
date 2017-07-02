@@ -240,6 +240,12 @@ class Order(models.Model):
 
         return summary
 
+    def brief_summary(self):
+        summary = f'{self.num_tickets()} {self.rate}-rate ticket'
+        if self.num_tickets() > 1:
+            summary += 's'
+        return summary
+
     def cost_excl_vat(self):
         return sum(ticket.cost_excl_vat() for ticket in self.all_tickets())
 

@@ -11,6 +11,8 @@ def index(request):
         context = {
             'ticket': user.get_ticket(),
             'orders': user.orders.all(),
+            'grant_application': user.get_grant_application(),
+            'proposals': user.proposals.all(),
         }
     else:
         context = {}

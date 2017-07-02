@@ -1,6 +1,8 @@
 from django.test import TestCase
 
 from accounts.tests import factories as account_factories
+from cfp.tests import factories as cfp_factories
+from grants.tests import factories as grants_factories
 from tickets.tests import factories as ticket_factories
 
 
@@ -26,6 +28,7 @@ class IndexTests(TestCase):
         self.assertContains(rsp, 'You have a ticket for Thursday, Friday, Saturday')
         self.assertContains(rsp, f'<a href="/tickets/tickets/{ticket.ticket_id}/">View your conference ticket</a>', html=True)
         self.assertContains(rsp, '<a href="/profile/">Update your profile</a>', html=True)
+        self.assertContains(rsp, 'We look forward to seeing you in Cardiff')
 
     def test_when_has_ticket_and_full_profile(self):
         user = account_factories.create_user_with_full_profile()
@@ -40,6 +43,7 @@ class IndexTests(TestCase):
         self.assertNotContains(rsp, 'You have a ticket')
         self.assertNotContains(rsp, 'View your conference ticket')
         self.assertNotContains(rsp, 'Update your profile')
+        self.assertContains(rsp, 'We hope to see you in Cardiff')
 
     def test_when_has_order(self):
         order = ticket_factories.create_confirmed_order_for_others(self.alice)
@@ -58,6 +62,29 @@ class IndexTests(TestCase):
         order2 = ticket_factories.create_confirmed_order_for_others(self.alice)
 
         rsp = self.client.get('/')
-        self.assertContains(rsp, f'<a href="/tickets/orders/{order1.order_id}/">View order {order1.order_id}</a>', html=True)
-        self.assertContains(rsp, f'<a href="/tickets/orders/{order2.order_id}/">View order {order2.order_id}</a>', html=True)
+        self.assertContains(rsp, f'<a href="/tickets/orders/{order1.order_id}/">Order {order1.order_id}</a> (1 individual-rate ticket)', html=True)
+        self.assertContains(rsp, f'<a href="/tickets/orders/{order2.order_id}/">Order {order2.order_id}</a> (2 individual-rate tickets)', html=True)
         self.assertContains(rsp, '<a href="/tickets/orders/new/">Order more conference tickets</a>', html=True)
+
+    def test_when_has_proposal(self):
+        proposal = cfp_factories.create_proposal(self.alice)
+
+        rsp = self.client.get('/')
+        self.assertContains(rsp, '<a href="/cfp/proposals/new/">Make another proposal to our Call for Participation</a>', html=True)
+        self.assertContains(rsp, f'<a href="/cfp/proposals/{proposal.proposal_id}/">View your proposal to our Call for Participation</a> ({proposal.title})', html=True)
+
+    def test_when_has_no_proposal(self):
+        rsp = self.client.get('/')
+        self.assertContains(rsp, '<a href="/cfp/proposals/new/">Make a proposal to our Call for Participation</a>', html=True)
+
+    def test_when_has_grant_application(self):
+        application = grants_factories.create_application(self.alice)
+
+        rsp = self.client.get('/')
+        self.assertNotContains(rsp, 'Apply for financial assistance')
+        self.assertContains(rsp, f'<a href="/grants/applications/{application.application_id}/">View your application for financial assistance</a>', html=True)
+
+    def test_when_has_no_grant_application(self):
+        rsp = self.client.get('/')
+        self.assertContains(rsp, '<a href="/grants/applications/new/">Apply for financial assistance</a>', html=True)
+        self.assertNotContains(rsp, 'View your application for financial assistance')
