@@ -45,16 +45,7 @@
         </div>
       </div>
       <div class="row">
-        {% if show_sidebar %}
-        <div class="col-md-4">
-          <ul class="nav nav-pills nav-stacked">
-            {% include './_actions.html' with sidebar=True %}
-          </ul>
-        </div>
-        <div class="col-md-8">
-          {% else %}
         <div class="col-md-10 col-md-offset-1">
-          {% endif %}
           {% block content %}
           {% endblock %}
         </div>

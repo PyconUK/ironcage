@@ -192,7 +192,6 @@ def order(request, order_id):
         'order': order,
         'ticket': ticket,
         'stripe_api_key': settings.STRIPE_API_KEY_PUBLISHABLE,
-        'show_sidebar': True,
     }
     return render(request, 'tickets/order.html', context)
 
@@ -255,7 +254,6 @@ def ticket(request, ticket_id):
 
     context = {
         'ticket': ticket,
-        'show_sidebar': True,
     }
     return render(request, 'tickets/ticket.html', context)
 
