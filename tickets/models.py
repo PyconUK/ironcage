@@ -42,7 +42,7 @@ class Order(models.Model):
                 assert company_details is not None
                 company_name = company_details['name']
                 company_addr = company_details['addr']
-            elif rate == 'individual':
+            elif rate in ['individual', 'education']:
                 assert company_details is None
                 company_name = None
                 company_addr = None
