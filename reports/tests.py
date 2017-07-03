@@ -56,13 +56,13 @@ class TestAttendanceByDayReport(ReportsTestCase):
         report = views.AttendanceByDayReport()
         expected = {
             'title': 'Attendance by day',
-            'headings': ['Day', 'Individual rate', 'Corporate rate', 'Total'],
+            'headings': ['Day', 'Individual rate', 'Corporate rate', 'Education rate', 'Total'],
             'rows': [
-                ['Thursday', 3, 2, 5],
-                ['Friday', 2, 2, 4],
-                ['Saturday', 2, 1, 3],
-                ['Sunday', 1, 1, 2],
-                ['Monday', 1, 0, 1],
+                ['Thursday', 3, 2, 0, 5],
+                ['Friday', 2, 2, 0, 4],
+                ['Saturday', 2, 1, 0, 3],
+                ['Sunday', 1, 1, 0, 2],
+                ['Monday', 1, 0, 0, 1],
             ],
         }
         self.assertEqual(report.get_context_data(), expected)
@@ -97,20 +97,20 @@ class TestTicketSalesReport(ReportsTestCase):
         report = views.TicketSalesReport()
         expected = {
             'title': 'Ticket sales',
-            'headings': ['Days', 'Individual rate', 'Corporate rate', 'Total'],
+            'headings': ['Days', 'Individual rate', 'Corporate rate', 'Education rate', 'Total'],
             'num_tickets_rows': [
-                [1, 1, 0, 1],
-                [2, 0, 1, 1],
-                [3, 1, 0, 1],
-                [4, 0, 1, 1],
-                [5, 1, 0, 1],
+                [1, 1, 0, 0, 1],
+                [2, 0, 1, 0, 1],
+                [3, 1, 0, 0, 1],
+                [4, 0, 1, 0, 1],
+                [5, 1, 0, 0, 1],
             ],
             'ticket_cost_rows': [
-                [1, '£54', '£0', '£54'],
-                [2, '£0', '£180', '£180'],
-                [3, '£126', '£0', '£126'],
-                [4, '£0', '£324', '£324'],
-                [5, '£198', '£0', '£198'],
+                [1, '£54', '£0', '£0', '£54'],
+                [2, '£0', '£180', '£0', '£180'],
+                [3, '£126', '£0', '£0', '£126'],
+                [4, '£0', '£324', '£0', '£324'],
+                [5, '£198', '£0', '£0', '£198'],
             ]
         }
         self.assertEqual(report.get_context_data(), expected)
