@@ -28,15 +28,18 @@ class IndexTests(TestCase):
         self.assertContains(rsp, 'You have a ticket for Thursday, Friday, Saturday')
         self.assertContains(rsp, f'<a href="/tickets/tickets/{ticket.ticket_id}/">View your conference ticket</a>', html=True)
         self.assertContains(rsp, '<a href="/profile/">Update your profile</a>', html=True)
+        self.assertContains(rsp, 'Your profile is incomplete')
         self.assertContains(rsp, 'We look forward to seeing you in Cardiff')
 
     def test_when_has_ticket_and_full_profile(self):
         user = account_factories.create_user_with_full_profile()
-        ticket_factories.create_ticket(user)
+        ticket = ticket_factories.create_ticket(user)
         self.client.force_login(user)
 
         rsp = self.client.get('/')
-        self.assertNotContains(rsp, 'Update your profile')
+        self.assertContains(rsp, f'<a href="/tickets/tickets/{ticket.ticket_id}/">View your conference ticket</a>', html=True)
+        self.assertContains(rsp, '<a href="/profile/">Update your profile</a>', html=True)
+        self.assertNotContains(rsp, 'Your profile is incomplete')
 
     def test_when_has_no_ticket(self):
         rsp = self.client.get('/')

@@ -10,8 +10,8 @@ logger = structlog.get_logger()
 def index(request):
     user = request.user
 
-    if user.is_authenticated() and not user.profile_complete():
-        if user.get_ticket() is not None:
+    if user.is_authenticated():
+        if user.get_ticket() is not None and not user.profile_complete():
             messages.warning(request, 'Your profile is incomplete')
         context = {
             'ticket': user.get_ticket(),
