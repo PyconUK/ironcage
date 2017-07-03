@@ -12,11 +12,11 @@
     {% endif %}
 
     <h4>{{ form.description.label }}</h4>
-    <div>{{ proposal.description }}</div>
+    <div>{{ proposal.description|linebreaks }}</div>
     <hr />
 
     <h4>{{ form.description_private.label }}</h4>
-    <div>{{ proposal.description_private }}</div>
+    <div>{{ proposal.description_private|linebreaks }}</div>
     <hr />
 
     <ul>
