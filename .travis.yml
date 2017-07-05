@@ -12,4 +12,4 @@ install:
   - pip install -r requirements.txt
 
 addons:
-  postgresql: 9.6
+  postgresql: "9.6"
