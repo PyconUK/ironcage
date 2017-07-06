@@ -72,6 +72,22 @@
       </div>
 
       <div>
+        <h3>UK Python Association (UKPA)</h3>
+        <table class="table">
+          <tr>
+            <th class="col-md-4">Do you wish to become a member of the UKPA?</th>
+            <td>
+              <div class="btn-group" data-toggle="buttons">
+                <label class="btn btn-default{% if form.ukpa_membership.value == True %} active{% endif %}">
+                  <input type="radio" name="ukpa_membership" value="2" {% if form.ukpa_membership.value == True %} checked{% endif %}>Yes
+                </label>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <div>
         <h3>Demographics</h3>
 
         <p>All fields are optional, and if you'd prefer not to share this information with us, just click "Don't ask me about this" below.</p>
