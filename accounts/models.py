@@ -65,6 +65,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     childcare_reqs = models.TextField(null=True, blank=True)
     dietary_reqs_yn = models.NullBooleanField()
     dietary_reqs = models.TextField(null=True, blank=True)
+    ukpa_membership = models.NullBooleanField(null=True, blank-True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -100,6 +101,7 @@ class User(AbstractBaseUser, PermissionsMixin):
             self.accessibility_reqs_yn,
             self.childcare_reqs_yn,
             self.dietary_reqs_yn,
+            self.ukpa_membership,
         ]):
             return False
 
