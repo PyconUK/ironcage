@@ -81,6 +81,9 @@
                 <label class="btn btn-default{% if form.ukpa_membership.value == True %} active{% endif %}">
                   <input type="radio" name="ukpa_membership" value="2" {% if form.ukpa_membership.value == True %} checked{% endif %}>Yes
                 </label>
+                <label class="btn btn-default{% if form.ukpa_membership.value == True %} active{% endif %}">
+                  <input type="radio" name="ukpa_membership" value="3" {% if form.ukpa_membership.value == False %} checked{% endif %}>No
+                </label>
               </div>
             </td>
           </tr>
