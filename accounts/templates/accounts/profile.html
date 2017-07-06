@@ -60,6 +60,24 @@
     </div>
 
     <div>
+      <h3>UK Python Association</h3>
+        <table class='table'>
+          <tr>
+            <th class="col-md-4">Membership</th>
+            <td>
+              {% if user.ukpa_membership == None %}
+              unknown
+              {% elif user.ukpa_membership %}
+              {{ user.ukpa_membership }}
+              {% else %}
+              none
+              {% endif %}
+            </td>
+          </tr>
+        </table>
+    </div>
+
+    <div>
       <h3>Demographics</h3>
       {% if user.dont_ask_demographics %}
       <p>You have opted not to share demographic information with us.</p>
