@@ -65,6 +65,7 @@ class ProfileForm(forms.ModelForm):
             'childcare_reqs',
             'dietary_reqs_yn',
             'dietary_reqs',
+            'ukpa_membership',
             'dont_ask_demographics',
             'year_of_birth',
             'gender',
