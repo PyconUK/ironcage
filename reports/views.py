@@ -72,7 +72,7 @@ class UKPAReport(ReportView):
     title = 'UKPA Membership'
 
     def get_context_data(self):
-        members = User.objects.filter(ukpa_membership=True)
+        members = User.objects.filter(is_ukpa_member=True)
         rows = [[member.name, member.email_addr] for member in members]
 
         return {
