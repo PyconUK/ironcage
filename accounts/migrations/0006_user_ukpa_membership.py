@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name='user',
-            name='ukpa_membership',
+            name='is_ukpa_member',
             field=models.NullBooleanField(),
         ),
     ]

@@ -65,10 +65,10 @@
           <tr>
             <th class="col-md-4">Membership</th>
             <td>
-              {% if user.ukpa_membership == None %}
+              {% if user.is_ukpa_member == None %}
               unknown
-              {% elif user.ukpa_membership %}
-              {{ user.ukpa_membership }}
+              {% elif user.is_ukpa_member %}
+              {{ user.is_ukpa_member }}
               {% else %}
               none
               {% endif %}
