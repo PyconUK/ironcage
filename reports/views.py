@@ -68,6 +68,7 @@ class AttendanceByDayReport(ReportView):
             'rows': rows,
         }
 
+
 class UKPAReport(ReportView):
     title = 'UKPA Membership'
 
