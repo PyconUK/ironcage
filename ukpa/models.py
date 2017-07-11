@@ -31,4 +31,4 @@ class Nomination(models.Model):
         return self.id_scrambler.forward(self.id)
 
     def get_absolute_url(self):
-        return reverse('cfp:proposal', args=[self.nomination_id])
+        return reverse('ukpa:nomination', args=[self.nomination_id])

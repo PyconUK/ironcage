@@ -55,6 +55,13 @@
 {% else %}
 <li><a href="{% url 'grants:new_application' %}">Apply for financial assistance</a></li>
 {% endif %}
+
+{% if nomination %}
+<li><a href="{% url 'ukpa:nomination' nomination.nomination_id %}">
+View your nomination for election as a UKPA Trustee</a></li>
+{% else %}
+<li><a href="{% url 'ukpa:new_nomination' %}">Nominate yourself for election as a UKPA Trustee</a></li>
+{% endif %}
 </ul>
 
 {% if ticket %}

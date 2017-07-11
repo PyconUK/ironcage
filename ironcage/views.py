@@ -18,6 +18,7 @@ def index(request):
             'orders': user.orders.all(),
             'grant_application': user.get_grant_application(),
             'proposals': user.proposals.all(),
+            'nomination': user.get_nomination(),
         }
     else:
         context = {}
