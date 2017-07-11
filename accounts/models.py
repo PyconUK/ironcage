@@ -101,8 +101,10 @@ class User(AbstractBaseUser, PermissionsMixin):
             self.accessibility_reqs_yn,
             self.childcare_reqs_yn,
             self.dietary_reqs_yn,
-            self.is_ukpa_member,
         ]):
+            return False
+
+        if self.get_ticket() is not None and self.is_ukpa_member is None:
             return False
 
         if self.dont_ask_demographics:
