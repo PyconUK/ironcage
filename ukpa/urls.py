@@ -2,7 +2,7 @@ from django.conf.urls import url
 
 from . import views
 
-app_name = 'trustee_nominations'
+app_name = 'ukpa'
 
 urlpatterns = [
     url(r'^nominations/new/$', views.new_nomination, name='new_nomination'),

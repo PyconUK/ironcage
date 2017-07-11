@@ -20,7 +20,7 @@ def new_nomination(request):
             nomination.nominee = request.user
             nomination.save()
             messages.success(request, 'Thank you for submitting your nomination')
-            slack_message('trustee_nominations/nomination_created.slack', {'nomination': nomination})
+            slack_message('ukpa/nomination_created.slack', {'nomination': nomination})
             return redirect(nomination)
     else:
         form = NominationForm()
@@ -28,7 +28,7 @@ def new_nomination(request):
     context = {
         'form': form,
     }
-    return render(request, 'trustee_nominations/new_nomination.html', context)
+    return render(request, 'ukpa/new_nomination.html', context)
 
 
 @login_required
@@ -52,7 +52,7 @@ def nomination_edit(request, nomination_id):
     context = {
         'form': form,
     }
-    return render(request, 'trustee_nominations/nomination_edit.html', context)
+    return render(request, 'ukpa/nomination_edit.html', context)
 
 
 @login_required
@@ -67,4 +67,4 @@ def nomination(request, nomination_id):
         'nomination': nomination,
         'form': NominationForm(),
     }
-    return render(request, 'trustee_nominations/nomination.html', context)
+    return render(request, 'ukpa/nomination.html', context)
