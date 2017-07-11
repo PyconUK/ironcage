@@ -3,7 +3,9 @@ from django.test import TestCase
 
 class SettingsTests(TestCase):
     def test_prod_settings(self):
-        import ironcage.settings.prod
+        # Test that prod settings can be imported
+        import ironcage.settings.prod  # noqa
 
     def test_staging_settings(self):
-        import ironcage.settings.staging
+        # Test that staging settings can be imported
+        import ironcage.settings.staging  # noqa

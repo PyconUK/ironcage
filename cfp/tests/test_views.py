@@ -56,7 +56,7 @@ class NewProposalTests(TestCase):
             'aimed_at_new_programmers': True,
             'would_like_mentor': True,
         }
-        rsp = self.client.post('/cfp/proposals/new/', form_data, follow=True)
+        self.client.post('/cfp/proposals/new/', form_data, follow=True)
 
         messages = backend.retrieve_messages()
         self.assertEqual(len(messages), 1)
