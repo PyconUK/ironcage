@@ -4,6 +4,7 @@
 <form method="post">
   {% csrf_token %}
   {% avatar user %}<br>
+  <a href="{% url 'avatar_change' %}">Change your avatar</a>
   {% bootstrap_field form.statement %}
   <hr />
   {% buttons %}
