@@ -88,6 +88,9 @@ class ProfileForm(forms.ModelForm):
             if value is not None and value not in choices:
                 widget.choices.insert(1, [value, value])
 
+        if self.instance.get_ticket() is None:
+            self.fields['is_ukpa_member'].disabled = True
+
     def _post_clean(self):
         super()._post_clean()
 
