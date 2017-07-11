@@ -1,8 +1,9 @@
 {% load bootstrap3 %}
+{% load avatar_tags %}
 
 <form method="post">
   {% csrf_token %}
-
+  {% avatar user %}<br>
   {% bootstrap_field form.statement %}
   <hr />
   {% buttons %}

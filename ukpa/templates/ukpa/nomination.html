@@ -1,8 +1,10 @@
 {% extends 'ironcage/base.html' %}
+{% load avatar_tags %}
 
 {% block content %}
 <div class="row">
   <div class="col-md-6 col-md-offset-3">
+  {% avatar user %}<br>
     <h4>{{ form.description.label }}</h4>
     <div>{{ nomination.statement|linebreaks }}</div>
     <hr />

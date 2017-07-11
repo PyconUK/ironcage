@@ -18,4 +18,5 @@ urlpatterns = [
     url(r'^$', ironcage.views.index, name='index'),
     url(r'^500/$', ironcage.views.error, name='error'),
     url(r'^log/$', ironcage.views.log, name='log'),
+    url(r'^avatar/', include('avatar.urls')),
 ]

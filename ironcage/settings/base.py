@@ -51,6 +51,7 @@ INSTALLED_APPS = [
 
     'bootstrap3',
     'django_slack',
+    'avatar',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -221,3 +222,5 @@ SLACK_USERNAME = 'ironcage-log-bot'
 # Admins for mailing errors to
 
 ADMINS = [['-', email_addr] for email_addr in os.environ.get('ADMINS', '').split(',')]
+
+AVATAR_GRAVATAR_FIELD = 'email_addr'
