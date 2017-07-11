@@ -1,0 +1,7 @@
+{% extends django_slack %}
+
+{% block text %}
+New nomination {{ nomination.nomination_id }}
+
+{{ nomination.nominee.name }} has just submitted a nominated themself for elections as a UKPA Trustee
+{% endblock %}

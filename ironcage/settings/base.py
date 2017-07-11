@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'grants',
     'reports',
     'tickets',
+    'trustee_nominations',
 
     'bootstrap3',
     'django_slack',
