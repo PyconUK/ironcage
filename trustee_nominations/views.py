@@ -17,10 +17,10 @@ def new_nomination(request):
         form = NominationForm(request.POST)
         if form.is_valid():
             nomination = form.save(commit=False)
-            nomination.proposer = request.user
+            nomination.nominee = request.user
             nomination.save()
             messages.success(request, 'Thank you for submitting your nomination')
-            slack_message('trustee_nomination/nomination_created.slack', {'nomination': nomination})
+            slack_message('trustee_nominations/nomination_created.slack', {'nomination': nomination})
             return redirect(nomination)
     else:
         form = NominationForm()
@@ -35,7 +35,7 @@ def new_nomination(request):
 def nomination_edit(request, nomination_id):
     nomination = Nomination.objects.get_by_nomination_id_or_404(nomination_id)
 
-    if request.user != nomination.proposer:
+    if request.user != nomination.nominee:
         messages.warning(request, 'Only the nominee can update the nomination')
         return redirect('index')
 
@@ -59,7 +59,7 @@ def nomination_edit(request, nomination_id):
 def nomination(request, nomination_id):
     nomination = Nomination.objects.get_by_nomination_id_or_404(nomination_id)
 
-    if request.user != nomination.proposer:
+    if request.user != nomination.nominee:
         messages.warning(request, 'Only the nominee can view the nomination')
         return redirect('index')
 

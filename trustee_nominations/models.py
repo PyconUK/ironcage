@@ -18,8 +18,8 @@ class Nomination(models.Model):
     id_scrambler = Scrambler(3000)
 
     class Manager(models.Manager):
-        def get_by_nomination_id_or_404(self, proposal_id):
-            id = self.model.id_scrambler.backward(proposal_id)
+        def get_by_nomination_id_or_404(self, nomination_id):
+            id = self.model.id_scrambler.backward(nomination_id)
             return get_object_or_404(self.model, pk=id)
 
     objects = Manager()
@@ -31,4 +31,4 @@ class Nomination(models.Model):
         return self.id_scrambler.forward(self.id)
 
     def get_absolute_url(self):
-        return reverse('cfp:proposal', args=[self.proposal_id])
+        return reverse('cfp:proposal', args=[self.nomination_id])
