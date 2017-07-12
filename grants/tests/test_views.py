@@ -1,7 +1,7 @@
 from django_slack.utils import get_backend as get_slack_backend
 
 from django.test import TestCase
-
+from grants.models import Application
 from . import factories
 
 
@@ -101,7 +101,7 @@ class ApplicationEditTests(TestCase):
         self.assertRedirects(rsp, f'/accounts/login/?next=/grants/applications/{self.application.application_id}/edit/')
 
     def test_post_when_not_authenticated(self):
-        rsp = self.client.get(f'/grants/applications/{self.application.application_id}/edit/')
+        rsp = self.client.post(f'/grants/applications/{self.application.application_id}/edit/')
         self.assertRedirects(rsp, f'/accounts/login/?next=/grants/applications/{self.application.application_id}/edit/')
 
     def test_get_when_not_authorized(self):
@@ -115,6 +115,39 @@ class ApplicationEditTests(TestCase):
         rsp = self.client.post(f'/grants/applications/{self.application.application_id}/edit/', follow=True)
         self.assertRedirects(rsp, '/')
         self.assertContains(rsp, 'Only the owner of a application can update the application')
+
+
+class ApplicationDeleteTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.alice = factories.create_user('Alice')
+        cls.bob = factories.create_user('Bob')
+
+    def test_get(self):
+        self.client.force_login(self.alice)
+        application = factories.create_application(self.alice)
+        rsp = self.client.get(f'/grants/applications/{application.application_id}/delete/')
+        self.assertEqual(rsp.status_code, 405)
+        self.assertEqual(Application.objects.get(id=application.id), application)
+
+    def test_post(self):
+        self.client.force_login(self.alice)
+        application = factories.create_application(self.alice)
+        rsp = self.client.post(f'/grants/applications/{application.application_id}/delete/', follow=True)
+        self.assertContains(rsp, 'Your application has been withdrawn', html=True)
+
+        with self.assertRaises(Application.DoesNotExist):
+            Application.objects.get(id=application.id)
+
+    def test_get_when_not_authenticated(self):
+        application = factories.create_application(self.alice)
+        rsp = self.client.get(f'/grants/applications/{application.application_id}/delete/')
+        self.assertRedirects(rsp, f'/accounts/login/?next=/grants/applications/{application.application_id}/delete/')
+
+    def test_post_when_not_authenticated(self):
+        application = factories.create_application(self.alice)
+        rsp = self.client.post(f'/grants/applications/{application.application_id}/delete/')
+        self.assertRedirects(rsp, f'/accounts/login/?next=/grants/applications/{application.application_id}/delete/')
 
 
 class ApplicationTests(TestCase):
