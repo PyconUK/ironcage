@@ -3,10 +3,15 @@
 
 <form method="post">
   {% csrf_token %}
-  {% avatar user %}<br><br>
+
+  <table class="table borderless">
+    <tr>
+      <td>{% avatar user %}</td>
+      <td>Both the statement you provide below and your avatar (which is pulled from <a href="https://secure.gravatar.com/">Gravatar</a>) will be made public on the conference website once the deadline for nominations has expired.</td>
+    </tr>
+  </table>
   {% bootstrap_field form.statement %}
   <hr />
-  {% buttons %}
   <p>By submitting this nomination I declare that I:</p>
   <ul>
     <li>have not been convicted at any time of an offence involving dishonesty or deception (please note, you do not have to declare any conviction
@@ -19,6 +24,7 @@
     Trustee due to misconduct.</li>
     <li>am not disqualified from being a Trustee by an order of the Charity Commission for England and Wales under section 181A of the Charities Act 2011</li>
   </ul>
+  {% buttons %}
   <button type="submit" class="btn btn-primary">Submit</button>
   {% endbuttons %}
 </form>

@@ -15,7 +15,7 @@ class NominationForm(forms.ModelForm):
         }
 
         help_texts = {
-            'statment': 'Limit: 300 words.',
+            'statement': 'Limit: 300 words.',
         }
 
         widgets = {
