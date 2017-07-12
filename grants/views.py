@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.forms.models import model_to_dict
 from django.shortcuts import redirect, render
-from django.http import HttpResponseNotAllowed
+from django.views.decorators.http import require_POST
 
 from tickets.constants import DAYS
 
@@ -91,10 +91,8 @@ def application(request, application_id):
 
 
 @login_required
+@require_POST
 def application_delete(request, application_id):
-    if request.method != 'POST':
-        return HttpResponseNotAllowed(['POST'])
-
     application = Application.objects.get_by_application_id_or_404(application_id)
 
     if request.user == application.applicant:
