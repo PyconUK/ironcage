@@ -129,7 +129,7 @@ class ProposalDeleteTests(TestCase):
         self.client.force_login(self.alice)
         proposal = factories.create_proposal(self.alice)
         rsp = self.client.get(f'/cfp/proposals/{proposal.proposal_id}/delete/')
-        self.assertRedirects(rsp, '/')
+        self.assertEqual(rsp.status_code, 405)
         self.assertEqual(Proposal.objects.get(id=proposal.id), proposal)
 
     def test_post(self):
