@@ -97,10 +97,10 @@ def application_delete(request, application_id):
 
     application = Application.objects.get_by_application_id_or_404(application_id)
 
-    if request.user != application.applicant:
+    if request.user == application.applicant:
+        application.delete()
+        messages.success(request, 'Your application has been withdrawn')
+    else:
         messages.warning(request, 'Only the owner of a application can delete the application')
-        return redirect('index')
 
-    application.delete()
-    messages.success(request, 'Your application has been withdrawn')
     return redirect('index')
