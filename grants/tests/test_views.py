@@ -127,7 +127,7 @@ class ApplicationDeleteTests(TestCase):
         self.client.force_login(self.alice)
         application = factories.create_application(self.alice)
         rsp = self.client.get(f'/grants/applications/{application.application_id}/delete/')
-        self.assertRedirects(rsp, '/')
+        self.assertEqual(rsp.status_code, 405)
         self.assertEqual(Application.objects.get(id=application.id), application)
 
     def test_post(self):
