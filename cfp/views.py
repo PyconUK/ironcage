@@ -70,3 +70,16 @@ def proposal(request, proposal_id):
         'form': ProposalForm(),
     }
     return render(request, 'cfp/proposal.html', context)
+
+
+@login_required
+def proposal_delete(request, proposal_id):
+    proposal = Proposal.objects.get_by_proposal_id_or_404(proposal_id)
+
+    if request.user != proposal.proposer:
+        messages.warning(request, 'Only the proposer of a proposal can withdraw the proposal')
+        return redirect('index')
+
+    proposal.delete()
+    messages.success(request, 'Your proposal has been withdrawn')
+    return redirect('index')
