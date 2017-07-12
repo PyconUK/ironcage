@@ -11,7 +11,7 @@ class NominationForm(forms.ModelForm):
         ]
 
         labels = {
-            'statement': 'Please make a statment in support of your nomination',
+            'statement': 'Please make a statement in support of your nomination',
         }
 
         help_texts = {
