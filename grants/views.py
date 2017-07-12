@@ -95,8 +95,9 @@ def application_delete(request, application_id):
 
     if request.user != application.applicant:
         messages.warning(request, 'Only the owner of a application can delete the application')
-        return redirect('index')
 
-    application.delete()
-    messages.success(request, 'Your application has been withdrawn')
+    if request.method == 'POST':
+        application.delete()
+        messages.success(request, 'Your application has been withdrawn')
+
     return redirect('index')
