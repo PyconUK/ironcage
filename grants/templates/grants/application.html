@@ -27,6 +27,7 @@
     {% endif %}
     <hr />
 
+    <a href="{% url 'grants:application_delete' application.application_id %}" class="btn btn-danger">Withdraw your application</a>
     <a href="{% url 'grants:application_edit' application.application_id %}" class="btn btn-primary">Update your application</a>
   </div>
 </div>
