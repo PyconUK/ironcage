@@ -68,3 +68,17 @@ def nomination(request, nomination_id):
         'form': NominationForm(),
     }
     return render(request, 'ukpa/nomination.html', context)
+
+
+@login_required
+def nomination_delete(request, nomination_id):
+    nomination = Nomination.objects.get_by_nomination_id_or_404(nomination_id)
+
+    if request.user != nomination.nominee:
+        messages.warning(request, 'Only the nominee can withdraw the nomination')
+        return redirect('index')
+
+    nomination.delete()
+    messages.success(request, 'Your nomination has been withdrawn')
+    return redirect('index')
+
