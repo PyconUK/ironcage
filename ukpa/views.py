@@ -10,6 +10,10 @@ from .models import Nomination
 
 
 def new_nomination(request):
+    if request.user.is_authenticated and request.user.get_nomination():
+        messages.warning(request, 'You have already submitted a nomination')
+        return redirect(request.user.get_nomination())
+
     if request.method == 'POST':
         if not request.user.is_authenticated:
             return redirect(settings.LOGIN_URL)
