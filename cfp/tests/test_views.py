@@ -151,6 +151,19 @@ class ProposalDeleteTests(TestCase):
         rsp = self.client.post(f'/cfp/proposals/{proposal.proposal_id}/delete/')
         self.assertRedirects(rsp, f'/accounts/login/?next=/cfp/proposals/{proposal.proposal_id}/delete/')
 
+    def test_get_when_not_authorized(self):
+        self.client.force_login(self.bob)
+        proposal = factories.create_proposal(self.alice)
+        rsp = self.client.get(f'/cfp/proposals/{proposal.proposal_id}/delete/', follow=True)
+        self.assertEqual(rsp.status_code, 405)
+
+    def test_post_when_not_authorized(self):
+        self.client.force_login(self.bob)
+        proposal = factories.create_proposal(self.alice)
+        rsp = self.client.post(f'/cfp/proposals/{proposal.proposal_id}/delete/', follow=True)
+        self.assertRedirects(rsp, '/')
+        self.assertContains(rsp, 'Only the proposer of a proposal can withdraw the proposal')
+
 
 class ProposalTests(TestCase):
     @classmethod
