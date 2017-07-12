@@ -101,7 +101,7 @@ class ApplicationEditTests(TestCase):
         self.assertRedirects(rsp, f'/accounts/login/?next=/grants/applications/{self.application.application_id}/edit/')
 
     def test_post_when_not_authenticated(self):
-        rsp = self.client.get(f'/grants/applications/{self.application.application_id}/edit/')
+        rsp = self.client.post(f'/grants/applications/{self.application.application_id}/edit/')
         self.assertRedirects(rsp, f'/accounts/login/?next=/grants/applications/{self.application.application_id}/edit/')
 
     def test_get_when_not_authorized(self):
