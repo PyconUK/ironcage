@@ -122,7 +122,7 @@ class NominationDeleteTests(TestCase):
         self.client.force_login(self.alice)
         nomination = factories.create_nomination(self.alice)
         rsp = self.client.get(f'/ukpa/nominations/{nomination.nomination_id}/delete/')
-        self.assertRedirects(rsp, '/')
+        self.assertEqual(rsp.status_code, 405)
         self.assertEqual(Nomination.objects.get(id=nomination.id), nomination)
 
     def test_post(self):
@@ -148,13 +148,12 @@ class NominationDeleteTests(TestCase):
         nomination = factories.create_nomination(self.alice)
         self.client.force_login(self.bob)
         rsp = self.client.get(f'/ukpa/nominations/{nomination.nomination_id}/delete/', follow=True)
-        self.assertRedirects(rsp, '/')
-        self.assertContains(rsp, 'Only the nominee can withdraw the nomination')
+        self.assertEqual(rsp.status_code, 405)
 
     def test_post_when_not_authorized(self):
         nomination = factories.create_nomination(self.alice)
         self.client.force_login(self.bob)
-        rsp = self.client.get(f'/ukpa/nominations/{nomination.nomination_id}/delete/', follow=True)
+        rsp = self.client.post(f'/ukpa/nominations/{nomination.nomination_id}/delete/', follow=True)
         self.assertRedirects(rsp, '/')
         self.assertContains(rsp, 'Only the nominee can withdraw the nomination')
 

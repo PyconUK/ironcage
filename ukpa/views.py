@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import redirect, render
+from django.http import HttpResponseNotAllowed
 
 from .forms import NominationForm
 from .models import Nomination
@@ -76,13 +77,15 @@ def nomination(request, nomination_id):
 
 @login_required
 def nomination_delete(request, nomination_id):
+    if request.method != 'POST':
+        return HttpResponseNotAllowed(['POST'])
+
     nomination = Nomination.objects.get_by_nomination_id_or_404(nomination_id)
 
-    if request.user != nomination.nominee:
-        messages.warning(request, 'Only the nominee can withdraw the nomination')
-
-    if request.method == 'POST':
+    if request.user == nomination.nominee:
         nomination.delete()
         messages.success(request, 'Your nomination has been withdrawn')
+    else:
+        messages.warning(request, 'Only the nominee can withdraw the nomination')
 
     return redirect('index')
