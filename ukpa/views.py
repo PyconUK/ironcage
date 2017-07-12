@@ -80,9 +80,9 @@ def nomination_delete(request, nomination_id):
 
     if request.user != nomination.nominee:
         messages.warning(request, 'Only the nominee can withdraw the nomination')
-        return redirect('index')
 
-    nomination.delete()
-    messages.success(request, 'Your nomination has been withdrawn')
+    if request.method == 'POST':
+        nomination.delete()
+        messages.success(request, 'Your nomination has been withdrawn')
+
     return redirect('index')
-
