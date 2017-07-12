@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.http import HttpResponseNotAllowed
+from django.views.decorators.http import require_POST
 
 from .forms import ProposalForm
 from .models import Proposal
@@ -74,9 +75,8 @@ def proposal(request, proposal_id):
 
 
 @login_required
+@require_POST
 def proposal_delete(request, proposal_id):
-    if request.method != 'POST':
-        return HttpResponseNotAllowed(['POST'])
 
     proposal = Proposal.objects.get_by_proposal_id_or_404(proposal_id)
 
