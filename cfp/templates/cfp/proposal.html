@@ -45,6 +45,7 @@
     <hr />
     {% endif %}
 
+    <a href="{% url 'cfp:proposal_delete' proposal.proposal_id %}" class="btn btn-danger">Withdraw your proposal</a>
     <a href="{% url 'cfp:proposal_edit' proposal.proposal_id %}" class="btn btn-primary">Update your proposal</a>
   </div>
 </div>

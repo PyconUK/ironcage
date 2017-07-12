@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import redirect, render
+from django.views.decorators.http import require_POST
 
 from .forms import ProposalForm
 from .models import Proposal
@@ -70,3 +71,18 @@ def proposal(request, proposal_id):
         'form': ProposalForm(),
     }
     return render(request, 'cfp/proposal.html', context)
+
+
+@login_required
+@require_POST
+def proposal_delete(request, proposal_id):
+
+    proposal = Proposal.objects.get_by_proposal_id_or_404(proposal_id)
+
+    if request.user == proposal.proposer:
+        proposal.delete()
+        messages.success(request, 'Your proposal has been withdrawn')
+    else:
+        messages.warning(request, 'Only the proposer of a proposal can withdraw the proposal')
+
+    return redirect('index')
