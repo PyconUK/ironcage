@@ -103,7 +103,7 @@ class ProposalEditTests(TestCase):
         self.assertRedirects(rsp, f'/accounts/login/?next=/cfp/proposals/{self.proposal.proposal_id}/edit/')
 
     def test_post_when_not_authenticated(self):
-        rsp = self.client.get(f'/cfp/proposals/{self.proposal.proposal_id}/edit/')
+        rsp = self.client.post(f'/cfp/proposals/{self.proposal.proposal_id}/edit/')
         self.assertRedirects(rsp, f'/accounts/login/?next=/cfp/proposals/{self.proposal.proposal_id}/edit/')
 
     def test_get_when_not_authorized(self):
