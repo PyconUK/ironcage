@@ -78,8 +78,9 @@ def proposal_delete(request, proposal_id):
 
     if request.user != proposal.proposer:
         messages.warning(request, 'Only the proposer of a proposal can withdraw the proposal')
-        return redirect('index')
 
-    proposal.delete()
-    messages.success(request, 'Your proposal has been withdrawn')
+    if request.method == 'POST':
+        proposal.delete()
+        messages.success(request, 'Your proposal has been withdrawn')
+
     return redirect('index')
