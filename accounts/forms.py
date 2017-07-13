@@ -88,7 +88,6 @@ class ProfileForm(forms.ModelForm):
             if value is not None and value not in choices:
                 widget.choices.insert(1, [value, value])
 
-
         # If the user has not bought a ticket, we do not offer UKPA membership.
         # The option is hidden in the templates, but we also disable the field
         # here to prevent that control being bypassed by a request sent
