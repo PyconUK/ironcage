@@ -24,7 +24,7 @@ class NewNominationTests(TestCase):
 
     def test_get_when_not_authenticated(self):
         rsp = self.client.get('/ukpa/nominations/new/')
-        self.assertContains(rsp, 'Please <a href="/accounts/register/?next=/ukpa/nominations/new/">sign up</a> or <a href="/accounts/login/?next=/ukpa/nominations/new/">sign in</a> to make a nomination.', html=True)
+        self.assertContains(rsp, 'Please <a href="/accounts/register/?next=/ukpa/nominations/new/">sign up</a> or <a href="/accounts/login/?next=/ukpa/nominations/new/">sign in</a> to stand for election.', html=True)
         self.assertNotContains(rsp, '<form method="post">')
 
     def test_post(self):
