@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.conf.urls import url, include
 from django.contrib import admin
 
@@ -18,3 +19,9 @@ urlpatterns = [
     url(r'^500/$', ironcage.views.error, name='error'),
     url(r'^log/$', ironcage.views.log, name='log'),
 ]
+
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns = [
+        url(r'^__debug__/', include(debug_toolbar.urls)),
+    ] + urlpatterns
