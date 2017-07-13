@@ -3,5 +3,5 @@
 {% block text %}
 New nomination {{ nomination.nomination_id }}
 
-{{ nomination.nominee.name }} has just submitted a nominated themself for elections as a UKPA Trustee
+{{ nomination.nominee.name }} has just stood for election as a UKPA Trustee
 {% endblock %}
