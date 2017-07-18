@@ -2,6 +2,7 @@ coverage
 dj-database-url
 django
 django-bootstrap3
+django-debug-toolbar
 django-dotenv
 django-slack
 flake8

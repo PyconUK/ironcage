@@ -1,6 +1,7 @@
 from .base import *  # flake8: noqa
 
 DEBUG = bool(os.environ.get('DEBUG'))
+INTERNAL_IPS = ['127.0.0.1']
 
 # A custom setting for creating full URLs in links in emails
 DOMAIN = 'http://localhost:8000'
