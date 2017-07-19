@@ -8,8 +8,6 @@
     <h4>{{ form.description.label }}</h4>
     <div>{{ nomination.statement|linebreaks }}</div>
     <hr />
-
-    <a href="{% url 'ukpa:nomination_delete' nomination.nomination_id %}" class="btn btn-danger">Withdraw your nomination</a>
     <a href="{% url 'ukpa:nomination_edit' nomination.nomination_id %}" class="btn btn-primary">Update your nomination</a>
   </div>
 </div>

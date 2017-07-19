@@ -15,7 +15,7 @@ class Nomination(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    id_scrambler = Scrambler(3000)
+    id_scrambler = Scrambler(5000)
 
     class Manager(models.Manager):
         def get_by_nomination_id_or_404(self, nomination_id):

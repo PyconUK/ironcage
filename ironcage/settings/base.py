@@ -224,3 +224,4 @@ SLACK_USERNAME = 'ironcage-log-bot'
 ADMINS = [['-', email_addr] for email_addr in os.environ.get('ADMINS', '').split(',')]
 
 AVATAR_GRAVATAR_FIELD = 'email_addr'
+AVATAR_GRAVATAR_DEFAULT = 'mm'
