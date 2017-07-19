@@ -4,7 +4,6 @@ from django.utils.decorators import method_decorator
 from django.utils.text import slugify
 from django.views.generic import TemplateView
 
-from accounts.models import User
 from cfp.models import Proposal
 from tickets.constants import DAYS
 from tickets.models import Order, Ticket
@@ -65,20 +64,6 @@ class AttendanceByDayReport(ReportView):
         return {
             'title': self.title,
             'headings': ['Day', 'Individual rate', 'Corporate rate', 'Education rate', 'Total'],
-            'rows': rows,
-        }
-
-
-class UKPAReport(ReportView):
-    title = 'UKPA Membership'
-
-    def get_context_data(self):
-        members = User.objects.filter(is_ukpa_member=True)
-        rows = [[member.name, member.email_addr] for member in members]
-
-        return {
-            'title': self.title,
-            'headings': ['Name', 'email'],
             'rows': rows,
         }
 
@@ -239,7 +224,6 @@ class SpeakersSeekingMentorReport(ReportView):
 
 reports = [
     AttendanceByDayReport,
-    UKPAReport,
     TicketSalesReport,
     OrdersReport,
     UnpaidOrdersReport,

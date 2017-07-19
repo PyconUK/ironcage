@@ -71,28 +71,6 @@
         </table>
       </div>
 
-      {% if user.get_ticket is not None %}
-      <div>
-        <h3>UK Python Association (UKPA)</h3>
-        <p>You can read more details about the UKPA and becoming a member on the <a href="http://2017.pyconuk.org/ukpa/">conference website</a></p>
-        <table class="table">
-          <tr>
-            <th class="col-md-4">Do you wish to become a member of the UKPA?</th>
-            <td>
-              <div class="btn-group" data-toggle="buttons">
-                <label class="btn btn-default{% if form.is_ukpa_member.value == True %} active{% endif %}">
-                  <input type="radio" name="is_ukpa_member" value="2" {% if form.is_ukpa_member.value == True %} checked{% endif %}>Yes
-                </label>
-                <label class="btn btn-default{% if form.is_ukpa_member.value == False %} active{% endif %}">
-                  <input type="radio" name="is_ukpa_member" value="3" {% if form.is_ukpa_member.value == False %} checked{% endif %}>No
-                </label>
-              </div>
-            </td>
-          </tr>
-        </table>
-      </div>
-      {% endif %}
-
       <div>
         <h3>Demographics</h3>
 
