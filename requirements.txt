@@ -10,6 +10,7 @@ dj-database-url==0.4.2
 django-appconf==1.0.2     # via django-avatar
 django-avatar==4.0.0
 django-bootstrap3==8.2.3
+django-debug-toolbar==1.8
 django-dotenv==1.4.1
 django-slack==5.8.1
 django==1.11.1
@@ -24,6 +25,7 @@ pyflakes==1.5.0           # via flake8
 pytz==2017.2              # via django
 requests==2.14.2          # via django-slack, stripe
 six==1.10.0               # via django-slack, structlog
+sqlparse==0.2.3           # via django-debug-toolbar
 stripe==1.55.2
 structlog[dev]==17.2.0
 whitenoise==3.3.0

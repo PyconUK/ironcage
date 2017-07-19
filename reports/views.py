@@ -222,6 +222,21 @@ class CFPSubmissionsReport(ReportView):
         ]
 
 
+class SpeakersSeekingMentorReport(ReportView):
+    title = 'Speakers Seeking Mentors'
+
+    headings = [
+        'Speaker',
+        'Title'
+    ]
+
+    def get_queryset(self):
+        return Proposal.objects.filter(would_like_mentor=True)
+
+    def presenter(self, proposal):
+        return [proposal.proposer.name, proposal.title]
+
+
 reports = [
     AttendanceByDayReport,
     UKPAReport,
@@ -231,6 +246,7 @@ reports = [
     TicketsReport,
     UnclaimedTicketsReport,
     CFPSubmissionsReport,
+    SpeakersSeekingMentorReport,
 ]
 
 
