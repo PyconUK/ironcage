@@ -168,7 +168,6 @@ class NominationTests(TestCase):
     def test_get(self):
         self.client.force_login(self.alice)
         rsp = self.client.get(f'/ukpa/nominations/{self.nomination.nomination_id}/', follow=True)
-        self.assertContains(rsp, f'<a href="/ukpa/nominations/{self.nomination.nomination_id}/delete/" class="btn btn-danger">Withdraw your nomination</a>', html=True)
         self.assertContains(rsp, f'<a href="/ukpa/nominations/{self.nomination.nomination_id}/edit/" class="btn btn-primary">Update your nomination</a>', html=True)
 
     def test_get_when_not_authenticated(self):
