@@ -65,7 +65,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     childcare_reqs = models.TextField(null=True, blank=True)
     dietary_reqs_yn = models.NullBooleanField()
     dietary_reqs = models.TextField(null=True, blank=True)
-    is_ukpa_member = models.NullBooleanField(null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -102,9 +101,6 @@ class User(AbstractBaseUser, PermissionsMixin):
             self.childcare_reqs_yn,
             self.dietary_reqs_yn,
         ]):
-            return False
-
-        if self.get_ticket() is not None and self.is_ukpa_member is None:
             return False
 
         if self.dont_ask_demographics:

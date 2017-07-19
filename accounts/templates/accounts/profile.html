@@ -59,26 +59,6 @@
       </table>
     </div>
 
-    {% if user.get_ticket is not None %}
-    <div>
-      <h3>UK Python Association</h3>
-        <table class='table'>
-          <tr>
-            <th class="col-md-4">Membership</th>
-            <td>
-              {% if user.is_ukpa_member == None %}
-              unknown
-              {% elif user.is_ukpa_member %}
-              Yes
-              {% else %}
-              No
-              {% endif %}
-            </td>
-          </tr>
-        </table>
-    </div>
-    {% endif %}
-
     <div>
       <h3>Demographics</h3>
       {% if user.dont_ask_demographics %}
