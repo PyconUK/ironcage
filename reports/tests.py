@@ -9,15 +9,13 @@ from reports import views
 class ReportsTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.alice = accounts_factories.create_user(
+        cls.alice = accounts_factories.create_staff_user(
             name='Alice',
             email_addr='alice@example.com',
-            is_staff=True
         )
         cls.bob = accounts_factories.create_user(
             name='Bob',
             email_addr='bob@example.com',
-            is_staff=False
         )
 
     def setUp(self):
