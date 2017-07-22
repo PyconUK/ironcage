@@ -1,0 +1,51 @@
+<table class="table">
+  <tr>
+    <th>Ticket holder</th>
+    <td>{{ ticket.owner.name }}</td>
+  </tr>
+  <tr>
+    <th>Days</th>
+    <td>{{ ticket.details.days }}</td>
+  </tr>
+  <tr>
+    <th>Cost (incl. VAT)</th>
+    <td>{{ ticket.details.cost_incl_vat }}</td>
+  </tr>
+  <tr>
+    <th>Accessibility</th>
+    <td>
+      {% if user.accessibility_reqs_yn == None %}
+      unknown
+      {% elif user.accessibility_reqs_yn %}
+      {{ user.accessibility_reqs }}
+      {% else %}
+      none
+      {% endif %}
+    </td>
+  </tr>
+  <tr>
+    <th>Childcare</th>
+    <td>
+      {% if user.childcare_reqs_yn == None %}
+      unknown
+      {% elif user.childcare_reqs_yn %}
+      {{ user.childcare_reqs }}
+      {% else %}
+      none
+      {% endif %}
+    </td>
+  </tr>
+  <tr>
+    <th>Dietary</th>
+    <td>
+      {% if user.dietary_reqs_yn == None %}
+      unknown
+      {% elif user.dietary_reqs_yn %}
+      {{ user.dietary_reqs }}
+      {% else %}
+      none
+      {% endif %}
+    </td>
+  </tr>
+</table>
+

@@ -129,12 +129,16 @@ class TestOrdersReport(ReportsTestCase):
 
     def test_get_context_data(self):
         report = reports.OrdersReport()
+        links = [{
+            'href': f'/reports/tickets/orders/{order.order_id}/',
+            'text': order.order_id,
+        } for order in [self.order1, self.order2]]
         expected = {
             'title': 'All orders',
             'headings': ['ID', 'Rate', 'Purchaser', 'Email', 'Tickets', 'Cost (incl. VAT)', 'Status'],
             'rows': [
-                [self.order1.order_id, 'individual', 'Alice', 'alice@example.com', 1, '£54', 'pending'],
-                [self.order2.order_id, 'individual', 'Bob', 'bob@example.com', 1, '£90', 'successful'],
+                [links[0], 'individual', 'Alice', 'alice@example.com', 1, '£54', 'pending'],
+                [links[1], 'individual', 'Bob', 'bob@example.com', 1, '£90', 'successful'],
             ],
         }
         self.assertEqual(report.get_context_data(), expected)
@@ -153,11 +157,15 @@ class TestUnpaidOrdersReport(ReportsTestCase):
 
     def test_get_context_data(self):
         report = reports.UnpaidOrdersReport()
+        link = {
+            'href': f'/reports/tickets/orders/{self.order1.order_id}/',
+            'text': self.order1.order_id,
+        }
         expected = {
             'title': 'Unpaid orders',
             'headings': ['ID', 'Rate', 'Purchaser', 'Email', 'Tickets', 'Cost (incl. VAT)', 'Status'],
             'rows': [
-                [self.order1.order_id, 'individual', 'Alice', 'alice@example.com', 1, '£54', 'pending'],
+                [link, 'individual', 'Alice', 'alice@example.com', 1, '£54', 'pending'],
             ],
         }
         self.assertEqual(report.get_context_data(), expected)
@@ -177,13 +185,17 @@ class TestTicketsReport(ReportsTestCase):
 
     def test_get_context_data(self):
         report = reports.TicketsReport()
+        links = [{
+            'href': f'/reports/tickets/tickets/{ticket.ticket_id}/',
+            'text': ticket.ticket_id,
+        } for ticket in [self.ticket1, self.ticket2, self.ticket3]]
         expected = {
             'title': 'All tickets',
             'headings': ['ID', 'Rate', 'Ticket holder', 'Days', 'Cost (incl. VAT)', 'Status'],
             'rows': [
-                [self.ticket1.ticket_id, 'individual', 'Alice', 'Thursday, Friday, Saturday', '£126', 'Assigned'],
-                [self.ticket2.ticket_id, 'individual', 'bob@example.com', 'Friday, Saturday', '£90', 'Unclaimed'],
-                [self.ticket3.ticket_id, 'individual', 'carol@example.com', 'Saturday, Sunday', '£90', 'Unclaimed'],
+                [links[0], 'individual', 'Alice', 'Thursday, Friday, Saturday', '£126', 'Assigned'],
+                [links[1], 'individual', 'bob@example.com', 'Friday, Saturday', '£90', 'Unclaimed'],
+                [links[2], 'individual', 'carol@example.com', 'Saturday, Sunday', '£90', 'Unclaimed'],
             ],
         }
         self.assertEqual(report.get_context_data(), expected)
@@ -203,12 +215,16 @@ class TestUnclaimedTicketsReport(ReportsTestCase):
 
     def test_get_context_data(self):
         report = reports.UnclaimedTicketsReport()
+        links = [{
+            'href': f'/reports/tickets/tickets/{ticket.ticket_id}/',
+            'text': ticket.ticket_id,
+        } for ticket in [self.ticket2, self.ticket3]]
         expected = {
             'title': 'Unclaimed tickets',
             'headings': ['ID', 'Rate', 'Ticket holder', 'Days', 'Cost (incl. VAT)', 'Status'],
             'rows': [
-                [self.ticket2.ticket_id, 'individual', 'bob@example.com', 'Friday, Saturday', '£90', 'Unclaimed'],
-                [self.ticket3.ticket_id, 'individual', 'carol@example.com', 'Saturday, Sunday', '£90', 'Unclaimed'],
+                [links[0], 'individual', 'bob@example.com', 'Friday, Saturday', '£90', 'Unclaimed'],
+                [links[1], 'individual', 'carol@example.com', 'Saturday, Sunday', '£90', 'Unclaimed'],
             ],
         }
         self.assertEqual(report.get_context_data(), expected)
