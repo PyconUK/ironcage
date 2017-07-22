@@ -1,0 +1,11 @@
+{% extends 'ironcage/base.html' %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-8">
+    <h2>{{ user.name }}</h2>
+
+    {% include 'accounts/_profile_details.html' %}
+  </div>
+</div>
+{% endblock %}

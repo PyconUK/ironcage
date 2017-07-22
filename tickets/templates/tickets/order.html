@@ -11,55 +11,7 @@
 <p>You have ordered {{ order.num_tickets }} ticket{{ order.num_tickets|pluralize }} at the {{ order.rate }} rate.</p>
 {% endif %}
 
-<div class="row">
-  <div class="col-md-4">
-    <table class="table table-condensed">
-      <tr>
-        <th>Date</th>
-        <td>{% if order.payment_required %}Unpaid{% else %}{{ order.stripe_charge_created|date }}{% endif %}</td>
-      </tr>
-      {% if order.rate == 'corporate' %}
-      <tr>
-        <th>Company</th>
-        <td>{{ order.company_name }}</td>
-      </tr>
-      <tr>
-        <th>Address</th>
-        <td>{{ order.company_addr_formatted }}</td>
-      </tr>
-      {% endif %}
-      <tr>
-        <th>Total (excl. VAT)</th>
-        <td>£{{ order.cost_excl_vat }}</td>
-      </tr>
-      <tr>
-        <th>VAT</th>
-        <td>£{{ order.vat }}</td>
-      </tr>
-      <tr>
-        <th>Total (incl. VAT)</th>
-        <td>£{{ order.cost_incl_vat }}</td>
-      </tr>
-    </table>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col-md-6">
-    <h3>Ticket details</h3>
-
-    <table class="table table-condensed">
-      {% for detail in order.ticket_details %}
-      <tr>
-        <td>{{ detail.id }}</td>
-        <td>{{ detail.name }}</td>
-        <td>{{ detail.days }}</td>
-        <td>£{{ detail.cost_incl_vat }}</td>
-      </tr>
-      {% endfor %}
-    </table>
-  </div>
-</div>
+{% include './_order_details.html' %}
 
 {% if order.payment_required %}
 <div id="stripe-form">

@@ -1,0 +1,9 @@
+{% extends 'ironcage/base.html' %}
+
+{% load static %}
+
+{% block content %}
+<h1>Ticket {{ ticket.ticket_id }}</h1>
+
+{% include 'tickets/_ticket_details.html' %}
+{% endblock %}

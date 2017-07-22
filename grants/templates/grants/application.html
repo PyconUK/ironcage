@@ -6,26 +6,7 @@
     <h3>Your application for financial assistance</h3>
     <hr />
 
-    <div>You have requested a grant for £{{ application.amount_requested }}.</div>
-    <hr />
-
-    <h4>About you</h4>
-    <div>{{ application.about_you|linebreaks }}</div>
-    <hr />
-
-    {% if application.days %}
-    <div>You are planning to come on {{ application.days|join:', ' }}.</div>
-    {% else %}
-    <div>You have not told us which days you plan to come for.</div>
-    {% endif %}
-    <hr />
-
-    {% if application.would_like_ticket_set_aside %}
-    <div>You have requested that we reserve a ticket for you until your application is processed.</div>
-    {% else %}
-    <div>You have not requested that we reserve a ticket for you until your application is processed.</div>
-    {% endif %}
-    <hr />
+    {% include './_application_details.html' %}
 
     <a href="{% url 'grants:application_delete' application.application_id %}" class="btn btn-danger">Withdraw your application</a>
     <a href="{% url 'grants:application_edit' application.application_id %}" class="btn btn-primary">Update your application</a>

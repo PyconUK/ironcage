@@ -1,0 +1,13 @@
+{% extends 'ironcage/base.html' %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-8">
+    <h2>{{ application.applicant.name }}</h2>
+    <small>Where it says "you" below, it doesn't mean you...</small>
+    <hr />
+
+    {% include 'grants/_application_details.html' %}
+  </div>
+</div>
+{% endblock %}

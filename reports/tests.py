@@ -3,7 +3,7 @@ from django.test import TestCase
 from accounts.tests import factories as accounts_factories
 from tickets.tests import factories as tickets_factories
 
-from reports import views
+from reports import reports
 
 
 class ReportsTestCase(TestCase):
@@ -51,7 +51,7 @@ class TestAttendanceByDayReport(ReportsTestCase):
         tickets_factories.create_ticket(num_days=5)
 
     def test_get_context_data(self):
-        report = views.AttendanceByDayReport()
+        report = reports.AttendanceByDayReport()
         expected = {
             'title': 'Attendance by day',
             'headings': ['Day', 'Individual rate', 'Corporate rate', 'Education rate', 'Total'],
@@ -92,7 +92,7 @@ class TestTicketSalesReport(ReportsTestCase):
         tickets_factories.create_ticket(num_days=5)
 
     def test_get_context_data(self):
-        report = views.TicketSalesReport()
+        report = reports.TicketSalesReport()
         expected = {
             'title': 'Ticket sales',
             'headings': ['Days', 'Individual rate', 'Corporate rate', 'Education rate', 'Total'],
@@ -126,13 +126,17 @@ class TestOrdersReport(ReportsTestCase):
         cls.order2 = tickets_factories.create_confirmed_order_for_self(cls.bob, num_days=2)
 
     def test_get_context_data(self):
-        report = views.OrdersReport()
+        report = reports.OrdersReport()
+        links = [{
+            'href': f'/reports/tickets/orders/{order.order_id}/',
+            'text': order.order_id,
+        } for order in [self.order1, self.order2]]
         expected = {
             'title': 'All orders',
             'headings': ['ID', 'Rate', 'Purchaser', 'Email', 'Tickets', 'Cost (incl. VAT)', 'Status'],
             'rows': [
-                [self.order1.order_id, 'individual', 'Alice', 'alice@example.com', 1, '£54', 'pending'],
-                [self.order2.order_id, 'individual', 'Bob', 'bob@example.com', 1, '£90', 'successful'],
+                [links[0], 'individual', 'Alice', 'alice@example.com', 1, '£54', 'pending'],
+                [links[1], 'individual', 'Bob', 'bob@example.com', 1, '£90', 'successful'],
             ],
         }
         self.assertEqual(report.get_context_data(), expected)
@@ -150,12 +154,16 @@ class TestUnpaidOrdersReport(ReportsTestCase):
         tickets_factories.create_confirmed_order_for_self(cls.bob, num_days=2)
 
     def test_get_context_data(self):
-        report = views.UnpaidOrdersReport()
+        report = reports.UnpaidOrdersReport()
+        link = {
+            'href': f'/reports/tickets/orders/{self.order1.order_id}/',
+            'text': self.order1.order_id,
+        }
         expected = {
             'title': 'Unpaid orders',
             'headings': ['ID', 'Rate', 'Purchaser', 'Email', 'Tickets', 'Cost (incl. VAT)', 'Status'],
             'rows': [
-                [self.order1.order_id, 'individual', 'Alice', 'alice@example.com', 1, '£54', 'pending'],
+                [link, 'individual', 'Alice', 'alice@example.com', 1, '£54', 'pending'],
             ],
         }
         self.assertEqual(report.get_context_data(), expected)
@@ -174,14 +182,18 @@ class TestTicketsReport(ReportsTestCase):
         cls.ticket2, cls.ticket3 = order.all_tickets()
 
     def test_get_context_data(self):
-        report = views.TicketsReport()
+        report = reports.TicketsReport()
+        links = [{
+            'href': f'/reports/tickets/tickets/{ticket.ticket_id}/',
+            'text': ticket.ticket_id,
+        } for ticket in [self.ticket1, self.ticket2, self.ticket3]]
         expected = {
             'title': 'All tickets',
             'headings': ['ID', 'Rate', 'Ticket holder', 'Days', 'Cost (incl. VAT)', 'Status'],
             'rows': [
-                [self.ticket1.ticket_id, 'individual', 'Alice', 'Thursday, Friday, Saturday', '£126', 'Assigned'],
-                [self.ticket2.ticket_id, 'individual', 'bob@example.com', 'Friday, Saturday', '£90', 'Unclaimed'],
-                [self.ticket3.ticket_id, 'individual', 'carol@example.com', 'Saturday, Sunday', '£90', 'Unclaimed'],
+                [links[0], 'individual', 'Alice', 'Thursday, Friday, Saturday', '£126', 'Assigned'],
+                [links[1], 'individual', 'bob@example.com', 'Friday, Saturday', '£90', 'Unclaimed'],
+                [links[2], 'individual', 'carol@example.com', 'Saturday, Sunday', '£90', 'Unclaimed'],
             ],
         }
         self.assertEqual(report.get_context_data(), expected)
@@ -200,13 +212,17 @@ class TestUnclaimedTicketsReport(ReportsTestCase):
         cls.ticket2, cls.ticket3 = order.all_tickets()
 
     def test_get_context_data(self):
-        report = views.UnclaimedTicketsReport()
+        report = reports.UnclaimedTicketsReport()
+        links = [{
+            'href': f'/reports/tickets/tickets/{ticket.ticket_id}/',
+            'text': ticket.ticket_id,
+        } for ticket in [self.ticket2, self.ticket3]]
         expected = {
             'title': 'Unclaimed tickets',
             'headings': ['ID', 'Rate', 'Ticket holder', 'Days', 'Cost (incl. VAT)', 'Status'],
             'rows': [
-                [self.ticket2.ticket_id, 'individual', 'bob@example.com', 'Friday, Saturday', '£90', 'Unclaimed'],
-                [self.ticket3.ticket_id, 'individual', 'carol@example.com', 'Saturday, Sunday', '£90', 'Unclaimed'],
+                [links[0], 'individual', 'bob@example.com', 'Friday, Saturday', '£90', 'Unclaimed'],
+                [links[1], 'individual', 'carol@example.com', 'Saturday, Sunday', '£90', 'Unclaimed'],
             ],
         }
         self.assertEqual(report.get_context_data(), expected)
