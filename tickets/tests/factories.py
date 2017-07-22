@@ -1,17 +1,6 @@
-from accounts.models import User
+from accounts.tests.factories import create_user
 
 from tickets import actions
-
-
-email_ix = 0
-
-
-def create_user(name='Alice', email_addr=None):
-    if email_addr is None:
-        global email_ix
-        email_ix += 1
-        email_addr = f'{name.lower()}-{email_ix}@example.com'
-    return User.objects.create_user(email_addr=email_addr, name=name)
 
 
 def create_pending_order_for_self(user=None, rate=None, num_days=None):

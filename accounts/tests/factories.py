@@ -35,3 +35,7 @@ def create_user_with_full_profile(name='Alice', email_addr=None):
 
 def create_user_with_dont_ask_demographics_set(name='Alice', **kwargs):
     return create_user(name, dont_ask_demographics=True, **kwargs)
+
+
+def create_staff_user(**kwargs):
+    return create_user(is_staff=True, **kwargs)

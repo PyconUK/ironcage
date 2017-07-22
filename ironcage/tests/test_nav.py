@@ -1,11 +1,11 @@
 from django.test import TestCase
 
-from tickets.tests import factories as tickets_factories
+from accounts.tests import factories as accounts_factories
 
 
 class NavTests(TestCase):
     def test_user_authenticated(self):
-        user = tickets_factories.create_user()
+        user = accounts_factories.create_user()
         self.client.force_login(user)
 
         rsp = self.client.get('/tickets/orders/new/')
