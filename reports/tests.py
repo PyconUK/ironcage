@@ -3,7 +3,7 @@ from django.test import TestCase
 from accounts.tests import factories as accounts_factories
 from tickets.tests import factories as tickets_factories
 
-from reports import views
+from reports import reports
 
 
 class ReportsTestCase(TestCase):
@@ -53,7 +53,7 @@ class TestAttendanceByDayReport(ReportsTestCase):
         tickets_factories.create_ticket(num_days=5)
 
     def test_get_context_data(self):
-        report = views.AttendanceByDayReport()
+        report = reports.AttendanceByDayReport()
         expected = {
             'title': 'Attendance by day',
             'headings': ['Day', 'Individual rate', 'Corporate rate', 'Education rate', 'Total'],
@@ -94,7 +94,7 @@ class TestTicketSalesReport(ReportsTestCase):
         tickets_factories.create_ticket(num_days=5)
 
     def test_get_context_data(self):
-        report = views.TicketSalesReport()
+        report = reports.TicketSalesReport()
         expected = {
             'title': 'Ticket sales',
             'headings': ['Days', 'Individual rate', 'Corporate rate', 'Education rate', 'Total'],
@@ -128,7 +128,7 @@ class TestOrdersReport(ReportsTestCase):
         cls.order2 = tickets_factories.create_confirmed_order_for_self(cls.bob, num_days=2)
 
     def test_get_context_data(self):
-        report = views.OrdersReport()
+        report = reports.OrdersReport()
         expected = {
             'title': 'All orders',
             'headings': ['ID', 'Rate', 'Purchaser', 'Email', 'Tickets', 'Cost (incl. VAT)', 'Status'],
@@ -152,7 +152,7 @@ class TestUnpaidOrdersReport(ReportsTestCase):
         tickets_factories.create_confirmed_order_for_self(cls.bob, num_days=2)
 
     def test_get_context_data(self):
-        report = views.UnpaidOrdersReport()
+        report = reports.UnpaidOrdersReport()
         expected = {
             'title': 'Unpaid orders',
             'headings': ['ID', 'Rate', 'Purchaser', 'Email', 'Tickets', 'Cost (incl. VAT)', 'Status'],
@@ -176,7 +176,7 @@ class TestTicketsReport(ReportsTestCase):
         cls.ticket2, cls.ticket3 = order.all_tickets()
 
     def test_get_context_data(self):
-        report = views.TicketsReport()
+        report = reports.TicketsReport()
         expected = {
             'title': 'All tickets',
             'headings': ['ID', 'Rate', 'Ticket holder', 'Days', 'Cost (incl. VAT)', 'Status'],
@@ -202,7 +202,7 @@ class TestUnclaimedTicketsReport(ReportsTestCase):
         cls.ticket2, cls.ticket3 = order.all_tickets()
 
     def test_get_context_data(self):
-        report = views.UnclaimedTicketsReport()
+        report = reports.UnclaimedTicketsReport()
         expected = {
             'title': 'Unclaimed tickets',
             'headings': ['ID', 'Rate', 'Ticket holder', 'Days', 'Cost (incl. VAT)', 'Status'],
