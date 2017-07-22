@@ -5,7 +5,6 @@
   <div class="col-md-6 col-md-offset-3">
     {% include './_proposal_details.html' %}
 
-    <a href="{% url 'cfp:proposal_delete' proposal.proposal_id %}" class="btn btn-danger">Withdraw your proposal</a>
     <a href="{% url 'cfp:proposal_edit' proposal.proposal_id %}" class="btn btn-primary">Update your proposal</a>
   </div>
 </div>
