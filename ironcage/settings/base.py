@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'ironcage',
     'accounts',
     'cfp',
+    'emails',
     'grants',
     'reports',
     'tickets',

@@ -1,0 +1,9 @@
+Hi {{ recipient.name }},
+
+This is a test email, sent to all Ironcage staff users.
+
+You can safely ignore it!
+
+Cheers,
+
+Peter.
