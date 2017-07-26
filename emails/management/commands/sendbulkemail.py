@@ -1,4 +1,5 @@
 from argparse import RawTextHelpFormatter
+import os
 
 from django.conf import settings
 from django.core.mail import send_mail
@@ -26,6 +27,7 @@ subject "This is a test".
     '''.strip()
 
     recipients = {
+        'admins': User.objects.filter(email_addr__in=os.environ.get('ADMINS', '').split(',')),
         'staff': User.objects.filter(is_staff=True),
         'ticket-holders': User.objects.exclude(ticket=None),
     }
