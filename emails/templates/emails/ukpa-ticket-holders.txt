@@ -1,0 +1,29 @@
+Hi {{ recipient.name }},
+
+As a ticket holder for this year's PyCon UK, we wanted to tell you about the UK
+Python Association, a newly-formed charity whose purpose is support the Python
+community in the UK.  You can read more about the UKPA on the conference
+website[1].
+
+The UKPA is a membership organisation, and anybody who attends PyCon UK 2017 is
+entitled to membership.  For now, membership entitles you to vote to elect the
+organisation's trustees.  You can indicate that you would like to join the UKPA
+when you fill out your profile[2].
+
+We are looking to elect up to six trustees for the UKPA at the first AGM on the
+Saturday of the conference.  The trustees will be responsible for the charity's
+management and administration, and will be responsible for appointing a chair
+for PyCon UK 2018.
+
+If you would like to put yourself forward for election as a trustee, please
+complete the nomination form[3] by Thursday 12th October.
+
+If you have any questions, please get in touch: trustees@uk.python.org.
+
+See you in Cardiff!
+
+~ The PyCon UK Committee
+
+[1] http://2017.pyconuk.org/ukpa/
+[2] https://hq.pyconuk.org/profile/
+[3] https://hq.pyconuk.org/ukpa/nominations/new/
