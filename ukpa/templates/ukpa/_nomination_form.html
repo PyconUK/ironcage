@@ -1,0 +1,31 @@
+{% load bootstrap3 %}
+{% load avatar_tags %}
+<p>Before submitting this form, you should ensure that you have read the <a href="http://2017.pyconuk.org/ukpa/trustess/">Trustee Guidelines</a> on the main conference website.
+<form method="post">
+  {% csrf_token %}
+
+  <table class="table borderless">
+    <tr>
+      <td>{% avatar user %}</td>
+      <td>Both the statement you provide below and your avatar (which is pulled from <a href="https://secure.gravatar.com/">Gravatar</a>) will be made public on the conference website.</td>
+    </tr>
+  </table>
+  {% bootstrap_field form.statement %}
+  <hr />
+  <p>By submitting this nomination I declare that I:</p>
+  <ul>
+    <li>have not been convicted at any time of an offence involving dishonesty or deception (please note, you do not have to declare any conviction
+    here which is regarded as ‘spent’); and</li>
+    <li>am not currently declared bankrupt (or subject to bankruptcy restrictions or an interim order) or have an individual voluntary arrangement
+    (IVA) with creditors, and;</li>
+    <li>am not disqualified from being a Company Director; and</li>
+    <li>have not failed to make payments under County Court Administration Orders; and</li>
+    <li>have not at any time been removed by the Charity Commission for England and Wales or by the court in England or Wales from being a
+    Trustee due to misconduct.</li>
+    <li>am not disqualified from being a Trustee by an order of the Charity Commission for England and Wales under section 181A of the Charities Act 2011</li>
+  </ul>
+  {% buttons %}
+  <button type="submit" class="btn btn-primary">Submit</button>
+  {% endbuttons %}
+</form>
+

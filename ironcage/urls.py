@@ -15,9 +15,11 @@ urlpatterns = [
     url(r'^profile/', include('accounts.urls')),
     url(r'^reports/', include('reports.urls')),
     url(r'^tickets/', include('tickets.urls')),
+    url(r'^ukpa/', include('ukpa.urls')),
     url(r'^$', ironcage.views.index, name='index'),
     url(r'^500/$', ironcage.views.error, name='error'),
     url(r'^log/$', ironcage.views.log, name='log'),
+    url(r'^avatar/', include('avatar.urls')),
 ]
 
 if settings.DEBUG:

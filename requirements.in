@@ -1,6 +1,7 @@
 coverage
 dj-database-url
 django
+django-avatar
 django-bootstrap3
 django-debug-toolbar
 django-dotenv

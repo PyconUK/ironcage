@@ -1,0 +1,16 @@
+{% extends 'ironcage/base.html' %}
+
+{% load bootstrap3 %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-6 col-md-offset-3">
+    <h1>Stand for election as a UKPA Trustee</h1>
+    {% if not request.user.is_authenticated %}
+    <p>Please <a href="{% url 'register' %}?next={{ request.path }}">sign up</a> or <a href="{% url 'login' %}?next={{ request.path }}">sign in</a> to stand for election.</p>
+    {% else %}
+    {% include './_nomination_form.html' %}
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

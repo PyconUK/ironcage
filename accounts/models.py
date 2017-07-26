@@ -8,6 +8,7 @@ from django.db import models
 
 from grants.models import Application
 from tickets.models import Ticket
+from ukpa.models import Nomination
 
 from .managers import UserManager
 
@@ -94,6 +95,12 @@ class User(AbstractBaseUser, PermissionsMixin):
         try:
             return self.grant_application
         except Application.DoesNotExist:
+            return None
+
+    def get_nomination(self):
+        try:
+            return self.nomination
+        except Nomination.DoesNotExist:
             return None
 
     def profile_complete(self):
