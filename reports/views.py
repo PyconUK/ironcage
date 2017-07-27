@@ -9,6 +9,7 @@ from cfp.models import Proposal
 from tickets.constants import DAYS
 from tickets.models import Order, Ticket
 from tickets.prices import cost_incl_vat
+from ukpa.models import Nomination
 
 
 @method_decorator(staff_member_required(login_url='login'), name='dispatch')
@@ -79,6 +80,22 @@ class UKPAReport(ReportView):
         return {
             'title': self.title,
             'headings': ['Name', 'email'],
+            'rows': rows,
+        }
+
+
+class CandidateReport(ReportView):
+    title = 'Candidates for UKPA Trustee Election'
+
+    def get_context_data(self):
+        candidates = Nomination.objects.all()
+        rows = [
+            [candidate.nominee.name, candidate.statement]
+            for candidate in candidates]
+
+        return {
+            'title': self.title,
+            'headings': ['Name', 'Statement'],
             'rows': rows,
         }
 
@@ -240,6 +257,7 @@ class SpeakersSeekingMentorReport(ReportView):
 reports = [
     AttendanceByDayReport,
     UKPAReport,
+    CandidateReport,
     TicketSalesReport,
     OrdersReport,
     UnpaidOrdersReport,
