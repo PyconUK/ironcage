@@ -3,6 +3,7 @@ from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.utils.text import slugify
 from django.views.generic import TemplateView
+from avatar.templatetags.avatar_tags import avatar_url
 
 from accounts.models import User
 from cfp.models import Proposal
@@ -90,12 +91,17 @@ class CandidateReport(ReportView):
     def get_context_data(self):
         candidates = Nomination.objects.all()
         rows = [
-            [candidate.nominee.name, candidate.statement]
-            for candidate in candidates]
+            [
+                candidate.nominee.name,
+                candidate.statement,
+                avatar_url(candidate.nominee)
+            ]
+            for candidate in candidates
+        ]
 
         return {
             'title': self.title,
-            'headings': ['Name', 'Statement'],
+            'headings': ['Name', 'Statement', 'Avatar URL'],
             'rows': rows,
         }
 
