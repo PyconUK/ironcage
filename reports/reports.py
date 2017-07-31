@@ -106,7 +106,6 @@ class CandidateReport(ReportView):
         }
 
 
-
 class TicketSalesReport(ReportView):
     title = 'Ticket sales'
     template_name = 'reports/ticket_sales_report.html'
