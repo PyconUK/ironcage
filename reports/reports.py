@@ -3,12 +3,14 @@ from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.utils.text import slugify
 from django.views.generic import TemplateView
+from avatar.templatetags.avatar_tags import avatar_url
 
 from accounts.models import User
 from cfp.models import Proposal
 from tickets.constants import DAYS
 from tickets.models import Order, Ticket
 from tickets.prices import cost_incl_vat
+from ukpa.models import Nomination
 
 
 @method_decorator(staff_member_required(login_url='login'), name='dispatch')
@@ -79,6 +81,27 @@ class UKPAReport(ReportView):
         return {
             'title': self.title,
             'headings': ['Name', 'email'],
+            'rows': rows,
+        }
+
+
+class CandidateReport(ReportView):
+    title = 'Candidates for UKPA Trustee Election'
+
+    def get_context_data(self):
+        candidates = Nomination.objects.all()
+        rows = [
+            [
+                candidate.nominee.name,
+                candidate.statement,
+                avatar_url(candidate.nominee)
+            ]
+            for candidate in candidates
+        ]
+
+        return {
+            'title': self.title,
+            'headings': ['Name', 'Statement', 'Avatar URL'],
             'rows': rows,
         }
 
@@ -252,6 +275,7 @@ class SpeakersSeekingMentorReport(ReportView):
 reports = [
     AttendanceByDayReport,
     UKPAReport,
+    CandidateReport,
     TicketSalesReport,
     OrdersReport,
     UnpaidOrdersReport,
