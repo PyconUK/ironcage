@@ -10,6 +10,7 @@ urlpatterns = [
     url(r'^accounts/register/', accounts.views.register, name='register'),
     url(r'^accounts/', include('django.contrib.auth.urls')),
     url(r'^admin/', admin.site.urls),
+    url(r'^children/', include('children.urls')),
     url(r'^cfp/', include('cfp.urls')),
     url(r'^grants/', include('grants.urls')),
     url(r'^profile/', include('accounts.urls')),

@@ -1,0 +1,17 @@
+{% load bootstrap3 %}
+
+<div data-formset-form>
+  {{ form.id }}
+  <div class="row">
+    <div class="col-xs-4">
+      {% bootstrap_field form.name layout='inline' placeholder='' %}
+    </div>
+    <div class="col-xs-4">
+      {% bootstrap_field form.date_of_birth layout='inline' placeholder='' %}
+    </div>
+    <div class="col-xs-1">
+      <div class="hidden">{{ form.DELETE }}</div>
+      <button type="button" data-formset-delete-button class="btn btn-default">&times;</button>
+    </div>
+  </div>
+</div>

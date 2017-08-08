@@ -1,0 +1,34 @@
+<div class="row">
+  <div class="col-md-4">
+    <table class="table table-condensed">
+      <tr>
+        <th>Date</th>
+        <td>{% if order.payment_required %}Unpaid{% else %}{{ order.stripe_charge_created|date }}{% endif %}</td>
+      </tr>
+      <tr>
+        <th>Total (incl. VAT)</th>
+        <td>£{{ order.cost_incl_vat }}</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-4">
+    <h3>Ticket details</h3>
+
+    <table class="table table-condensed">
+      <tr>
+        <th>Name</th>
+        <th>Date of birth</th>
+      </tr>
+      {% for detail in order.ticket_details %}
+      <tr>
+        <td>{{ detail.name }}</td>
+        <td>{{ detail.date_of_birth|default:"unknown" }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+
