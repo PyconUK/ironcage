@@ -4,7 +4,7 @@ from django.core import mail
 from django.test import TestCase
 
 from . import factories
-from . import utils
+from ironcage.tests import utils
 
 from tickets import actions
 from tickets.models import TicketInvitation

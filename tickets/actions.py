@@ -4,9 +4,10 @@ import stripe
 from django.db import transaction
 from django.db.utils import IntegrityError
 
+from ironcage.stripe_integration import create_charge_for_order, refund_charge
+
 from .mailer import send_invitation_mail, send_order_confirmation_mail
 from .models import Order
-from .stripe_integration import create_charge_for_order, refund_charge
 
 import structlog
 logger = structlog.get_logger()
