@@ -9,5 +9,4 @@ urlpatterns = [
     url(r'^proposals/(?P<proposal_id>\w+)/$', views.proposal, name='proposal'),
     url(r'^proposals/(?P<proposal_id>\w+)/edit/$', views.proposal_edit, name='proposal_edit'),
     url(r'^proposals/(?P<proposal_id>\w+)/delete/$', views.proposal_delete, name='proposal_delete'),
-    url(r'^histogram/$', views.histogram, name='histogram'),
 ]
