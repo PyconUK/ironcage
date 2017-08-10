@@ -57,7 +57,9 @@
 {% if grant_application %}
 <li><a href="{% url 'grants:application' grant_application.application_id %}">View your application for financial assistance</a></li>
 {% else %}
+{% if grant_applications_open %}
 <li><a href="{% url 'grants:new_application' %}">Apply for financial assistance</a></li>
+{% endif %}
 {% endif %}
 
 {% if nomination %}

@@ -23,6 +23,7 @@ def index(request):
             'proposals': user.proposals.all(),
             'nomination': user.get_nomination(),
             'cfp_open': datetime.now(timezone.utc) < settings.CFP_CLOSE_AT,
+            'grant_applications_open': datetime.now(timezone.utc) < settings.GRANT_APPLICATIONS_CLOSE_AT,
         }
     else:
         context = {}

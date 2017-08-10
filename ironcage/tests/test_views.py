@@ -105,3 +105,8 @@ class IndexTests(TestCase):
         rsp = self.client.get('/')
         self.assertContains(rsp, '<a href="/grants/applications/new/">Apply for financial assistance</a>', html=True)
         self.assertNotContains(rsp, 'View your application for financial assistance')
+
+    @override_settings(GRANT_APPLICATIONS_CLOSE_AT=datetime.now(timezone.utc) - timedelta(days=1))
+    def test_when_has_no_grant_application_and_applications_closed(self):
+        rsp = self.client.get('/')
+        self.assertNotContains(rsp, 'Apply for financial assistance')

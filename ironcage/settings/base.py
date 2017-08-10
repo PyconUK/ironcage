@@ -233,8 +233,10 @@ AVATAR_GRAVATAR_DEFAULT = 'mm'
 
 # Last orders...
 
-# When testing locally, we probably don't want the CFP to be closed.
+# When testing locally, we probably don't want the CFP or grant applications to be closed.
 CFP_CLOSE_AT = datetime.now(timezone.utc) + timedelta(days=100)
+GRANT_APPLICATIONS_CLOSE_AT = datetime.now(timezone.utc) + timedelta(days=100)
 
-# Uncomment this line if you do want to CFP to be closed
+# Uncomment these lines if you do want to CFP and grant applications to be closed
 # CFP_CLOSE_AT = datetime.now(timezone.utc) - timedelta(days=100)
+# GRANT_APPLICATIONS_CLOSE_AT = datetime.now(timezone.utc) - timedelta(days=100)

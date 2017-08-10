@@ -8,7 +8,9 @@
 
     {% include './_application_details.html' %}
 
+    {% if applications_open %}
     <a href="{% url 'grants:application_edit' application.application_id %}" class="btn btn-primary">Update your application</a>
+    {% endif %}
   </div>
 </div>
 {% endblock %}
