@@ -8,6 +8,8 @@ django-dotenv
 django-slack
 flake8
 gunicorn
+matplotlib
+pandas
 psycopg2
 stripe
 structlog[dev]
