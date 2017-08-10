@@ -36,10 +36,14 @@
 {% endif %}
 
 {% if proposals|length == 0 %}
+{% if cfp_open %}
 <li><a href="{% url 'cfp:new_proposal' %}">Make a proposal to our Call for Participation</a></li>
+{% endif %}
 {% elif proposals|length == 1 %}
 <li><a href="{% url 'cfp:proposal' proposals.0.proposal_id %}">View your proposal to our Call for Participation</a> ({{ proposals.0.title }})</li>
+{% if cfp_open %}
 <li><a href="{% url 'cfp:new_proposal' %}">Make another proposal to our Call for Participation</a></li>
+{% endif %}
 {% else %}
 <li>View your proposals to our Call for Participation</li>
 <ul>
@@ -53,7 +57,9 @@
 {% if grant_application %}
 <li><a href="{% url 'grants:application' grant_application.application_id %}">View your application for financial assistance</a></li>
 {% else %}
+{% if grant_applications_open %}
 <li><a href="{% url 'grants:new_application' %}">Apply for financial assistance</a></li>
+{% endif %}
 {% endif %}
 
 {% if nomination %}

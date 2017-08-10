@@ -1,6 +1,8 @@
+from datetime import datetime, timedelta, timezone
+
 from django_slack.utils import get_backend as get_slack_backend
 
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from grants.models import Application
 from . import factories
 
@@ -171,3 +173,57 @@ class ApplicationTests(TestCase):
         rsp = self.client.get(f'/grants/applications/{self.application.application_id}/', follow=True)
         self.assertRedirects(rsp, '/')
         self.assertContains(rsp, 'Only the owner of a application can view the application')
+
+
+@override_settings(GRANT_APPLICATIONS_CLOSE_AT=datetime.now(timezone.utc) - timedelta(days=1))
+class ApplicationsClosedTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.alice = factories.create_user()
+        cls.application = factories.create_application(cls.alice)
+
+    def setUp(self):
+        self.client.force_login(self.alice)
+
+    def test_get_new_application(self):
+        rsp = self.client.get('/grants/applications/new/', follow=True)
+        self.assertContains(rsp, 'financial assistance applications are closed')
+        self.assertRedirects(rsp, '/')
+
+    def test_post_new_application(self):
+        form_data = {
+            'session_type': 'talk',
+            'title': 'Python is brilliant',
+            'subtitle': 'From abs to ZeroDivisionError',
+            'copresenter_names': '',
+            'description': 'Let me tell you why Python is brilliant',
+            'description_private': 'I am well placed to tell you why Python is brilliant',
+            'aimed_at_new_programmers': True,
+            'would_like_mentor': True,
+        }
+        rsp = self.client.post('/grants/applications/new/', form_data, follow=True)
+        self.assertContains(rsp, 'financial assistance applications are closed')
+        self.assertRedirects(rsp, '/')
+
+    def test_get_application_edit(self):
+        rsp = self.client.get(f'/grants/applications/{self.application.application_id}/edit/', follow=True)
+        self.assertContains(rsp, 'financial assistance applications are closed')
+        self.assertRedirects(rsp, f'/grants/applications/{self.application.application_id}/')
+
+    def test_post_application_edit(self):
+        form_data = {
+            'session_type': 'talk',
+            'title': 'Python is brilliant',
+            'subtitle': 'From abs to ZeroDivisionError',
+            'copresenter_names': '',
+            'description': 'Let me tell you why Python is brilliant',
+            'description_private': 'I am well placed to tell you why Python is brilliant',
+            'aimed_at_new_programmers': True,
+        }
+        rsp = self.client.post(f'/grants/applications/{self.application.application_id}/edit/', form_data, follow=True)
+        self.assertContains(rsp, 'financial assistance applications are closed')
+        self.assertRedirects(rsp, f'/grants/applications/{self.application.application_id}/')
+
+    def test_get_application(self):
+        rsp = self.client.get(f'/grants/applications/{self.application.application_id}/', follow=True)
+        self.assertNotContains(rsp, 'Update your application')

@@ -1,4 +1,6 @@
-from django.test import TestCase
+from datetime import datetime, timedelta, timezone
+
+from django.test import TestCase, override_settings
 
 from accounts.tests import factories as account_factories
 from cfp.tests import factories as cfp_factories
@@ -76,9 +78,21 @@ class IndexTests(TestCase):
         self.assertContains(rsp, '<a href="/cfp/proposals/new/">Make another proposal to our Call for Participation</a>', html=True)
         self.assertContains(rsp, f'<a href="/cfp/proposals/{proposal.proposal_id}/">View your proposal to our Call for Participation</a> ({proposal.title})', html=True)
 
+    @override_settings(CFP_CLOSE_AT=datetime.now(timezone.utc) - timedelta(days=1))
+    def test_when_has_proposal_and_cfp_closed(self):
+        cfp_factories.create_proposal(self.alice)
+
+        rsp = self.client.get('/')
+        self.assertNotContains(rsp, 'Make another proposal to our Call for Participation')
+
     def test_when_has_no_proposal(self):
         rsp = self.client.get('/')
         self.assertContains(rsp, '<a href="/cfp/proposals/new/">Make a proposal to our Call for Participation</a>', html=True)
+
+    @override_settings(CFP_CLOSE_AT=datetime.now(timezone.utc) - timedelta(days=1))
+    def test_when_has_no_proposal_and_cfp_closed(self):
+        rsp = self.client.get('/')
+        self.assertNotContains(rsp, 'Make a proposal to our Call for Participation')
 
     def test_when_has_grant_application(self):
         application = grants_factories.create_application(self.alice)
@@ -91,3 +105,8 @@ class IndexTests(TestCase):
         rsp = self.client.get('/')
         self.assertContains(rsp, '<a href="/grants/applications/new/">Apply for financial assistance</a>', html=True)
         self.assertNotContains(rsp, 'View your application for financial assistance')
+
+    @override_settings(GRANT_APPLICATIONS_CLOSE_AT=datetime.now(timezone.utc) - timedelta(days=1))
+    def test_when_has_no_grant_application_and_applications_closed(self):
+        rsp = self.client.get('/')
+        self.assertNotContains(rsp, 'Apply for financial assistance')

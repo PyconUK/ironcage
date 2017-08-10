@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+
 from django_slack import slack_message
 
 from django.conf import settings
@@ -14,6 +16,9 @@ from .models import Application
 
 
 def new_application(request):
+    if datetime.now(timezone.utc) > settings.GRANT_APPLICATIONS_CLOSE_AT:
+        return _new_application_after_cfp_closes(request)
+
     if request.user.is_authenticated and request.user.get_grant_application():
         messages.warning(request, 'You have already submitted an application')
         return redirect(request.user.get_grant_application())
@@ -44,8 +49,20 @@ def new_application(request):
     return render(request, 'grants/new_application.html', context)
 
 
+def _new_application_after_cfp_closes(request):
+    if request.method == 'POST':
+        messages.warning(request, "We're sorry, financial assistance applications are closed, and we were not able to process your submission")
+    else:
+        messages.warning(request, "We're sorry, financial assistance applications are closed")
+
+    return redirect('index')
+
+
 @login_required
 def application_edit(request, application_id):
+    if datetime.now(timezone.utc) > settings.GRANT_APPLICATIONS_CLOSE_AT:
+        return _application_edit_after_cfp_closes(request, application_id)
+
     application = Application.objects.get_by_application_id_or_404(application_id)
 
     if request.user != application.applicant:
@@ -75,6 +92,17 @@ def application_edit(request, application_id):
     return render(request, 'grants/application_edit.html', context)
 
 
+def _application_edit_after_cfp_closes(request, application_id):
+    application = Application.objects.get_by_application_id_or_404(application_id)
+
+    if request.method == 'POST':
+        messages.warning(request, "We're sorry, financial assistance applications are closed, and we were not able to process the change to your application")
+    else:
+        messages.warning(request, "We're sorry, financial assistance applications are closed, and we are not accepting any more changes to applications")
+
+    return redirect(application)
+
+
 @login_required
 def application(request, application_id):
     application = Application.objects.get_by_application_id_or_404(application_id)
@@ -86,6 +114,7 @@ def application(request, application_id):
     context = {
         'application': application,
         'form': ApplicationForm(),
+        'applications_open': datetime.now(timezone.utc) < settings.GRANT_APPLICATIONS_CLOSE_AT,
     }
     return render(request, 'grants/application.html', context)
 

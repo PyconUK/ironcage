@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+
 from django_slack import slack_message
 
 from django.conf import settings
@@ -11,6 +13,9 @@ from .models import Proposal
 
 
 def new_proposal(request):
+    if datetime.now(timezone.utc) > settings.CFP_CLOSE_AT:
+        return _new_proposal_after_cfp_closes(request)
+
     if request.method == 'POST':
         if not request.user.is_authenticated:
             return redirect(settings.LOGIN_URL)
@@ -33,8 +38,20 @@ def new_proposal(request):
     return render(request, 'cfp/new_proposal.html', context)
 
 
+def _new_proposal_after_cfp_closes(request):
+    if request.method == 'POST':
+        messages.warning(request, "We're sorry, the Call For Participation has closed, and we were not able to process your submission")
+    else:
+        messages.warning(request, "We're sorry, the Call For Participation has closed")
+
+    return redirect('index')
+
+
 @login_required
 def proposal_edit(request, proposal_id):
+    if datetime.now(timezone.utc) > settings.CFP_CLOSE_AT:
+        return _proposal_edit_after_cfp_closes(request, proposal_id)
+
     proposal = Proposal.objects.get_by_proposal_id_or_404(proposal_id)
 
     if request.user != proposal.proposer:
@@ -58,6 +75,17 @@ def proposal_edit(request, proposal_id):
     return render(request, 'cfp/proposal_edit.html', context)
 
 
+def _proposal_edit_after_cfp_closes(request, proposal_id):
+    proposal = Proposal.objects.get_by_proposal_id_or_404(proposal_id)
+
+    if request.method == 'POST':
+        messages.warning(request, "We're sorry, the Call For Participation has closed, and we were not able to process the change to your proposal")
+    else:
+        messages.warning(request, "We're sorry, the Call For Participation has closed, and we are not accepting any more changes to proposals")
+
+    return redirect(proposal)
+
+
 @login_required
 def proposal(request, proposal_id):
     proposal = Proposal.objects.get_by_proposal_id_or_404(proposal_id)
@@ -69,6 +97,7 @@ def proposal(request, proposal_id):
     context = {
         'proposal': proposal,
         'form': ProposalForm(),
+        'cfp_open': datetime.now(timezone.utc) < settings.CFP_CLOSE_AT,
     }
     return render(request, 'cfp/proposal.html', context)
 
