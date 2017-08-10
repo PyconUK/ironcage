@@ -4,8 +4,6 @@ from ironcage.tests import utils
 
 from . import factories
 
-from children import actions
-
 
 class NewOrderTests(TestCase):
     @classmethod
@@ -52,6 +50,9 @@ class OrderEditTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.order = factories.create_pending_order()
+
+    def setUp(self):
+        self.order.refresh_from_db()
 
     def test_get(self):
         self.client.force_login(self.order.purchaser)
@@ -111,7 +112,7 @@ class OrderEditTests(TestCase):
         self.assertRedirects(rsp, f'/children/orders/{self.order.order_id}/')
         self.assertContains(rsp, 'This order has already been paid')
 
-    def test_get_when_already_paid(self):
+    def test_post_when_already_paid(self):
         factories.confirm_order(self.order)
         self.client.force_login(self.order.purchaser)
         rsp = self.client.post(f'/children/orders/{self.order.order_id}/edit/', follow=True)

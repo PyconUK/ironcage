@@ -1,7 +1,5 @@
 from datetime import date
 
-from django_slack.utils import get_backend as get_slack_backend
-
 from django.core import mail
 from django.test import TestCase
 
