@@ -18,3 +18,7 @@ X_FRAME_OPTIONS = 'DENY'
 
 # Email address to send mail from
 SERVER_EMAIL = f'PyCon UK 2017 <noreply@{ALLOWED_HOSTS[0]}>'
+
+# Last orders...
+bst = timezone(timedelta(hours=1))
+CFP_CLOSE_AT = datetime(2017, 8, 11, 0, 0, tzinfo=bst)

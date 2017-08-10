@@ -1,5 +1,8 @@
+from datetime import datetime, timezone
+
 import structlog
 
+from django.conf import settings
 from django.contrib import messages
 from django.shortcuts import redirect, render
 
@@ -19,6 +22,7 @@ def index(request):
             'grant_application': user.get_grant_application(),
             'proposals': user.proposals.all(),
             'nomination': user.get_nomination(),
+            'cfp_open': datetime.now(timezone.utc) < settings.CFP_CLOSE_AT,
         }
     else:
         context = {}

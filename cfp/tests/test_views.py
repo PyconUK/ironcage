@@ -1,6 +1,8 @@
+from datetime import datetime, timedelta, timezone
+
 from django_slack.utils import get_backend as get_slack_backend
 
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
 from cfp.models import Proposal
 
@@ -186,3 +188,57 @@ class ProposalTests(TestCase):
         rsp = self.client.get(f'/cfp/proposals/{self.proposal.proposal_id}/', follow=True)
         self.assertRedirects(rsp, '/')
         self.assertContains(rsp, 'Only the proposer of a proposal can view the proposal')
+
+
+@override_settings(CFP_CLOSE_AT=datetime.now(timezone.utc) - timedelta(days=1))
+class CFPClosedTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.alice = factories.create_user()
+        cls.proposal = factories.create_proposal(cls.alice)
+
+    def setUp(self):
+        self.client.force_login(self.alice)
+
+    def test_get_new_proposal(self):
+        rsp = self.client.get('/cfp/proposals/new/', follow=True)
+        self.assertContains(rsp, 'the Call For Participation has closed')
+        self.assertRedirects(rsp, '/')
+
+    def test_post_new_proposal(self):
+        form_data = {
+            'session_type': 'talk',
+            'title': 'Python is brilliant',
+            'subtitle': 'From abs to ZeroDivisionError',
+            'copresenter_names': '',
+            'description': 'Let me tell you why Python is brilliant',
+            'description_private': 'I am well placed to tell you why Python is brilliant',
+            'aimed_at_new_programmers': True,
+            'would_like_mentor': True,
+        }
+        rsp = self.client.post('/cfp/proposals/new/', form_data, follow=True)
+        self.assertContains(rsp, 'the Call For Participation has closed')
+        self.assertRedirects(rsp, '/')
+
+    def test_get_proposal_edit(self):
+        rsp = self.client.get(f'/cfp/proposals/{self.proposal.proposal_id}/edit/', follow=True)
+        self.assertContains(rsp, 'the Call For Participation has closed')
+        self.assertRedirects(rsp, f'/cfp/proposals/{self.proposal.proposal_id}/')
+
+    def test_post_proposal_edit(self):
+        form_data = {
+            'session_type': 'talk',
+            'title': 'Python is brilliant',
+            'subtitle': 'From abs to ZeroDivisionError',
+            'copresenter_names': '',
+            'description': 'Let me tell you why Python is brilliant',
+            'description_private': 'I am well placed to tell you why Python is brilliant',
+            'aimed_at_new_programmers': True,
+        }
+        rsp = self.client.post(f'/cfp/proposals/{self.proposal.proposal_id}/edit/', form_data, follow=True)
+        self.assertContains(rsp, 'the Call For Participation has closed')
+        self.assertRedirects(rsp, f'/cfp/proposals/{self.proposal.proposal_id}/')
+
+    def test_get_proposal(self):
+        rsp = self.client.get(f'/cfp/proposals/{self.proposal.proposal_id}/', follow=True)
+        self.assertNotContains(rsp, 'Update your proposal')
