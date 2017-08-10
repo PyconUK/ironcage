@@ -6,6 +6,7 @@
 #
 colorama==0.3.9           # via structlog
 coverage==4.4.1
+cycler==0.10.0            # via matplotlib
 dj-database-url==0.4.2
 django-appconf==1.0.2     # via django-avatar
 django-avatar==4.0.0
@@ -16,15 +17,20 @@ django-slack==5.8.1
 django==1.11.1
 flake8==3.3.0
 gunicorn==19.7.1
+matplotlib==2.0.2
 mccabe==0.6.1             # via flake8
+numpy==1.13.1             # via matplotlib, pandas
 olefile==0.44             # via pillow
+pandas==0.20.3
 pillow==4.2.1             # via django-avatar
 psycopg2==2.7.1
 pycodestyle==2.3.1        # via flake8
 pyflakes==1.5.0           # via flake8
-pytz==2017.2              # via django
+pyparsing==2.2.0          # via matplotlib
+python-dateutil==2.6.1    # via matplotlib, pandas
+pytz==2017.2              # via django, matplotlib, pandas
 requests==2.14.2          # via django-slack, stripe
-six==1.10.0               # via django-slack, structlog
+six==1.10.0               # via cycler, django-slack, matplotlib, python-dateutil, structlog
 sqlparse==0.2.3           # via django-debug-toolbar
 stripe==1.55.2
 structlog[dev]==17.2.0
