@@ -1,0 +1,20 @@
+{% extends 'ironcage/base.html' %}
+
+{% block content %}
+{% include './_voting_nav.html' %}
+<h1>{{ title }}</h1>
+
+{% if proposals %}
+<ul class="list-group">
+  {% for proposal in proposals %}
+  <li class="list-group-item">
+    {{ proposal.proposal_id }}
+    <a href="{% url 'cfp:voting_proposal' proposal_id=proposal.proposal_id %}">{{ proposal.full_title }}</a>
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+{{ empty_message }}
+{% endif %}
+
+{% endblock %}
