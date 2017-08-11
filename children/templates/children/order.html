@@ -1,0 +1,42 @@
+{% extends 'ironcage/base.html' %}
+
+{% load static %}
+
+{% block content %}
+<h1>Details of your children's day order ({{ order.order_id }})</h1>
+
+{% if order.payment_required %}
+<p>You are ordering {{ order.num_tickets }} children's day ticket{{ order.num_tickets|pluralize }}.</p>
+{% else %}
+<p>You have ordered {{ order.num_tickets }} children's day ticket{{ order.num_tickets|pluralize }}.</p>
+{% endif %}
+
+{% include './_order_details.html' %}
+
+{% if order.payment_required %}
+<div id="stripe-form">
+  <form action="{% url 'children:order_payment' order_id=order.order_id %}" method="POST">
+    {% csrf_token %}
+    <script
+      src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+      data-key="{{ stripe_api_key }}"
+      data-amount="{{ order.cost_pence_incl_vat }}"
+      data-currency="gbp"
+      data-name="PyCon UK Society Ltd"
+      data-image="{% static 'ironcage/img/yellow.png' %}"
+      data-description="PyCon UK 2017 order {{ order.order_id }}"
+      data-locale="auto"
+      data-email="{{ order.purchaser.email_addr }}"
+    >
+    </script>
+
+    <!-- https://stackoverflow.com/a/41527060 -->
+    <style>.stripe-button-el { display: none; }</style>
+    <button class="btn btn-primary" type="submit">Pay by card</button>
+    <a href="{% url 'children:order_edit' order.order_id %}" class="btn btn-primary">Make changes to your order</a>
+  </form>
+
+</div>
+{% endif %}
+
+{% endblock %}

@@ -2,10 +2,10 @@ import stripe
 
 from django.test import TestCase
 
-from . import factories
+from tickets.tests import factories
 from . import utils
 
-from tickets import stripe_integration
+from ironcage import stripe_integration
 
 
 class StripeIntegrationTests(TestCase):

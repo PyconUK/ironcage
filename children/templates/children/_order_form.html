@@ -1,0 +1,126 @@
+{% load bootstrap3 %}
+
+<form method="post" id="order-form">
+  {% csrf_token %}
+  <div class="panel panel-default">
+    <div class="panel-heading">Children's details</div>
+    <div class="panel-body">
+      <div class="row">
+        <div class="col-md-12">
+          <p>For each child you're buying a ticket for, enter their first name and date of birth.</p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-4">
+          <label>First name</label>
+        </div>
+        <div class="col-md-8">
+          <label>Date of birth</label>
+        </div>
+      </div>
+
+      <div id="formset" data-formset-prefix="{{ ticket_formset.prefix }}">
+        {{ ticket_formset.management_form }}
+
+        <div data-formset-body>
+          {% for form in ticket_formset %}
+          {% include './_ticket_form.html' with form=form %}
+          {% endfor %}
+        </div>
+
+        <script type="form-template" data-formset-empty-form>
+          {% include './_ticket_form.html' with form=ticket_formset.empty_form %}
+        </script>
+
+        <input type="button" value="Add another" data-formset-add class="btn btn-default">
+      </div>
+    </div>
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-heading">Accompanying adult's details</div>
+    <div class="panel-body">
+      <div class="row">
+        <div class="col-md-12">
+          <p>Children need to be accompanied by a parent or guardian.</p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-4">
+          <label>Name</label>
+        </div>
+        <div class="col-md-8">
+          {% bootstrap_field order_form.adult_name layout='inline' placeholder='' %}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <label>Email address</label>
+        </div>
+        <div class="col-md-8">
+          {% bootstrap_field order_form.adult_email_addr layout='inline' placeholder='' %}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <label>Phone number</label>
+        </div>
+        <div class="col-md-8">
+          {% bootstrap_field order_form.adult_phone_number layout='inline' placeholder='' %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-heading">Accessibility and dietary requirements</div>
+    <div class="panel-body">
+      <div class="row">
+        <div class="col-md-12">
+          <p>If you or your children have any accessiblity or dietary requirements, please let us know.</p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-4">
+          <label>Accessibility requirements</label>
+        </div>
+        <div class="col-md-8">
+          {% bootstrap_field order_form.accessibility_reqs layout='inline' placeholder='' %}
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-4">
+          <label>Dietary requirements</label>
+        </div>
+        <div class="col-md-8">
+          {% bootstrap_field order_form.dietary_reqs layout='inline' placeholder='' %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-heading">Summary</div>
+    <div class="panel-body">
+      <div class="row">
+        <div class="col-md-6">
+          <table class="table">
+            <tr>
+              <th>Number of tickets</th>
+              <td><span id="num-tickets">0</span></td>
+            </tr>
+            <tr>
+              <th>Total cost (incl. VAT)</th>
+              <td>&pound;<span id="total-cost">0</span></td>
+            </tr>
+          </table>
+          <input type="submit" value="Place my order" class="btn btn-primary" />
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

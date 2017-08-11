@@ -1,7 +1,8 @@
 from django.test import TestCase
 
+from ironcage.tests import utils
+
 from . import factories
-from . import utils
 
 from tickets import actions
 from tickets.models import TicketInvitation

@@ -1,0 +1,21 @@
+{% extends 'ironcage/base.html' %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-8 col-md-offset-2">
+    {% if not request.user.is_authenticated %}
+    <p>Please <a href="{% url 'register' %}?next={{ request.path }}">sign up</a> or <a href="{% url 'login' %}?next={{ request.path }}">sign in</a> to buy tickets for the <a href="http://2017.pyconuk.org/education/">children's day</a>.</p>
+    {% else %}
+    <p>Read more about the children's day <a href="http://2017.pyconuk.org/education/">here</a>.</p>
+    {% endif %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-8 col-md-offset-2">
+    {% if request.user.is_authenticated %}
+    {% include './_order_form.html' %}
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
