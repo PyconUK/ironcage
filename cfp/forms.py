@@ -1,5 +1,7 @@
 from django import forms
 
+from ironcage.widgets import ButtonsRadio
+
 from .models import Proposal
 
 
@@ -47,3 +49,17 @@ class ProposalForm(forms.ModelForm):
             'description': forms.Textarea(attrs={'placeholder': False}),
             'description_private': forms.Textarea(attrs={'placeholder': False}),
         }
+
+
+IS_INTERESTED_CHOICES = [
+    ('yes', 'Interested'),
+    ('no', 'Not interested'),
+    ('skip', 'Skip'),
+]
+
+
+class ProposalVotingForm(forms.Form):
+    is_interested = forms.ChoiceField(
+        choices=IS_INTERESTED_CHOICES,
+        widget=ButtonsRadio
+    )

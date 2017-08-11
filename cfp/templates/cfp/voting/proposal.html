@@ -1,0 +1,13 @@
+{% extends 'ironcage/base.html' %}
+
+{% block content %}
+{% include './_voting_nav.html' %}
+{% include '../_proposal_details.html' %}
+
+<form method="POST" id="voting-form">
+  {% csrf_token %}
+  <div class="btn-group" data-toggle="buttons">
+  {{ form.is_interested }}
+  </div>
+</form>
+{% endblock %}

@@ -3,12 +3,13 @@ from datetime import datetime, timezone
 from django_slack import slack_message
 
 from django.conf import settings
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST
 
-from .forms import ProposalForm
+from .forms import ProposalForm, ProposalVotingForm
 from .models import Proposal
 
 
@@ -115,3 +116,104 @@ def proposal_delete(request, proposal_id):
         messages.warning(request, 'Only the proposer of a proposal can withdraw the proposal')
 
     return redirect('index')
+
+
+@staff_member_required(login_url='login')
+def voting_index(request):
+    proposal = Proposal.objects.get_random_unreviewed_by_user(request.user)
+    if proposal is None:
+        return redirect('cfp:voting_reviewed_proposals')
+    else:
+        return redirect('cfp:voting_proposal', proposal_id=proposal.proposal_id)
+
+
+@staff_member_required(login_url='login')
+def voting_reviewed_proposals(request):
+    context = {
+        'proposals': Proposal.objects.reviewed_by_user(request.user),
+        'title': "Proposals you've reviewed",
+        'empty_message': "You haven't reviewed any proposals yet.",
+    }
+
+    context.update(_voting_stats(request.user))
+
+    return render(request, 'cfp/voting/proposals.html', context)
+
+
+@staff_member_required(login_url='login')
+def voting_unreviewed_proposals(request):
+    context = {
+        'proposals': Proposal.objects.unreviewed_by_user(request.user),
+        'title': "Proposals you've not reviewed",
+        'empty_message': "You've reviewed all the proposals!",
+    }
+
+    context.update(_voting_stats(request.user))
+
+    return render(request, 'cfp/voting/proposals.html', context)
+
+
+@staff_member_required(login_url='login')
+def voting_proposals_of_interest(request):
+    context = {
+        'proposals': Proposal.objects.of_interest_to_user(request.user),
+        'title': "Proposals you're interested in",
+        'empty_message': "You've not indicated that any proposals are of interest.",
+    }
+
+    context.update(_voting_stats(request.user))
+
+    return render(request, 'cfp/voting/proposals.html', context)
+
+
+@staff_member_required(login_url='login')
+def voting_proposals_not_of_interest(request):
+    context = {
+        'proposals': Proposal.objects.not_of_interest_to_user(request.user),
+        'title': "Proposals you're not interested in",
+        'empty_message': "You've not indicated that any proposals are not of interest.",
+    }
+
+    context.update(_voting_stats(request.user))
+
+    return render(request, 'cfp/voting/proposals.html', context)
+
+
+@staff_member_required(login_url='login')
+def voting_proposal(request, proposal_id):
+    proposal = Proposal.objects.get_by_proposal_id_or_404(proposal_id)
+
+    if request.method == 'POST':
+        is_interested = request.POST['is_interested']
+
+        if is_interested == 'yes':
+            proposal.vote(request.user, True)
+        elif is_interested == 'no':
+            proposal.vote(request.user, False)
+        elif is_interested == 'skip':
+            pass
+
+        return redirect('cfp:voting_index')
+
+    form = ProposalVotingForm({
+        'is_interested': proposal.is_interested_for_form(request.user),
+    })
+
+    context = {
+        'proposal': proposal,
+        'form': form,
+        'js_paths': ['cfp/voting_form.js'],
+    }
+
+    context.update(_voting_stats(request.user))
+
+    return render(request, 'cfp/voting/proposal.html', context)
+
+
+def _voting_stats(user):
+    return {
+        'num_unreviewed': Proposal.objects.unreviewed_by_user(user).count(),
+        'num_reviewed': Proposal.objects.reviewed_by_user(user).count(),
+        'num_of_interest': Proposal.objects.of_interest_to_user(user).count(),
+        'num_not_of_interest': Proposal.objects.not_of_interest_to_user(user).count(),
+    }

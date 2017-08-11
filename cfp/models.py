@@ -38,7 +38,25 @@ class Proposal(models.Model):
             id = self.model.id_scrambler.backward(proposal_id)
             return get_object_or_404(self.model, pk=id)
 
+        def reviewed_by_user(self, user):
+            return self.filter(vote__user=user).order_by('id')
+
+        def unreviewed_by_user(self, user):
+            return self.exclude(vote__user=user).order_by('id')
+
+        def of_interest_to_user(self, user):
+            return self.reviewed_by_user(user).filter(vote__is_interested=True)
+
+        def not_of_interest_to_user(self, user):
+            return self.reviewed_by_user(user).filter(vote__is_interested=False)
+
+        def get_random_unreviewed_by_user(self, user):
+            return self.unreviewed_by_user(user).order_by('?').first()
+
     objects = Manager()
+
+    def __str__(self):
+        return self.proposal_id
 
     @property
     def proposal_id(self):
@@ -54,3 +72,47 @@ class Proposal(models.Model):
             return f'{self.title}: {self.subtitle}'
         else:
             return self.title
+
+    def vote(self, user, is_interested):
+        self.vote_set.update_or_create(
+            user=user,
+            defaults={
+                'is_interested': is_interested,
+            },
+        )
+
+    def is_interested(self, user):
+        try:
+            vote = self.vote_set.get(user=user)
+        except Vote.DoesNotExist:
+            return None
+
+        return vote.is_interested
+
+    def is_interested_for_form(self, user):
+        is_interested = self.is_interested(user)
+
+        if is_interested is True:
+            return 'yes'
+        elif is_interested is False:
+            return 'no'
+
+
+class Vote(models.Model):
+    proposal = models.ForeignKey('Proposal')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    is_interested = models.BooleanField(default=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ('proposal', 'user')
+
+    def __str__(self):
+        args = [
+            self.user.email,
+            'interested' if self.is_interested else 'not interested',
+            self.proposal.title,
+        ]
+        return '{} was {} in {}'.format(*args)
