@@ -221,9 +221,7 @@ class UnclaimedTicketsReport(ReportView, TicketsMixin):
         return Ticket.objects.filter(owner=None)
 
 
-class CFPSubmissionsReport(ReportView):
-    title = 'CFP Submissions'
-
+class CFPPropsalsMixin:
     headings = [
         'ID',
         'Title',
@@ -235,9 +233,6 @@ class CFPSubmissionsReport(ReportView):
         'Mentor?',
         'Longer slot?',
     ]
-
-    def get_queryset(self):
-        return Proposal.objects.all()
 
     def presenter(self, proposal):
         link = {
@@ -255,6 +250,34 @@ class CFPSubmissionsReport(ReportView):
             '✔' if proposal.would_like_mentor else '✘',
             '✔' if proposal.would_like_longer_slot else '✘',
         ]
+
+
+class CFPPropsals(ReportView, CFPPropsalsMixin):
+    title = 'CFP Proposals'
+
+    def get_queryset(self):
+        return Proposal.objects.all()
+
+
+class CFPPropsalsAimedAtNewProgrammers(ReportView, CFPPropsalsMixin):
+    title = 'CFP Proposals aimed at new programmers'
+
+    def get_queryset(self):
+        return Proposal.objects.filter(aimed_at_new_programmers=True)
+
+
+class CFPPropsalsAimedAtTeachers(ReportView, CFPPropsalsMixin):
+    title = 'CFP Proposals aimed at teachers'
+
+    def get_queryset(self):
+        return Proposal.objects.filter(aimed_at_teachers=True)
+
+
+class CFPPropsalsAimedAtDataScientists(ReportView, CFPPropsalsMixin):
+    title = 'CFP Proposals aimed at data scientists'
+
+    def get_queryset(self):
+        return Proposal.objects.filter(aimed_at_data_scientists=True)
 
 
 class SpeakersSeekingMentorReport(ReportView):
@@ -281,6 +304,9 @@ reports = [
     UnpaidOrdersReport,
     TicketsReport,
     UnclaimedTicketsReport,
-    CFPSubmissionsReport,
+    CFPPropsals,
+    CFPPropsalsAimedAtNewProgrammers,
+    CFPPropsalsAimedAtTeachers,
+    CFPPropsalsAimedAtDataScientists,
     SpeakersSeekingMentorReport,
 ]
