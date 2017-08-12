@@ -3,8 +3,7 @@ from datetime import datetime, timezone
 from django_slack import slack_message
 
 from django.conf import settings
-from django.contrib.admin.views.decorators import staff_member_required
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST
@@ -118,7 +117,7 @@ def proposal_delete(request, proposal_id):
     return redirect('index')
 
 
-@staff_member_required(login_url='login')
+@permission_required('cfp.review_proposal')
 def voting_index(request):
     proposal = Proposal.objects.get_random_unreviewed_by_user(request.user)
     if proposal is None:
@@ -127,7 +126,7 @@ def voting_index(request):
         return redirect('cfp:voting_proposal', proposal_id=proposal.proposal_id)
 
 
-@staff_member_required(login_url='login')
+@permission_required('cfp.review_proposal')
 def voting_reviewed_proposals(request):
     context = {
         'proposals': Proposal.objects.reviewed_by_user(request.user),
@@ -140,7 +139,7 @@ def voting_reviewed_proposals(request):
     return render(request, 'cfp/voting/proposals.html', context)
 
 
-@staff_member_required(login_url='login')
+@permission_required('cfp.review_proposal')
 def voting_unreviewed_proposals(request):
     context = {
         'proposals': Proposal.objects.unreviewed_by_user(request.user),
@@ -153,7 +152,7 @@ def voting_unreviewed_proposals(request):
     return render(request, 'cfp/voting/proposals.html', context)
 
 
-@staff_member_required(login_url='login')
+@permission_required('cfp.review_proposal')
 def voting_proposals_of_interest(request):
     context = {
         'proposals': Proposal.objects.of_interest_to_user(request.user),
@@ -166,7 +165,7 @@ def voting_proposals_of_interest(request):
     return render(request, 'cfp/voting/proposals.html', context)
 
 
-@staff_member_required(login_url='login')
+@permission_required('cfp.review_proposal')
 def voting_proposals_not_of_interest(request):
     context = {
         'proposals': Proposal.objects.not_of_interest_to_user(request.user),
@@ -179,7 +178,7 @@ def voting_proposals_not_of_interest(request):
     return render(request, 'cfp/voting/proposals.html', context)
 
 
-@staff_member_required(login_url='login')
+@permission_required('cfp.review_proposal')
 def voting_proposal(request, proposal_id):
     proposal = Proposal.objects.get_by_proposal_id_or_404(proposal_id)
 
