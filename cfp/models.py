@@ -33,6 +33,11 @@ class Proposal(models.Model):
 
     id_scrambler = Scrambler(3000)
 
+    class Meta:
+        permissions = [
+            ('review_proposal', 'Can review proposals'),
+        ]
+
     class Manager(models.Manager):
         def get_by_proposal_id_or_404(self, proposal_id):
             id = self.model.id_scrambler.backward(proposal_id)
