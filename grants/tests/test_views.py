@@ -175,7 +175,10 @@ class ApplicationTests(TestCase):
         self.assertContains(rsp, 'Only the owner of a application can view the application')
 
 
-@override_settings(GRANT_APPLICATIONS_CLOSE_AT=datetime.now(timezone.utc) - timedelta(days=1))
+@override_settings(
+    GRANT_APPLICATIONS_CLOSE_AT=datetime.now(timezone.utc) - timedelta(days=1),
+    GRANT_APPLICATIONS_DEADLINE_BYPASS_TOKEN='abc123',
+)
 class ApplicationsClosedTests(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -190,40 +193,76 @@ class ApplicationsClosedTests(TestCase):
         self.assertContains(rsp, 'financial assistance applications are closed')
         self.assertRedirects(rsp, '/')
 
+    def test_get_new_application_with_token(self):
+        rsp = self.client.get('/grants/applications/new/?deadline-bypass-token=abc123', follow=True)
+        self.assertNotContains(rsp, 'financial assistance applications are closed')
+        self.assertRedirects(rsp, f'/grants/applications/{self.application.application_id}/')
+
+    def test_get_new_application_with_incorrect_token(self):
+        rsp = self.client.get('/grants/applications/new/?deadline-bypass-token=321cba', follow=True)
+        self.assertContains(rsp, 'financial assistance applications are closed')
+        self.assertRedirects(rsp, '/')
+
+    @override_settings(CFP_DEADLINE_BYPASS_TOKEN=None)
+    def test_get_new_application_when_token_not_set_in_setting(self):
+        rsp = self.client.get('/grants/applications/new/', follow=True)
+        self.assertContains(rsp, 'financial assistance applications are closed')
+        self.assertRedirects(rsp, '/')
+
     def test_post_new_application(self):
         form_data = {
-            'session_type': 'talk',
-            'title': 'Python is brilliant',
-            'subtitle': 'From abs to ZeroDivisionError',
-            'copresenter_names': '',
-            'description': 'Let me tell you why Python is brilliant',
-            'description_private': 'I am well placed to tell you why Python is brilliant',
-            'aimed_at_new_programmers': True,
-            'would_like_mentor': True,
+            'amount_requested': '1000',
+            'days': ['sat', 'sun', 'mon'],
+            'about_you': 'I have two thumbs',
         }
         rsp = self.client.post('/grants/applications/new/', form_data, follow=True)
         self.assertContains(rsp, 'financial assistance applications are closed')
         self.assertRedirects(rsp, '/')
+
+    def test_post_new_application_with_token(self):
+        self.client.force_login(self.alice)
+        form_data = {
+            'amount_requested': '1000',
+            'days': ['sat', 'sun', 'mon'],
+            'about_you': 'I have two thumbs',
+        }
+        rsp = self.client.post('/grants/applications/new/?deadline-bypass-token=abc123', form_data, follow=True)
+        self.assertRedirects(rsp, f'/grants/applications/{self.application.application_id}/')
 
     def test_get_application_edit(self):
         rsp = self.client.get(f'/grants/applications/{self.application.application_id}/edit/', follow=True)
         self.assertContains(rsp, 'financial assistance applications are closed')
         self.assertRedirects(rsp, f'/grants/applications/{self.application.application_id}/')
 
+    def test_get_application_edit_with_token(self):
+        rsp = self.client.get(f'/grants/applications/{self.application.application_id}/edit/?deadline-bypass-token=abc123', follow=True)
+        self.assertNotContains(rsp, 'financial assistance applications are closed')
+        self.assertContains(rsp, 'Update your application')
+
     def test_post_application_edit(self):
         form_data = {
-            'session_type': 'talk',
-            'title': 'Python is brilliant',
-            'subtitle': 'From abs to ZeroDivisionError',
-            'copresenter_names': '',
-            'description': 'Let me tell you why Python is brilliant',
-            'description_private': 'I am well placed to tell you why Python is brilliant',
-            'aimed_at_new_programmers': True,
+            'amount_requested': '2000',
+            'days': ['fri', 'sat', 'sun', 'mon'],
+            'about_you': 'I have two thumbs',
         }
         rsp = self.client.post(f'/grants/applications/{self.application.application_id}/edit/', form_data, follow=True)
         self.assertContains(rsp, 'financial assistance applications are closed')
         self.assertRedirects(rsp, f'/grants/applications/{self.application.application_id}/')
 
+    def test_post_application_edit_with_token(self):
+        form_data = {
+            'amount_requested': '2000',
+            'days': ['fri', 'sat', 'sun', 'mon'],
+            'about_you': 'I have two thumbs',
+        }
+        rsp = self.client.post(f'/grants/applications/{self.application.application_id}/edit/?deadline-bypass-token=abc123', form_data, follow=True)
+        self.assertNotContains(rsp, 'financial assistance applications are closed')
+        self.assertContains(rsp, 'Thank you for updating your application')
+
     def test_get_application(self):
         rsp = self.client.get(f'/grants/applications/{self.application.application_id}/', follow=True)
         self.assertNotContains(rsp, 'Update your application')
+
+    def test_get_application_with_token(self):
+        rsp = self.client.get(f'/grants/applications/{self.application.application_id}/?deadline-bypass-token=abc123')
+        self.assertContains(rsp, 'Update your application')

@@ -12,8 +12,18 @@ from .forms import ProposalForm, ProposalVotingForm
 from .models import Proposal
 
 
+def _can_submit(request):
+    if datetime.now(timezone.utc) <= settings.CFP_CLOSE_AT:
+        return True
+
+    if request.GET.get('deadline-bypass-token', '') == settings.CFP_DEADLINE_BYPASS_TOKEN:
+        return True
+
+    return False
+
+
 def new_proposal(request):
-    if datetime.now(timezone.utc) > settings.CFP_CLOSE_AT:
+    if not _can_submit(request):
         return _new_proposal_after_cfp_closes(request)
 
     if request.method == 'POST':
@@ -49,7 +59,7 @@ def _new_proposal_after_cfp_closes(request):
 
 @login_required
 def proposal_edit(request, proposal_id):
-    if datetime.now(timezone.utc) > settings.CFP_CLOSE_AT:
+    if not _can_submit(request):
         return _proposal_edit_after_cfp_closes(request, proposal_id)
 
     proposal = Proposal.objects.get_by_proposal_id_or_404(proposal_id)
@@ -97,7 +107,7 @@ def proposal(request, proposal_id):
     context = {
         'proposal': proposal,
         'form': ProposalForm(),
-        'cfp_open': datetime.now(timezone.utc) < settings.CFP_CLOSE_AT,
+        'cfp_open': _can_submit(request),
     }
     return render(request, 'cfp/proposal.html', context)
 

@@ -15,8 +15,18 @@ from .forms import ApplicationForm
 from .models import Application
 
 
+def _can_submit(request):
+    if datetime.now(timezone.utc) <= settings.GRANT_APPLICATIONS_CLOSE_AT:
+        return True
+
+    if request.GET.get('deadline-bypass-token', '') == settings.GRANT_APPLICATIONS_DEADLINE_BYPASS_TOKEN:
+        return True
+
+    return False
+
+
 def new_application(request):
-    if datetime.now(timezone.utc) > settings.GRANT_APPLICATIONS_CLOSE_AT:
+    if not _can_submit(request):
         return _new_application_after_cfp_closes(request)
 
     if request.user.is_authenticated and request.user.get_grant_application():
@@ -60,7 +70,7 @@ def _new_application_after_cfp_closes(request):
 
 @login_required
 def application_edit(request, application_id):
-    if datetime.now(timezone.utc) > settings.GRANT_APPLICATIONS_CLOSE_AT:
+    if not _can_submit(request):
         return _application_edit_after_cfp_closes(request, application_id)
 
     application = Application.objects.get_by_application_id_or_404(application_id)
@@ -114,7 +124,7 @@ def application(request, application_id):
     context = {
         'application': application,
         'form': ApplicationForm(),
-        'applications_open': datetime.now(timezone.utc) < settings.GRANT_APPLICATIONS_CLOSE_AT,
+        'applications_open': _can_submit(request),
     }
     return render(request, 'grants/application.html', context)
 

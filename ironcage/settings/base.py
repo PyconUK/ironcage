@@ -241,3 +241,6 @@ GRANT_APPLICATIONS_CLOSE_AT = datetime.now(timezone.utc) + timedelta(days=100)
 # Uncomment these lines if you do want to CFP and grant applications to be closed
 # CFP_CLOSE_AT = datetime.now(timezone.utc) - timedelta(days=100)
 # GRANT_APPLICATIONS_CLOSE_AT = datetime.now(timezone.utc) - timedelta(days=100)
+
+CFP_DEADLINE_BYPASS_TOKEN = os.environ.get('CFP_DEADLINE_BYPASS_TOKEN')
+GRANT_APPLICATIONS_DEADLINE_BYPASS_TOKEN = os.environ.get('GRANT_APPLICATIONS_DEADLINE_BYPASS_TOKEN')
