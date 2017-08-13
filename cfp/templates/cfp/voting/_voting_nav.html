@@ -2,8 +2,8 @@
   <ul class="nav navbar-nav">
     <li><a href="{% url 'cfp:voting_unreviewed_proposals' %}">Unreviewed ({{ num_unreviewed }})</a></li>
     <li><a href="{% url 'cfp:voting_reviewed_proposals' %}">Reviewed ({{ num_reviewed }})</a></li>
-    <li><a href="{% url 'cfp:voting_proposals_of_interest' %}">Of interest ({{ num_of_interest }})</a></li>
-    <li><a href="{% url 'cfp:voting_proposals_not_of_interest' %}">Not of interest ({{ num_not_of_interest }})</a></li>
+    <li><a href="{% url 'cfp:voting_proposals_of_interest' %}">Should be considered ({{ num_of_interest }})</a></li>
+    <li><a href="{% url 'cfp:voting_proposals_not_of_interest' %}">Should not be considered ({{ num_not_of_interest }})</a></li>
     {% if num_unreviewed > 0 %}
     <li><a href="{% url 'cfp:voting_index' %}">Give me something to review!</a></li>
     {% endif %}
