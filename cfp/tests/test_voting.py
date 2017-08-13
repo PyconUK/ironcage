@@ -9,10 +9,16 @@ class VotingModelTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.alice = factories.create_user('Alice')
+        cls.bob = factories.create_user('Bob')
+        cls.carol = factories.create_user('Carol')
         cls.proposals = [factories.create_proposal() for _ in range(4)]
 
         cls.proposals[0].vote(cls.alice, True)
         cls.proposals[1].vote(cls.alice, False)
+        cls.proposals[0].vote(cls.bob, False)
+        cls.proposals[2].vote(cls.bob, True)
+        cls.proposals[0].vote(cls.carol, True)
+        cls.proposals[3].vote(cls.carol, False)
 
     def test_vote(self):
         self.assertTrue(self.proposals[0].is_interested(self.alice))

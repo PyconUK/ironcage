@@ -50,10 +50,10 @@ class Proposal(models.Model):
             return self.exclude(vote__user=user).order_by('id')
 
         def of_interest_to_user(self, user):
-            return self.reviewed_by_user(user).filter(vote__is_interested=True)
+            return self.filter(vote__user=user, vote__is_interested=True).order_by('id')
 
         def not_of_interest_to_user(self, user):
-            return self.reviewed_by_user(user).filter(vote__is_interested=False)
+            return self.filter(vote__user=user, vote__is_interested=False).order_by('id')
 
         def get_random_unreviewed_by_user(self, user):
             return self.unreviewed_by_user(user).order_by('?').first()
