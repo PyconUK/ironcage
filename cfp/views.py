@@ -166,8 +166,8 @@ def voting_unreviewed_proposals(request):
 def voting_proposals_of_interest(request):
     context = {
         'proposals': Proposal.objects.of_interest_to_user(request.user),
-        'title': "Proposals you're interested in",
-        'empty_message': "You've not indicated that any proposals are of interest.",
+        'title': "Proposals you think should be considered",
+        'empty_message': "You've not indicated that any proposals should be considered.",
     }
 
     context.update(_voting_stats(request.user))
@@ -179,8 +179,8 @@ def voting_proposals_of_interest(request):
 def voting_proposals_not_of_interest(request):
     context = {
         'proposals': Proposal.objects.not_of_interest_to_user(request.user),
-        'title': "Proposals you're not interested in",
-        'empty_message': "You've not indicated that any proposals are not of interest.",
+        'title': "Proposals you don't think should be considered",
+        'empty_message': "You've not indicated that any proposals shouldn't be considered.",
     }
 
     context.update(_voting_stats(request.user))
