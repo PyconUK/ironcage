@@ -27,6 +27,7 @@ class Proposal(models.Model):
     aimed_at_data_scientists = models.BooleanField()
     would_like_mentor = models.BooleanField()
     would_like_longer_slot = models.BooleanField()
+    state = models.CharField(max_length=40, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
