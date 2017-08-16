@@ -227,6 +227,7 @@ class CFPPropsalsMixin:
         'Title',
         'Type',
         'Proposer',
+        'State',
         'New programmers?',
         'Teachers?',
         'Data scientists?',
@@ -252,6 +253,7 @@ class CFPPropsalsMixin:
             proposal.full_title(),
             proposal.session_type,
             proposal.proposer.name,
+            proposal.state,
             '✔' if proposal.aimed_at_new_programmers else '✘',
             '✔' if proposal.aimed_at_teachers else '✘',
             '✔' if proposal.aimed_at_data_scientists else '✘',
@@ -266,6 +268,27 @@ class CFPPropsals(ReportView, CFPPropsalsMixin):
 
     def get_queryset(self):
         return Proposal.objects.select_related('proposer', 'proposer__grant_application').all()
+
+
+class CFPPropsalsPlanToAccept(ReportView, CFPPropsalsMixin):
+    title = 'CFP Proposals we plan to accept'
+
+    def get_queryset(self):
+        return Proposal.objects.select_related('proposer', 'proposer__grant_application').filter(state='plan to accept')
+
+
+class CFPPropsalsPlanToReject(ReportView, CFPPropsalsMixin):
+    title = 'CFP Proposals we plan to reject'
+
+    def get_queryset(self):
+        return Proposal.objects.select_related('proposer', 'proposer__grant_application').filter(state='plan to reject')
+
+
+class CFPPropsalsNoDecision(ReportView, CFPPropsalsMixin):
+    title = 'CFP Proposals we with no decision'
+
+    def get_queryset(self):
+        return Proposal.objects.select_related('proposer', 'proposer__grant_application').filter(state='')
 
 
 class CFPPropsalsAimedAtNewProgrammers(ReportView, CFPPropsalsMixin):
@@ -314,6 +337,9 @@ reports = [
     TicketsReport,
     UnclaimedTicketsReport,
     CFPPropsals,
+    CFPPropsalsPlanToAccept,
+    CFPPropsalsPlanToReject,
+    CFPPropsalsNoDecision,
     CFPPropsalsAimedAtNewProgrammers,
     CFPPropsalsAimedAtTeachers,
     CFPPropsalsAimedAtDataScientists,
