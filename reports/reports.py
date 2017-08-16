@@ -232,6 +232,7 @@ class CFPPropsalsMixin:
         'Data scientists?',
         'Mentor?',
         'Longer slot?',
+        'Amount requested',
     ]
 
     def presenter(self, proposal):
@@ -239,6 +240,13 @@ class CFPPropsalsMixin:
             'href': reverse('reports:cfp_proposal', args=[proposal.proposal_id]),
             'text': proposal.proposal_id,
         }
+
+        grant_appliction = proposal.proposer.get_grant_application()
+        if grant_appliction is None:
+            amount_requested = ''
+        else:
+            amount_requested = grant_appliction.amount_requested
+
         return [
             link,
             proposal.full_title(),
@@ -249,6 +257,7 @@ class CFPPropsalsMixin:
             '✔' if proposal.aimed_at_data_scientists else '✘',
             '✔' if proposal.would_like_mentor else '✘',
             '✔' if proposal.would_like_longer_slot else '✘',
+            amount_requested,
         ]
 
 
@@ -256,28 +265,28 @@ class CFPPropsals(ReportView, CFPPropsalsMixin):
     title = 'CFP Proposals'
 
     def get_queryset(self):
-        return Proposal.objects.all()
+        return Proposal.objects.select_related('proposer', 'proposer__grant_application').all()
 
 
 class CFPPropsalsAimedAtNewProgrammers(ReportView, CFPPropsalsMixin):
     title = 'CFP Proposals aimed at new programmers'
 
     def get_queryset(self):
-        return Proposal.objects.filter(aimed_at_new_programmers=True)
+        return Proposal.objects.select_related('proposer', 'proposer__grant_application').filter(aimed_at_new_programmers=True)
 
 
 class CFPPropsalsAimedAtTeachers(ReportView, CFPPropsalsMixin):
     title = 'CFP Proposals aimed at teachers'
 
     def get_queryset(self):
-        return Proposal.objects.filter(aimed_at_teachers=True)
+        return Proposal.objects.select_related('proposer', 'proposer__grant_application').filter(aimed_at_teachers=True)
 
 
 class CFPPropsalsAimedAtDataScientists(ReportView, CFPPropsalsMixin):
     title = 'CFP Proposals aimed at data scientists'
 
     def get_queryset(self):
-        return Proposal.objects.filter(aimed_at_data_scientists=True)
+        return Proposal.objects.select_related('proposer', 'proposer__grant_application').filter(aimed_at_data_scientists=True)
 
 
 class SpeakersSeekingMentorReport(ReportView):
