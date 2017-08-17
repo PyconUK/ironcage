@@ -332,7 +332,7 @@ class AttendeesWithAccessibilityReqs(ReportView):
 
     headings = [
         'Name',
-        'Email'
+        'Email',
         'Requirements',
     ]
 
