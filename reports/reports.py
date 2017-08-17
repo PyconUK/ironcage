@@ -266,6 +266,13 @@ class CFPPropsals(ReportView, CFPPropsalsMixin):
         return Proposal.objects.select_related('proposer', 'proposer__grant_application').all()
 
 
+class CFPPropsalsForEducationTrack(ReportView, CFPPropsalsMixin):
+    title = 'CFP Proposals to be scheduled in education track'
+
+    def get_queryset(self):
+        return Proposal.objects.select_related('proposer', 'proposer__grant_application').filter(state='plan to accept', track='education')
+
+
 class CFPPropsalsPlanToAccept(ReportView, CFPPropsalsMixin):
     title = 'CFP Proposals we plan to accept'
 
@@ -381,6 +388,7 @@ reports = [
     TicketsReport,
     UnclaimedTicketsReport,
     CFPPropsals,
+    CFPPropsalsForEducationTrack,
     CFPPropsalsPlanToAccept,
     CFPPropsalsPlanToReject,
     CFPPropsalsNoDecision,
