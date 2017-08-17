@@ -327,6 +327,54 @@ class SpeakersSeekingMentorReport(ReportView):
         return [proposal.proposer.name, proposal.title]
 
 
+class AttendeesWithAccessibilityReqs(ReportView):
+    title = 'Attendees with accessibility requirements'
+
+    headings = [
+        'Name',
+        'Email'
+        'Requirements',
+    ]
+
+    def get_queryset(self):
+        return User.objects.filter(accessibility_reqs_yn=True)
+
+    def presenter(self, user):
+        return [user.name, user.email_addr, user.accessibility_reqs]
+
+
+class AttendeesWithChildcareReqs(ReportView):
+    title = 'Attendees with childcare requirements'
+
+    headings = [
+        'Name',
+        'Email'
+        'Requirements',
+    ]
+
+    def get_queryset(self):
+        return User.objects.filter(childcare_reqs_yn=True)
+
+    def presenter(self, user):
+        return [user.name, user.email_addr, user.childcare_reqs]
+
+
+class AttendeesWithDietaryReqs(ReportView):
+    title = 'Attendees with dietary requirements'
+
+    headings = [
+        'Name',
+        'Email'
+        'Requirements',
+    ]
+
+    def get_queryset(self):
+        return User.objects.filter(dietary_reqs_yn=True)
+
+    def presenter(self, user):
+        return [user.name, user.email_addr, user.dietary_reqs]
+
+
 reports = [
     AttendanceByDayReport,
     UKPAReport,
@@ -344,4 +392,7 @@ reports = [
     CFPPropsalsAimedAtTeachers,
     CFPPropsalsAimedAtDataScientists,
     SpeakersSeekingMentorReport,
+    AttendeesWithAccessibilityReqs,
+    AttendeesWithChildcareReqs,
+    AttendeesWithDietaryReqs,
 ]
