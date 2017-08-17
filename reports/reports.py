@@ -228,11 +228,9 @@ class CFPPropsalsMixin:
         'Type',
         'Proposer',
         'State',
+        'Track'
         'New programmers?',
-        'Teachers?',
-        'Data scientists?',
         'Mentor?',
-        'Longer slot?',
         'Amount requested',
     ]
 
@@ -254,11 +252,9 @@ class CFPPropsalsMixin:
             proposal.session_type,
             proposal.proposer.name,
             proposal.state,
+            proposal.track,
             '✔' if proposal.aimed_at_new_programmers else '✘',
-            '✔' if proposal.aimed_at_teachers else '✘',
-            '✔' if proposal.aimed_at_data_scientists else '✘',
             '✔' if proposal.would_like_mentor else '✘',
-            '✔' if proposal.would_like_longer_slot else '✘',
             amount_requested,
         ]
 
