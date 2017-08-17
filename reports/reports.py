@@ -228,7 +228,7 @@ class CFPPropsalsMixin:
         'Type',
         'Proposer',
         'State',
-        'Track'
+        'Track',
         'New programmers?',
         'Mentor?',
         'Amount requested',
@@ -344,7 +344,7 @@ class AttendeesWithChildcareReqs(ReportView):
 
     headings = [
         'Name',
-        'Email'
+        'Email',
         'Requirements',
     ]
 
@@ -360,7 +360,7 @@ class AttendeesWithDietaryReqs(ReportView):
 
     headings = [
         'Name',
-        'Email'
+        'Email',
         'Requirements',
     ]
 
