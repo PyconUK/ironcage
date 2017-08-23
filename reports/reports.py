@@ -393,7 +393,7 @@ class GrantApplications(ReportView):
 
     def presenter(self, application):
         link = {
-            'href': reverse('reports:grant_application', args=[application.application_id]),
+            'href': reverse('reports:grants_application', args=[application.application_id]),
             'text': application.application_id,
         }
 
