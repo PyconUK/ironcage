@@ -7,6 +7,7 @@ from avatar.templatetags.avatar_tags import avatar_url
 
 from accounts.models import User
 from cfp.models import Proposal
+from grants.models import Application
 from tickets.constants import DAYS
 from tickets.models import Order, Ticket
 from tickets.prices import cost_incl_vat
@@ -378,6 +379,31 @@ class AttendeesWithDietaryReqs(ReportView):
         return [user.name, user.email_addr, user.dietary_reqs]
 
 
+class GrantApplications(ReportView):
+    title = 'Grant applications'
+
+    headings = [
+        'Name',
+        'Email',
+        'Requirements',
+    ]
+
+    def get_queryset(self):
+        return Application.objects.select_related('applicant').all()
+
+    def presenter(self, application):
+        link = {
+            'href': reverse('reports:grant_application', args=[application.application_id]),
+            'text': application.application_id,
+        }
+
+        return [
+            link,
+            application.applicant.name,
+            application.amount_requested,
+        ]
+
+
 reports = [
     AttendanceByDayReport,
     UKPAReport,
@@ -399,4 +425,5 @@ reports = [
     AttendeesWithAccessibilityReqs,
     AttendeesWithChildcareReqs,
     AttendeesWithDietaryReqs,
+    GrantApplications,
 ]
