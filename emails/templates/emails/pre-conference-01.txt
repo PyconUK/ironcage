@@ -1,0 +1,53 @@
+Hi {{ recipient.name }},
+
+We're looking forwards to seeing you at PyCon UK in Cardiff in October.
+
+This email contains some practicalities about the conference.
+
+Hotels
+------
+
+We understand that some Cardiff hotels are getting booked up over the
+conference weekend.  We have put together a list of hotels in central
+Cardiff[1], and if you have not already booked a room, we encourage you to do
+so soon!
+
+
+Accessibility, childcare, and dietary requirements
+--------------------------------------------------
+
+It is important to us that the conference is inclusive of the whole community.
+If you have any particular accessibility, childcare, or dietary requirements,
+please let us know by filling in your profile in the conference HQ[2].
+
+You can read more about our approach to diversity, accessibility, and inclusion
+on our website[3].
+
+
+Conference programme
+--------------------
+
+This evening we announced details of our keynote speakers[4], and we'll be
+announcing the full programme soon.
+
+If you submitted a proposal to our Call for Participation, or an application
+for financial assistance, you should hear from us by the end of the weekend.
+
+
+Staying in touch
+----------------
+
+You can keep up with the latest from the conference committee by subscribing to
+UK Python News[5], and following us on Twitter[6].
+
+
+See you in Cardiff!
+
+~ The PyCon UK Committee
+
+[1] http://2017.pyconuk.org/accommodation/
+[2] https://hq.pyconuk.org/profile/
+[3] http://2017.pyconuk.org/diversity-accessibility-inclusion/
+[4] http://uk.python.org/news/2017/08/23/pyconuk-keynotes-announced/
+[5] http://uk.python.org/
+[6] https://twitter.com/PyConUK
