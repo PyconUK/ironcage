@@ -281,6 +281,13 @@ class CFPPropsalsPlanToAccept(ReportView, CFPPropsalsMixin):
         return Proposal.objects.select_related('proposer', 'proposer__grant_application').filter(state='plan to accept')
 
 
+class CFPPropsalsPlanToAcceptWithGrantApplications(ReportView, CFPPropsalsMixin):
+    title = 'CFP Proposals we plan to accept'
+
+    def get_queryset(self):
+        return Proposal.objects.select_related('proposer', 'proposer__grant_application').filter(state='plan to accept', proposer__grant_application__isnull=False).order_by('proposer__grant_application__amount_requested')
+
+
 class CFPPropsalsPlanToReject(ReportView, CFPPropsalsMixin):
     title = 'CFP Proposals we plan to reject'
 
@@ -416,6 +423,7 @@ reports = [
     CFPPropsals,
     CFPPropsalsForEducationTrack,
     CFPPropsalsPlanToAccept,
+    CFPPropsalsPlanToAcceptWithGrantApplications,
     CFPPropsalsPlanToReject,
     CFPPropsalsNoDecision,
     CFPPropsalsAimedAtNewProgrammers,
