@@ -282,7 +282,7 @@ class CFPPropsalsPlanToAccept(ReportView, CFPPropsalsMixin):
 
 
 class CFPPropsalsPlanToAcceptWithGrantApplications(ReportView, CFPPropsalsMixin):
-    title = 'CFP Proposals we plan to accept'
+    title = "CFP Proposals we plan to accept from people who've applied for a grant"
 
     def get_queryset(self):
         return Proposal.objects.select_related('proposer', 'proposer__grant_application').filter(state='plan to accept', proposer__grant_application__isnull=False).order_by('proposer__grant_application__amount_requested')
