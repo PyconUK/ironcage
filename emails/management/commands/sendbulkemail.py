@@ -72,6 +72,9 @@ subject "This is a test".
             context = {'recipient': recipient}
             body = template.render(context)
             assert 'THIS SHOULD NEVER HAPPEN' not in body, f'Could not render template for {recipient.email_addr}'
+            if dry_run:
+                print('~' * 80)
+                print(body)
 
         if dry_run:
             return
