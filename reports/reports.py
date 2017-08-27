@@ -399,7 +399,7 @@ class GrantApplications(ReportView):
     ]
 
     def get_queryset(self):
-        return Application.objects.select_related('applicant').all()
+        return Application.objects.select_related('applicant').order_by('amount_requested').all()
 
     def presenter(self, application):
         link = {
