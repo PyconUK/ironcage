@@ -1,0 +1,15 @@
+Hi {{ recipient.name }},
+
+I had hoped that we'd be able to announce our decisions about the PyCon UK
+schedule this evening, but it's getting late and I'm struggling to get a Django
+ORM query to Do The Right Thing.
+
+Rather than risk messing it up, I'm going to sleep on it and get somebody else
+on the committee to review my code in the morning, so please expect a
+notification by email tomorrow.
+
+In the meantime, thank you for your submission or submissions, and thank you
+for your understanding.
+
+Peter Inglesby
+PyCon UK conference chair
