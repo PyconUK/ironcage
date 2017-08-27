@@ -31,12 +31,12 @@ subject "This is a test".
         'admins': User.objects.filter(email_addr__in=os.environ.get('ADMINS', '').split(',')),
         'staff': User.objects.filter(is_staff=True),
         'ticket-holders': User.objects.exclude(ticket=None),
-        'cfp-proposers': User.objects.filter(proposals__isnull=False),
+        'cfp-proposers': User.objects.exclude(proposals__isnull=False).distinct(),
         'grant-applicants-without-cfp-proposal': User.objects.filter(
             grant_application__isnull=False,
             grant_application__special_reply_required=False,
             proposals__isnull=True,
-        ),
+        ).distinct(),
     }
 
     def create_parser(self, *args, **kwargs):
