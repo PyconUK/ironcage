@@ -126,7 +126,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         ])
 
     def submitted_single_proposal(self):
-        return len(self.proposals()) == 1
+        return len(self.proposals.all()) == 1
 
     def accepted_proposals(self):
         return [p for p in self.proposals.all() if p.is_accepted()]
