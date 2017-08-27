@@ -1,5 +1,6 @@
 from argparse import RawTextHelpFormatter
 import os
+import re
 
 from django.conf import settings
 from django.core.mail import send_mail
@@ -30,6 +31,12 @@ subject "This is a test".
         'admins': User.objects.filter(email_addr__in=os.environ.get('ADMINS', '').split(',')),
         'staff': User.objects.filter(is_staff=True),
         'ticket-holders': User.objects.exclude(ticket=None),
+        'cfp-proposers': User.objects.filter(proposals__isnull=False),
+        'grant-applicants-without-cfp-proposal': User.objects.filter(
+            grant_application__isnull=False,
+            grant_application__special_reply_required=False,
+            proposals__isnull=True,
+        ),
     }
 
     def create_parser(self, *args, **kwargs):
@@ -64,6 +71,10 @@ subject "This is a test".
             # *before* we start to send any emails.
             context = {'recipient': recipient}
             body = template.render(context)
+            assert 'THIS SHOULD NEVER HAPPEN' not in body, f'Could not render template for {recipient.email_addr}'
+            if dry_run:
+                print('~' * 80)
+                print(body)
 
         if dry_run:
             return
@@ -84,6 +95,7 @@ subject "This is a test".
         for recipient in recipients.order_by('id'):
             context = {'recipient': recipient}
             body = template.render(context)
+            body = re.sub(r'\n\n+', '\n\n', body)
             logger.info('sending email', recipient=recipient.id, email_addr=recipient.email_addr)
             send_mail(
                 subject,

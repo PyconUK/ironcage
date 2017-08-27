@@ -124,3 +124,27 @@ class User(AbstractBaseUser, PermissionsMixin):
             self.nationality,
             self.country_of_residence
         ])
+
+    def submitted_single_proposal(self):
+        return len(self.proposals) == 1
+
+    def accepted_proposals(self):
+        return [p for p in self.proposals if p.is_accepted()]
+
+    def rejected_proposals(self):
+        return [p for p in self.proposals if p.is_rejected()]
+
+    def all_proposals_accepted(self):
+        return len(self.proposals) > 0 and len(self.proposals) == len(self.accepted_proposals())
+
+    def any_proposals_accepted(self):
+        return len(self.accepted_proposals()) > 0
+
+    def some_proposals_accepted(self):
+        return self.any_proposals_accepted() and not self.all_proposals_accepted()
+
+    def one_proposal_rejected(self):
+        return len(self.rejected_proposals()) == 1
+
+    def one_proposal_accepted(self):
+        return len(self.accepted_proposals()) == 1

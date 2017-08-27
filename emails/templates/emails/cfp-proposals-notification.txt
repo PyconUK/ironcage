@@ -1,0 +1,107 @@
+Hi {{ recipient.name }},
+
+{% if recipient.submitted_single_proposal %}
+Thank you for submitting your proposal to the PyCon UK Call for Participation:
+
+ * {{ recipient.proposals.0.title }}
+
+{% if recipient.all_proposals_accepted %}
+We are pleased to tell you that we would like to accept your proposal.
+{% else %}
+We are sorry to tell you that we were unable to find room in the schedule for
+your session.  We received many excellent proposals, and are sad not to have
+been able to schedule more of them.
+{% endif %}
+
+{% if recipient.get_grant_application %}
+In particular, we were unable to meet your request for financial assistance, as
+we have received applications for several times more than the amount of our
+financial assistance budget.
+{% endif %}
+
+{% else %}
+Thank you for submitting several proposals to the PyCon UK Call for Participation.
+
+{% if recipient.all_proposals_accepted %}
+We are pleased to tell you that we would like to accept the following proposals:
+
+{% for proposal in recipient.accepted_proposals %}
+  * {{ proposal.title }}
+{% endfor %}
+{% elif recipient.some_proposals_accepted %}
+We are pleased to tell you that we would like to accept the following proposals:
+
+{% for proposal in recipient.accepted_proposals %}
+  * {{ proposal.title }}
+{% endfor %}
+
+{% if recipient.one_proposal_rejected %}
+However, we were not able to find room in the schedule for your other proposal.
+{% else %}
+However, we were not able to find room in the schedule for your other proposals.
+{% endif %}
+{% elif recipient.one_proposal_accepted %}
+We are pleased to tell you that we would like to accept the following proposal:
+
+{% for proposal in recipient.accepted_proposals %}
+  * {{ proposal.title }}
+{% endfor %}
+
+{% if recipient.one_proposal_rejected %}
+However, we were not able to find room in the schedule for your other proposal.
+{% else %}
+However, we were not able to find room in the schedule for your other proposals.
+{% endif %}
+{% else %}
+We are sorry to tell you that we were unable to find room in the schedule for
+your sessions.  We received many excellent proposals, and are sad not to have
+been able to schedule more of them.
+
+{% if recipient.get_grant_application %}
+In particular, we were unable to meet your request for financial assistance, as
+we have received applications for several times more than the amount of our
+financial assistance budget.
+{% endif %}
+{% endif %}
+
+{% if recipient.any_proposals_accepted %}
+{% if recipient.submitted_single_proposal %}
+You can review your proposal at https://hq.pyconuk.org/.
+{% else %}
+You can review your proposals at https://hq.pyconuk.org/.
+{% endif %}
+{% endif %}
+
+{% if recipient.get_ticket %}
+{% elif recipient.get_grant_application %}
+{% with application=recipient.get_grant_application %}
+{% if application.special_reply_required %}
+We will be in touch separately regarding your application for financial
+assistance.
+{% elif application.requested_ticket_only %}
+You have applied for a complementary ticket for PyCon UK 2017, and we're
+also pleased to tell you that we can offer you a ticket for the conference.
+
+We will send instructions for claiming your ticket in the next few days.
+{% elif application.amount_requested == application.amount_offered %}
+You have applied for financial assistance to attend PyCon UK, and we're also
+pleased to tell you that we can offer you the full amount (£{{ application.amount_requested }}) and a
+complementary ticket.
+
+We will send instructions for claiming your grant and ticket in the next few days.
+{% else %}
+THIS SHOULD NEVER HAPPEN
+{% endif %}
+{% endwith %}
+{% else %}
+Our records show that you have not yet bought a ticket for the conference.  As
+a community conference, we ask all speakers to buy a ticket or request one
+through our financial assistance programme.  The deadline for financial
+assistance applications has passed, but if you are unable to attend the
+conference without a free ticket, please let us know immediately.
+{% endif %}
+{% endif %}
+
+Best wishes,
+
+~ The PyCon UK Committee

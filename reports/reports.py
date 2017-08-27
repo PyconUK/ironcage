@@ -390,9 +390,12 @@ class GrantApplications(ReportView):
     title = 'Grant applications'
 
     headings = [
+        'ID'
         'Name',
-        'Email',
-        'Requirements',
+        'Amount requested',
+        'Amount offered',
+        'Requested ticket only',
+        'Special reply required',
     ]
 
     def get_queryset(self):
@@ -408,6 +411,9 @@ class GrantApplications(ReportView):
             link,
             application.applicant.name,
             application.amount_requested,
+            application.amount_offered,
+            application.requested_ticket_only,
+            application.special_reply_required,
         ]
 
 

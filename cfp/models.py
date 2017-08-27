@@ -80,6 +80,12 @@ class Proposal(models.Model):
         else:
             return self.title
 
+    def is_accepted(self):
+        return self.state == 'plan to accept'
+
+    def is_rejected(self):
+        return self.state == 'plan to reject'
+
     def vote(self, user, is_interested):
         self.vote_set.update_or_create(
             user=user,
