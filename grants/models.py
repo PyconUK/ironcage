@@ -18,6 +18,9 @@ class Application(models.Model):
     sun = models.BooleanField()
     mon = models.BooleanField()
     about_you = models.TextField()
+    amount_offered = models.IntegerField(default=0)
+    requested_ticket_only = models.BooleanField(default=False)
+    special_reply_required = models.BooleanField(default=False)
 
     id_scrambler = Scrambler(4000)
 
