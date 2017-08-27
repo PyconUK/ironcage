@@ -65,16 +65,18 @@ subject "This is a test".
 
         for recipient in recipients.order_by('email_addr'):
             if list_recipients:
+                if dry_run:
+                    self.stdout.write('~' * 80)
                 self.stdout.write(f' * {recipient.name} ({recipient.email_addr})')
 
             # Here, we are making sure that template.render() raises no errors,
             # *before* we start to send any emails.
             context = {'recipient': recipient}
             body = template.render(context)
+            body = re.sub(r'\n\n+', '\n\n', body)
             assert 'THIS SHOULD NEVER HAPPEN' not in body, f'Could not render template for {recipient.email_addr}'
             if dry_run:
-                print('~' * 80)
-                print(body)
+                self.stdout.write(body)
 
         if dry_run:
             return
