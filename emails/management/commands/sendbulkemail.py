@@ -1,5 +1,6 @@
 from argparse import RawTextHelpFormatter
 import os
+import re
 
 from django.conf import settings
 from django.core.mail import send_mail
@@ -84,6 +85,7 @@ subject "This is a test".
         for recipient in recipients.order_by('id'):
             context = {'recipient': recipient}
             body = template.render(context)
+            body = re.sub(r'\n\n+', '\n\n', body)
             logger.info('sending email', recipient=recipient.id, email_addr=recipient.email_addr)
             send_mail(
                 subject,
