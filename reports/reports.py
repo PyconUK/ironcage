@@ -390,7 +390,7 @@ class GrantApplications(ReportView):
     title = 'Grant applications'
 
     headings = [
-        'ID'
+        'ID',
         'Name',
         'Amount requested',
         'Amount offered',
@@ -412,8 +412,8 @@ class GrantApplications(ReportView):
             application.applicant.name,
             application.amount_requested,
             application.amount_offered,
-            application.requested_ticket_only,
-            application.special_reply_required,
+            '✔' if application.requested_ticket_only else '✘',
+            '✔' if application.special_reply_required else '✘',
         ]
 
 
