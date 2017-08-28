@@ -37,9 +37,17 @@ Hi {{ recipient.name }},
     {% endfor %}
 
     {% if recipient.one_proposal_rejected %}
-      However, we were not able to find room in the schedule for your other proposal.
+      However, we were not able to find room in the schedule for your other proposal:
+
+      {% for proposal in recipient.rejected_proposals %}
+        * {{ proposal.title }}
+      {% endfor %}
     {% else %}
-      However, we were not able to find room in the schedule for your other proposals.
+      However, we were not able to find room in the schedule for your other proposals:
+
+      {% for proposal in recipient.rejected_proposals %}
+        * {{ proposal.title }}
+      {% endfor %}
     {% endif %}
 
   {% elif recipient.one_proposal_accepted %}
@@ -50,9 +58,17 @@ Hi {{ recipient.name }},
     {% endfor %}
 
     {% if recipient.one_proposal_rejected %}
-      However, we were not able to find room in the schedule for your other proposal.
+      However, we were not able to find room in the schedule for your other proposal:
+
+      {% for proposal in recipient.rejected_proposals %}
+        * {{ proposal.title }}
+      {% endfor %}
     {% else %}
-      However, we were not able to find room in the schedule for your other proposals.
+      However, we were not able to find room in the schedule for your other proposals:
+
+      {% for proposal in recipient.rejected_proposals %}
+        * {{ proposal.title }}
+      {% endfor %}
     {% endif %}
 
   {% else %}
