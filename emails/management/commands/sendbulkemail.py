@@ -1,6 +1,7 @@
 from argparse import RawTextHelpFormatter
 import os
 import re
+import textwrap
 
 from django.conf import settings
 from django.core.mail import send_mail
@@ -72,8 +73,7 @@ subject "This is a test".
             # Here, we are making sure that template.render() raises no errors,
             # *before* we start to send any emails.
             context = {'recipient': recipient}
-            body = template.render(context)
-            body = re.sub(r'\n\n+', '\n\n', body)
+            body = render(template, context)
             assert 'THIS SHOULD NEVER HAPPEN' not in body, f'Could not render template for {recipient.email_addr}'
             if dry_run:
                 self.stdout.write(body)
@@ -96,8 +96,7 @@ subject "This is a test".
 
         for recipient in recipients.order_by('id'):
             context = {'recipient': recipient}
-            body = template.render(context)
-            body = re.sub(r'\n\n+', '\n\n', body)
+            body = render(template, context)
             logger.info('sending email', recipient=recipient.id, email_addr=recipient.email_addr)
             send_mail(
                 subject,
@@ -106,3 +105,10 @@ subject "This is a test".
                 [recipient.email_addr],
                 fail_silently=False,
             )
+
+
+def render(template, context):
+    body = template.render(context)
+    body = re.sub(r'\n\n+', '\n\n', body)
+    body = textwrap.dedent(body)
+    return body
