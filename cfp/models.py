@@ -91,7 +91,7 @@ class Proposal(models.Model):
         if self.session_type == 'other':
             return 'a one-off session'
         else:
-            return self.SESSION_TYPE_CHOICES[self.session_type].lower()
+            return dict(self.SESSION_TYPE_CHOICES)[self.session_type].lower()
 
     def vote(self, user, is_interested):
         self.vote_set.update_or_create(
