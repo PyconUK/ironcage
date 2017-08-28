@@ -14,8 +14,8 @@ Hi {{ recipient.name }},
     been able to schedule more of them.
 
     {% if recipient.get_grant_application %}
-      In particular, we were unable to meet your request for financial assistance, as
-      we have received applications for several times more than the amount of our
+      I regret also that we have been to meet your request for financial assistance,
+      as we have received applications for several times more than the amount of our
       financial assistance budget.
     {% endif %}
   {% endif %}
@@ -65,8 +65,8 @@ Hi {{ recipient.name }},
     been able to schedule more of them.
 
     {% if recipient.get_grant_application %}
-      In particular, we were unable to meet your request for financial assistance, as
-      we have received applications for several times more than the amount of our
+      I regret also that we have been to meet your request for financial assistance,
+      as we have received applications for several times more than the amount of our
       financial assistance budget.
     {% endif %}
   {% endif %}
