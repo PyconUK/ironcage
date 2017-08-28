@@ -86,6 +86,12 @@ class Proposal(models.Model):
     def is_rejected(self):
         return self.state == 'plan to reject'
 
+    def session_type_for_display(self):
+        if self.session_type == 'other':
+            return 'a one-off session'
+        else:
+            return self.SESSION_TYPE_CHOICES[self.session_type].lower()
+
     def vote(self, user, is_interested):
         self.vote_set.update_or_create(
             user=user,
