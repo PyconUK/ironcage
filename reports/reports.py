@@ -233,6 +233,7 @@ class CFPPropsalsMixin:
         'New programmers?',
         'Mentor?',
         'Amount requested',
+        'Special reply required',
     ]
 
     def presenter(self, proposal):
@@ -257,6 +258,7 @@ class CFPPropsalsMixin:
             '✔' if proposal.aimed_at_new_programmers else '✘',
             '✔' if proposal.would_like_mentor else '✘',
             amount_requested,
+            '✔' if application.special_reply_required else '✘',
         ]
 
 

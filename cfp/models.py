@@ -29,6 +29,7 @@ class Proposal(models.Model):
     would_like_longer_slot = models.BooleanField()
     state = models.CharField(max_length=40, blank=True)
     track = models.CharField(max_length=40, blank=True)
+    special_reply_required = models.BooleanField(default=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
