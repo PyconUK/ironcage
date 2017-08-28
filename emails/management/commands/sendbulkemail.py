@@ -108,6 +108,6 @@ subject "This is a test".
 
 def render(template, context):
     body = template.render(context)
-    body = '\n'.join(line.lstrip() for line in body)
+    body = '\n'.join(line.lstrip() for line in body.splitlines())
     body = re.sub(r'\n\n+', '\n\n', body)
     return body
