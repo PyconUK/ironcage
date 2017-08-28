@@ -4,7 +4,7 @@ Hi {{ recipient.name }},
   Thank you for submitting your proposal to the PyCon UK Call for Participation:
 
   {% for proposal in recipient.proposals.all %}
-  * {{ proposal.title }} ({{ propsal.session_type_for_display }}){% endfor %}
+  * {{ proposal.title }} ({{ proposal.session_type_for_display }}){% endfor %}
 
   {% if recipient.all_proposals_accepted %}
     We are pleased to tell you that we would like to accept your proposal.
@@ -27,13 +27,13 @@ Hi {{ recipient.name }},
     We are pleased to tell you that we would like to accept the following proposals:
 
     {% for proposal in recipient.accepted_proposals %}
-    * {{ proposal.title }} ({{ propsal.session_type_for_display }}){% endfor %}
+    * {{ proposal.title }} ({{ proposal.session_type_for_display }}){% endfor %}
 
   {% elif recipient.one_proposal_accepted %}
     We are pleased to tell you that we would like to accept the following proposal:
 
     {% for proposal in recipient.accepted_proposals %}
-    * {{ proposal.title }} ({{ propsal.session_type_for_display }}){% endfor %}
+    * {{ proposal.title }} ({{ proposal.session_type_for_display }}){% endfor %}
 
     {% if recipient.one_proposal_rejected %}
       However, we were not able to find room in the schedule for your other proposal:
@@ -42,13 +42,13 @@ Hi {{ recipient.name }},
     {% endif %}
 
     {% for proposal in recipient.rejected_proposals %}
-    * {{ proposal.title }} ({{ propsal.session_type_for_display }}){% endfor %}
+    * {{ proposal.title }} ({{ proposal.session_type_for_display }}){% endfor %}
 
   {% elif recipient.some_proposals_accepted %}
     We are pleased to tell you that we would like to accept the following proposals:
 
     {% for proposal in recipient.accepted_proposals %}
-    * {{ proposal.title }} ({{ propsal.session_type_for_display }}){% endfor %}
+    * {{ proposal.title }} ({{ proposal.session_type_for_display }}){% endfor %}
 
     {% if recipient.one_proposal_rejected %}
       However, we were not able to find room in the schedule for your other proposal:
@@ -57,7 +57,7 @@ Hi {{ recipient.name }},
     {% endif %}
 
     {% for proposal in recipient.rejected_proposals %}
-    * {{ proposal.title }} ({{ propsal.session_type_for_display }}){% endfor %}
+    * {{ proposal.title }} ({{ proposal.session_type_for_display }}){% endfor %}
 
   {% else %}
     We are sorry to tell you that we were unable to find room in the schedule for
