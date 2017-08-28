@@ -25,12 +25,14 @@ Hi {{ recipient.name }},
   {% if recipient.all_proposals_accepted %}
     We are pleased to tell you that we would like to accept the following proposals:
 
-    {% for proposal in recipient.accepted_proposals %}* {{ proposal.title }}{% endfor %}
+    {% for proposal in recipient.accepted_proposals %}
+    * {{ proposal.title }}{% endfor %}
 
   {% elif recipient.one_proposal_accepted %}
     We are pleased to tell you that we would like to accept the following proposal:
 
-    {% for proposal in recipient.accepted_proposals %}* {{ proposal.title }}{% endfor %}
+    {% for proposal in recipient.accepted_proposals %}
+    * {{ proposal.title }}{% endfor %}
 
     {% if recipient.one_proposal_rejected %}
       However, we were not able to find room in the schedule for your other proposal:
@@ -38,12 +40,14 @@ Hi {{ recipient.name }},
       However, we were not able to find room in the schedule for your other proposals:
     {% endif %}
 
-    {% for proposal in recipient.rejected_proposals %}* {{ proposal.title }}{% endfor %}
+    {% for proposal in recipient.rejected_proposals %}
+    * {{ proposal.title }}{% endfor %}
 
   {% elif recipient.some_proposals_accepted %}
     We are pleased to tell you that we would like to accept the following proposals:
 
-    {% for proposal in recipient.accepted_proposals %}* {{ proposal.title }}{% endfor %}
+    {% for proposal in recipient.accepted_proposals %}
+    * {{ proposal.title }}{% endfor %}
 
     {% if recipient.one_proposal_rejected %}
       However, we were not able to find room in the schedule for your other proposal:
@@ -51,7 +55,8 @@ Hi {{ recipient.name }},
       However, we were not able to find room in the schedule for your other proposals:
     {% endif %}
 
-    {% for proposal in recipient.rejected_proposals %}* {{ proposal.title }}{% endfor %}
+    {% for proposal in recipient.rejected_proposals %}
+    * {{ proposal.title }}{% endfor %}
 
   {% else %}
     We are sorry to tell you that we were unable to find room in the schedule for
