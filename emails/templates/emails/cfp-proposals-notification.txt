@@ -3,7 +3,7 @@ Hi {{ recipient.name }},
 {% if recipient.submitted_single_proposal %}
 Thank you for submitting your proposal to the PyCon UK Call for Participation:
 
- * {{ recipient.proposals.0.title }}
+ * {{ recipient.proposals.all.0.title }}
 
 {% if recipient.all_proposals_accepted %}
 We are pleased to tell you that we would like to accept your proposal.
