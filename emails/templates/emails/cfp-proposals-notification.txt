@@ -64,6 +64,9 @@ Hi {{ recipient.name }},
     your sessions.  We received many excellent proposals, and are sad not to have
     been able to schedule more of them.
 
+    {% for proposal in recipient.rejected_proposals %}
+    * {{ proposal.title }} ({{ proposal.session_type_for_display }}){% endfor %}
+
     {% if recipient.get_grant_application %}
       I regret also that we have been to meet your request for financial assistance,
       as we have received applications for several times more than the amount of our
