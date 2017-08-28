@@ -19,7 +19,10 @@ class TicketForm(forms.Form):
     name = forms.CharField()
     date_of_birth = forms.DateField(
         required=False,
-        widget=forms.DateInput(attrs={'type': 'date'}),
+        widget=forms.DateInput(attrs={
+            'data-provide': 'datepicker',
+            'data-date-format': 'yyyy-mm-dd',
+        }),
     )
 
 
