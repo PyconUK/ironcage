@@ -1,7 +1,6 @@
 from argparse import RawTextHelpFormatter
 import os
 import re
-import textwrap
 
 from django.conf import settings
 from django.core.mail import send_mail
@@ -109,6 +108,6 @@ subject "This is a test".
 
 def render(template, context):
     body = template.render(context)
+    body = '\n'.join(line.lstrip() for line in body)
     body = re.sub(r'\n\n+', '\n\n', body)
-    body = textwrap.dedent(body)
     return body
