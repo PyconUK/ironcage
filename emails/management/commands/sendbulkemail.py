@@ -110,4 +110,6 @@ def render(template, context):
     body = template.render(context)
     body = '\n'.join(line.lstrip() for line in body.splitlines())
     body = re.sub(r'\n\n+', '\n\n', body)
+    body = body.replace('&#39;', "'")
+    body = body.replace('&amp;', '&')
     return body
