@@ -23,5 +23,5 @@ def send_order_confirmation_mail(order):
         body,
         settings.SERVER_EMAIL,
         [order.purchaser.email_addr],
-        fail_silently=False,
+        fail_silently=True,
     )

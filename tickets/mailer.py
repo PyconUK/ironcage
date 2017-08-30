@@ -32,7 +32,7 @@ def send_invitation_mail(invitation):
         body,
         settings.SERVER_EMAIL,
         [invitation.email_addr],
-        fail_silently=False,
+        fail_silently=True,
     )
 
 
@@ -55,5 +55,5 @@ def send_order_confirmation_mail(order):
         body,
         settings.SERVER_EMAIL,
         [order.purchaser.email_addr],
-        fail_silently=False,
+        fail_silently=True,
     )
