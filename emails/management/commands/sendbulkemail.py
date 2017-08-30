@@ -30,6 +30,7 @@ subject "This is a test".
     recipients = {
         'admins': User.objects.filter(email_addr__in=os.environ.get('ADMINS', '').split(',')),
         'staff': User.objects.filter(is_staff=True),
+        'all': User.objects.all(),
         'ticket-holders': User.objects.exclude(ticket=None),
         'cfp-proposers': User.objects.filter(
             proposals__isnull=False,
