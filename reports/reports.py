@@ -419,6 +419,21 @@ class GrantApplications(ReportView):
         ]
 
 
+class PeopleReport(ReportView):
+    title = 'People'
+    headings = ['Name', 'Email address']
+
+    def get_queryset(self):
+        return User.objects.order_by('name').all()
+
+    def presenter(self, user):
+        return [
+            user.name,
+            user.email_addr,
+        ]
+
+
+
 reports = [
     AttendanceByDayReport,
     UKPAReport,
@@ -442,4 +457,5 @@ reports = [
     AttendeesWithChildcareReqs,
     AttendeesWithDietaryReqs,
     GrantApplications,
+    PeopleReport,
 ]
