@@ -7,6 +7,7 @@ from avatar.templatetags.avatar_tags import avatar_url
 
 from accounts.models import User
 from cfp.models import Proposal
+from children.models import Ticket as ChildTicket
 from grants.models import Application
 from tickets.constants import DAYS
 from tickets.models import Order, Ticket
@@ -220,6 +221,28 @@ class UnclaimedTicketsReport(ReportView, TicketsMixin):
 
     def get_queryset(self):
         return Ticket.objects.filter(owner=None)
+
+
+class ChildrensDayTicketsReport(ReportView):
+    title = "Children's day tickets"
+    headings = [
+        'Name',
+        'Adult name',
+        'Adult email address',
+        'Adult phone number',
+    ]
+
+    def presenter(self, ticket):
+        return [
+            ticket.ticket_id,
+            ticket.name,
+            ticket.order.adult_name,
+            ticket.order.adult_email_addr,
+            ticket.order.adult_phone_number,
+        ]
+
+    def get_queryset(self):
+        return ChildTicket.objects.order_by('name')
 
 
 class CFPPropsalsMixin:
@@ -443,6 +466,7 @@ reports = [
     UnpaidOrdersReport,
     TicketsReport,
     UnclaimedTicketsReport,
+    ChildrensDayTicketsReport,
     CFPPropsals,
     CFPPropsalsForEducationTrack,
     CFPPropsalsPlanToAccept,
