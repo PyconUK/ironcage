@@ -226,6 +226,7 @@ class UnclaimedTicketsReport(ReportView, TicketsMixin):
 class ChildrensDayTicketsReport(ReportView):
     title = "Children's day tickets"
     headings = [
+        'ID',
         'Name',
         'Adult name',
         'Adult email address',
