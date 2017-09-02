@@ -457,6 +457,19 @@ class PeopleReport(ReportView):
         ]
 
 
+class AccommodationReport(ReportView):
+    title = 'Accommodation booked'
+    headings = []
+
+    def get_queryset(self):
+        return User.objects.filter(ticket__isnull=False).values('has_booked_hotel').annotate(Count('has_booked_hotel'))
+
+    def presenter(self, result):
+        return [
+            result['has_booked_hotel'],
+            result['has_booked_hotel__count'],
+        ]
+
 
 reports = [
     AttendanceByDayReport,
@@ -483,4 +496,5 @@ reports = [
     AttendeesWithDietaryReqs,
     GrantApplications,
     PeopleReport,
+    AccommodationReport,
 ]
