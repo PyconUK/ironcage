@@ -13,6 +13,25 @@
 </div>
 
 <div>
+  <h3>Accommodation</h3>
+
+  <table class="table">
+    <tr>
+      <th class="col-md-4">Has arranged accommodation?</th>
+      <td>
+        {% if user.has_booked_hotel == None %}
+        unknown
+        {% elif user.has_booked_hotel %}
+        yes
+        {% else %}
+        no
+        {% endif %}
+      </td>
+    </tr>
+  </table>
+</div>
+
+<div>
   <h3>Requirements</h3>
   <table class="table">
     <tr>

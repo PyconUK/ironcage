@@ -67,6 +67,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     dietary_reqs_yn = models.NullBooleanField()
     dietary_reqs = models.TextField(null=True, blank=True)
     is_ukpa_member = models.NullBooleanField(null=True, blank=True)
+    has_booked_hotel = models.NullBooleanField()
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
