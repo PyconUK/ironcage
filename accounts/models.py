@@ -27,6 +27,12 @@ with open(os.path.join(settings.BASE_DIR, 'accounts', 'data', 'ethnicities.json'
     ETHNICITIES = json.load(f)
 
 
+class Manager(UserManager):
+    def get_by_user_id_or_404(self, user_id):
+        id = self.model.id_scrambler.backward(user_id)
+        return get_object_or_404(self.model, pk=id)
+
+
 class User(AbstractBaseUser, PermissionsMixin):
     YEAR_OF_BIRTH_CHOICES = [['not shared', 'prefer not to say']] + [[str(year), str(year)] for year in range(1917, 2017)]
 
@@ -78,11 +84,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = ['name']
 
     id_scrambler = Scrambler(8000)
-
-    class Manager(UserManager):
-        def get_by_user_id_or_404(self, user_id):
-            id = self.model.id_scrambler.backward(user_id)
-            return get_object_or_404(self.model, pk=id)
 
     objects = Manager()
 
