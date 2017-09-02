@@ -7,6 +7,7 @@ from django.contrib.auth.base_user import AbstractBaseUser
 from django.db import models
 
 from grants.models import Application
+from ironcage.utils import Scrambler
 from tickets.models import Ticket
 from ukpa.models import Nomination
 
@@ -76,7 +77,20 @@ class User(AbstractBaseUser, PermissionsMixin):
     EMAIL_FIELD = 'email_addr'
     REQUIRED_FIELDS = ['name']
 
-    objects = UserManager()
+    id_scrambler = Scrambler(8000)
+
+    class Manager(UserManager):
+        def get_by_user_id_or_404(self, user_id):
+            id = self.model.id_scrambler.backward(user_id)
+            return get_object_or_404(self.model, pk=id)
+
+    objects = Manager()
+
+    @property
+    def user_id(self):
+        if self.id is None:
+            return None
+        return self.id_scrambler.forward(self.id)
 
     def get_full_name(self):
         '''This is used by the admin.'''

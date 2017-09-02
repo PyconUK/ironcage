@@ -10,7 +10,7 @@ from accounts.tests import factories as accounts_factories
 class SendBulkEmailTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        accounts_factories.create_staff_user(name='Alice', email_addr='alice@example.com')
+        cls.alice = accounts_factories.create_staff_user(name='Alice', email_addr='alice@example.com')
         accounts_factories.create_staff_user(name='Bob', email_addr='bob@example.com')
         accounts_factories.create_user(name='Carol')
 
@@ -27,6 +27,8 @@ class SendBulkEmailTests(TestCase):
 
         self.assertIn('This is a dry run', stdout.getvalue())
         self.assertIn('Running this would send the email to 2 recipient(s)', stdout.getvalue())
+
+        self.assertEqual(len(mail.outbox), 0)
 
     def test_wet_run(self):
         stdout = StringIO()
@@ -49,5 +51,5 @@ class SendBulkEmailTests(TestCase):
         email = mail.outbox[0]
         self.assertEqual(email.to, ['alice@example.com'])
         self.assertEqual(email.from_email, 'PyCon UK 2017 <noreply@pyconuk.org>')
-        self.assertEqual(email.subject, 'This is a test')
+        self.assertEqual(email.subject, f'[{self.alice.user_id}] This is a test')
         self.assertIn('Hi Alice', email.body)
