@@ -1,0 +1,14 @@
+Hi {{ recipient.name }},
+
+As you may have gathered, we're concerned about availability of accommodation
+in Cardiff during PyCon UK.  It would be helpful for us if you could tell us
+whether you've already arranged accommodation.  Please could you do this AS
+SOON AS POSSIBLE at https://hq.pyconuk.org/profile/edit/.
+
+More details about accommodation are on our website:
+http://2017.pyconuk.org/accommodation/.
+
+All the best
+
+~ The PyCon UK Committee
+
