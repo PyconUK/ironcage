@@ -5,6 +5,7 @@ from django.conf import settings
 from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.db import models
+from django.shortcuts import get_object_or_404
 
 from grants.models import Application
 from ironcage.utils import Scrambler
