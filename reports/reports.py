@@ -413,9 +413,7 @@ class AttendeesWithDietaryReqs(ReportView):
         return [user.name, user.email_addr, user.dietary_reqs]
 
 
-class GrantApplications(ReportView):
-    title = 'Grant applications'
-
+class GrantApplicationsMixin:
     headings = [
         'ID',
         'Name',
@@ -424,9 +422,6 @@ class GrantApplications(ReportView):
         'Requested ticket only',
         'Special reply required',
     ]
-
-    def get_queryset(self):
-        return Application.objects.select_related('applicant').order_by('amount_requested').all()
 
     def presenter(self, application):
         link = {
@@ -442,6 +437,20 @@ class GrantApplications(ReportView):
             '✔' if application.requested_ticket_only else '✘',
             '✔' if application.special_reply_required else '✘',
         ]
+
+
+class GrantApplications(ReportView, GrantApplicationsMixin):
+    title = 'Grant applications'
+
+    def get_queryset(self):
+        return Application.objects.select_related('applicant').order_by('amount_requested').all()
+
+
+class GrantApplicationsWithFundsOffered(ReportView):
+    title = 'Grant applications'
+
+    def get_queryset(self):
+        return Application.objects.filter(amount_offered__gt=0).select_related('applicant').order_by('amount_offered').all()
 
 
 class PeopleReport(ReportView):
@@ -496,6 +505,7 @@ reports = [
     AttendeesWithChildcareReqs,
     AttendeesWithDietaryReqs,
     GrantApplications,
+    GrantApplicationsWithFundsOffered,
     PeopleReport,
     AccommodationReport,
 ]
