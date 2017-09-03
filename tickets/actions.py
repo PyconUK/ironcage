@@ -1,3 +1,12 @@
+# The functions defined in this module should be the only way that Orders,
+# Tickets, and TicketInvitations are created or updated by the rest of the
+# code.  This has at least two benefits:
+#
+#  * It makes it easier to see how and when data is changed.
+#  * The only way that data can be set up for testing is through calling
+#    functions in this module.  This means that test data should always be
+#    in a consistent state.
+
 from django_slack import slack_message
 import stripe
 
