@@ -426,6 +426,8 @@ class TicketInvitation(models.Model):
         return reverse('tickets:ticket_invitation', args=[self.token])
 
     def claim_for_owner(self, owner):
+        # This would fail if owner already has a ticket, as Ticket.owner is a
+        # OneToOneField.
         assert self.status == 'unclaimed'
         ticket = self.ticket
         ticket.owner = owner
