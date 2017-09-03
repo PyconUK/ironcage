@@ -29,6 +29,21 @@ class MailerTests(TestCase):
         self.assertTrue(re.search(r'Alice has purchased you a ticket for PyCon UK 2017', email.body))
         self.assertTrue(re.search(r'http://testserver/tickets/invitations/\w{12}/', email.body))
 
+    def test_send_invitation_mail_for_free_ticket(self):
+        factories.create_free_ticket(self.alice)
+        mail.outbox = []
+
+        invitation = TicketInvitation.objects.get(email_addr='alice@example.com')
+        send_invitation_mail(invitation.ticket)
+
+        self.assertEqual(len(mail.outbox), 1)
+        email = mail.outbox[0]
+        self.assertEqual(email.to, ['alice@example.com'])
+        self.assertEqual(email.from_email, 'PyCon UK 2017 <noreply@pyconuk.org>')
+        self.assertEqual(email.subject, f'PyCon UK 2017 ticket invitation ({invitation.ticket.ticket_id})')
+        self.assertTrue(re.search(r'You have been assigned a ticket for PyCon UK 2017', email.body))
+        self.assertTrue(re.search(r'http://testserver/tickets/invitations/\w{12}/', email.body))
+
     def test_send_order_confirmation_mail_for_order_for_self(self):
         order = factories.create_confirmed_order_for_self(self.alice)
 

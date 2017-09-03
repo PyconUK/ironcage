@@ -299,6 +299,26 @@ class MarkOrderAsErroredAfterCharge(TestCase):
         self.assertEqual(order.status, 'errored')
 
 
+class CreateFreeTicketTests(TestCase):
+    def test_create_free_ticket(self):
+        ticket = actions.create_free_ticket('alice@example.com', 'Financial assistance')
+
+        self.assertEqual(ticket.days(), [])
+        self.assertEqual(ticket.pot, 'Financial assistance')
+        self.assertEqual(ticket.invitation().email_addr, 'alice@example.com')
+        self.assertEqual(len(mail.outbox), 1)
+
+
+class UpdateFreeTicketTests(TestCase):
+    def test_update_free_ticket(self):
+        ticket = factories.create_free_ticket()
+
+        actions.update_free_ticket(ticket, ['thu', 'fri', 'sat'])
+        ticket.refresh_from_db()
+
+        self.assertEqual(ticket.days(), ['Thursday', 'Friday', 'Saturday'])
+
+
 class ProcessStripeChargeTests(TestCase):
     def setUp(self):
         self.order = factories.create_pending_order_for_self()

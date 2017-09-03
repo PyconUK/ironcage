@@ -96,3 +96,9 @@ def create_errored_order(user=None, rate=None):
 def create_ticket(user=None, rate=None, num_days=None):
     order = create_confirmed_order_for_self(user, rate, num_days)
     return order.all_tickets()[0]
+
+
+def create_free_ticket(email_addr=None, pot='Financial assistance'):
+    if email_addr is None:
+        email_addr = create_user().email_addr
+    return actions.create_free_ticket(email_addr, pot)

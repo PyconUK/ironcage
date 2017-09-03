@@ -16,7 +16,7 @@ from django.db.utils import IntegrityError
 from ironcage.stripe_integration import create_charge_for_order, refund_charge
 
 from .mailer import send_invitation_mail, send_order_confirmation_mail
-from .models import Order
+from .models import Order, Ticket
 
 import structlog
 logger = structlog.get_logger()
@@ -72,6 +72,23 @@ def mark_order_as_errored_after_charge(order, charge_id):
     logger.warn('mark_order_as_errored_after_charge', order=order.order_id, charge_id=charge_id)
     with transaction.atomic():
         order.march_as_errored_after_charge(charge_id)
+
+
+def create_free_ticket(email_addr, pot):
+    logger.info('create_free_ticket', email_addr=email_addr, pot=pot)
+    with transaction.atomic():
+        ticket = Ticket.objects.create_free_with_invitation(
+            email_addr=email_addr,
+            pot=pot,
+        )
+    send_invitation_mail(ticket)
+    return ticket
+
+
+def update_free_ticket(ticket, days):
+    logger.info('update_free_ticket', ticket=ticket.ticket_id, days=days)
+    with transaction.atomic():
+        ticket.update_days(days)
 
 
 def send_receipt(order):
