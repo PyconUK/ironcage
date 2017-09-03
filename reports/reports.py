@@ -446,7 +446,7 @@ class GrantApplications(ReportView, GrantApplicationsMixin):
         return Application.objects.select_related('applicant').order_by('amount_requested').all()
 
 
-class GrantApplicationsWithFundsOffered(ReportView):
+class GrantApplicationsWithFundsOffered(ReportView, GrantApplicationsMixin):
     title = 'Grant applications with funds offered'
 
     def get_queryset(self):
