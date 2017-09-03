@@ -82,7 +82,7 @@ def send_receipt(order):
 def send_ticket_invitations(order):
     logger.info('send_ticket_invitations', order=order.order_id)
     for ticket in order.unclaimed_tickets():
-        send_invitation_mail(ticket.invitation())
+        send_invitation_mail(ticket)
 
 
 def claim_ticket_invitation(owner, invitation):

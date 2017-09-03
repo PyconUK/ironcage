@@ -16,11 +16,10 @@ class MailerTests(TestCase):
 
     def test_send_invitation_mail(self):
         factories.create_confirmed_order_for_others(self.alice)
-
         mail.outbox = []
 
         invitation = TicketInvitation.objects.get(email_addr='bob@example.com')
-        send_invitation_mail(invitation)
+        send_invitation_mail(invitation.ticket)
 
         self.assertEqual(len(mail.outbox), 1)
         email = mail.outbox[0]
