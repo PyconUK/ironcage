@@ -155,7 +155,7 @@ class Order(models.Model):
                     tickets.append(ticket)
             return tickets
         else:
-            return self.tickets.all()
+            return self.tickets.order_by('id')
 
     def form_data(self):
         assert self.payment_required()
