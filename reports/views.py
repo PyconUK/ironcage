@@ -17,8 +17,8 @@ def index(request):
 
 
 @staff_member_required(login_url='login')
-def accounts_user(request, email_addr):
-    user = get_object_or_404(User, email_addr=email_addr)
+def accounts_user(request, user_id):
+    user = User.get_by_user_id_or_404(user_id)
     context = {
         'user': user,
     }

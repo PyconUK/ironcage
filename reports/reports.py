@@ -455,13 +455,19 @@ class GrantApplicationsWithFundsOffered(ReportView, GrantApplicationsMixin):
 
 class PeopleReport(ReportView):
     title = 'People'
-    headings = ['Name', 'Email address']
+    headings = ['ID', 'Name', 'Email address']
 
     def get_queryset(self):
         return User.objects.order_by('name').all()
 
     def presenter(self, user):
+        link = {
+            'href': reverse('reports:accounts_user', args=[user.user_id]),
+            'text': user.user_id,
+        }
+
         return [
+            link,
             user.name,
             user.email_addr,
         ]
