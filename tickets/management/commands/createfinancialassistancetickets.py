@@ -12,7 +12,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, dry_run, **kwargs):
         for u in User.objects.filter(
-            Q(grant_application__amount_offered__gt=0) | Q(requested_ticket_only=True),
+            Q(grant_application__amount_offered__gt=0) | Q(grant_application__requested_ticket_only=True),
             ticket=None
         ):
             print(u.email_addr)
