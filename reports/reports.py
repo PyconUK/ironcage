@@ -202,7 +202,7 @@ class TicketsMixin:
         }
         return [
             link,
-            ticket.order.rate,
+            ticket.rate,
             ticket.ticket_holder_name(),
             ', '.join(ticket.days()),
             f'£{ticket.cost_incl_vat()}',
