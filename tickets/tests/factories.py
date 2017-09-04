@@ -102,3 +102,15 @@ def create_free_ticket(email_addr=None, pot='Financial assistance'):
     if email_addr is None:
         email_addr = create_user().email_addr
     return actions.create_free_ticket(email_addr, pot)
+
+
+def create_claimed_free_ticket(user, pot='Financial assistance'):
+    ticket = create_free_ticket(user.email_addr, pot)
+    actions.claim_ticket_invitation(user, ticket.invitation())
+    return ticket
+
+
+def create_completed_free_ticket(user, pot='Financial assistance'):
+    ticket = create_claimed_free_ticket(user, pot)
+    actions.update_free_ticket(ticket, ['thu', 'fri', 'sat'])
+    return ticket

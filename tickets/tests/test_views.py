@@ -440,27 +440,110 @@ class OrderReceiptTests(TestCase):
 
 
 class TicketTests(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.ticket = factories.create_ticket()
-
     def test_ticket(self):
-        self.client.force_login(self.ticket.owner)
-        rsp = self.client.get(f'/tickets/tickets/{self.ticket.ticket_id}/', follow=True)
-        self.assertContains(rsp, f'Details of your ticket ({self.ticket.ticket_id})')
+        ticket = factories.create_ticket()
+        self.client.force_login(ticket.owner)
+        rsp = self.client.get(f'/tickets/tickets/{ticket.ticket_id}/', follow=True)
+        self.assertContains(rsp, f'Details of your ticket ({ticket.ticket_id})')
+        self.assertContains(rsp, 'Cost (incl. VAT)')
         self.assertContains(rsp, 'Your profile is incomplete')
         self.assertContains(rsp, 'Update your profile')
+        self.assertNotContains(rsp, 'Update your ticket')
+
+    def test_incomplete_free_ticket(self):
+        alice = factories.create_user('Alice')
+        ticket = factories.create_claimed_free_ticket(alice)
+        self.client.force_login(alice)
+        rsp = self.client.get(f'/tickets/tickets/{ticket.ticket_id}/', follow=True)
+        self.assertRedirects(rsp, f'/tickets/tickets/{ticket.ticket_id}/edit/')
+
+    def test_complete_free_ticket(self):
+        alice = factories.create_user('Alice')
+        ticket = factories.create_completed_free_ticket(alice)
+        self.client.force_login(alice)
+        rsp = self.client.get(f'/tickets/tickets/{ticket.ticket_id}/', follow=True)
+        self.assertNotContains(rsp, 'Cost (incl. VAT)')
+        self.assertContains(rsp, 'Thursday, Friday, Saturday')
+        self.assertContains(rsp, 'Update your ticket')
 
     def test_when_not_authenticated(self):
-        rsp = self.client.get(f'/tickets/tickets/{self.ticket.ticket_id}/', follow=True)
-        self.assertRedirects(rsp, f'/accounts/login/?next=/tickets/tickets/{self.ticket.ticket_id}/')
+        ticket = factories.create_ticket()
+        rsp = self.client.get(f'/tickets/tickets/{ticket.ticket_id}/', follow=True)
+        self.assertRedirects(rsp, f'/accounts/login/?next=/tickets/tickets/{ticket.ticket_id}/')
 
     def test_when_not_authorized(self):
+        ticket = factories.create_ticket()
         bob = factories.create_user('Bob')
         self.client.force_login(bob)
-        rsp = self.client.get(f'/tickets/tickets/{self.ticket.ticket_id}/', follow=True)
+        rsp = self.client.get(f'/tickets/tickets/{ticket.ticket_id}/', follow=True)
         self.assertRedirects(rsp, '/')
         self.assertContains(rsp, 'Only the owner of a ticket can view the ticket')
+
+
+class TicketEditTests(TestCase):
+    def test_get_incomplete_free_ticket(self):
+        alice = factories.create_user('Alice')
+        ticket = factories.create_claimed_free_ticket(alice)
+        self.client.force_login(alice)
+        rsp = self.client.get(f'/tickets/tickets/{ticket.ticket_id}/edit/', follow=True)
+        self.assertContains(rsp, 'Update my ticket')
+        self.assertContains(rsp, '<input type="checkbox" name="days" value="thu">', html=True)
+
+    def test_get_completed_free_ticket(self):
+        alice = factories.create_user('Alice')
+        ticket = factories.create_completed_free_ticket(alice)
+        self.client.force_login(alice)
+        rsp = self.client.get(f'/tickets/tickets/{ticket.ticket_id}/edit/', follow=True)
+        self.assertContains(rsp, 'Update my ticket')
+        self.assertContains(rsp, '<input type="checkbox" name="days" value="thu" checked>', html=True)
+
+    def test_post(self):
+        alice = factories.create_user('Alice')
+        ticket = factories.create_completed_free_ticket(alice)
+        self.client.force_login(alice)
+        rsp = self.client.post(f'/tickets/tickets/{ticket.ticket_id}/edit/', {'days': ['thu', 'fri', 'sat', 'sun']}, follow=True)
+        self.assertContains(rsp, 'Thursday, Friday, Saturday, Sunday')
+        self.assertContains(rsp, 'Update your ticket')
+
+    def test_get_when_not_authenticated(self):
+        ticket = factories.create_ticket()
+        rsp = self.client.get(f'/tickets/tickets/{ticket.ticket_id}/edit/', follow=True)
+        self.assertRedirects(rsp, f'/accounts/login/?next=/tickets/tickets/{ticket.ticket_id}/edit/')
+
+    def test_post_when_not_authenticated(self):
+        ticket = factories.create_ticket()
+        rsp = self.client.post(f'/tickets/tickets/{ticket.ticket_id}/edit/', follow=True)
+        self.assertRedirects(rsp, f'/accounts/login/?next=/tickets/tickets/{ticket.ticket_id}/edit/')
+
+    def test_get_when_not_authorized(self):
+        ticket = factories.create_ticket()
+        bob = factories.create_user('Bob')
+        self.client.force_login(bob)
+        rsp = self.client.get(f'/tickets/tickets/{ticket.ticket_id}/edit/', follow=True)
+        self.assertRedirects(rsp, '/')
+        self.assertContains(rsp, 'Only the owner of a ticket can edit the ticket')
+
+    def test_post_when_not_authorized(self):
+        ticket = factories.create_ticket()
+        bob = factories.create_user('Bob')
+        self.client.force_login(bob)
+        rsp = self.client.post(f'/tickets/tickets/{ticket.ticket_id}/edit/', follow=True)
+        self.assertRedirects(rsp, '/')
+        self.assertContains(rsp, 'Only the owner of a ticket can edit the ticket')
+
+    def test_get_when_not_editable(self):
+        ticket = factories.create_ticket()
+        self.client.force_login(ticket.owner)
+        rsp = self.client.get(f'/tickets/tickets/{ticket.ticket_id}/edit/', follow=True)
+        self.assertRedirects(rsp, f'/tickets/tickets/{ticket.ticket_id}/')
+        self.assertContains(rsp, 'This ticket cannot be edited')
+
+    def test_post_when_not_editable(self):
+        ticket = factories.create_ticket()
+        self.client.force_login(ticket.owner)
+        rsp = self.client.post(f'/tickets/tickets/{ticket.ticket_id}/edit/', follow=True)
+        self.assertRedirects(rsp, f'/tickets/tickets/{ticket.ticket_id}/')
+        self.assertContains(rsp, 'This ticket cannot be edited')
 
 
 class TicketInvitationTests(TestCase):

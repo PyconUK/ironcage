@@ -349,6 +349,9 @@ class Ticket(models.Model):
     def days(self):
         return [DAYS[day] for day in DAYS if getattr(self, day)]
 
+    def days_abbrev(self):
+        return [day for day in DAYS if getattr(self, day)]
+
     def num_days(self):
         return len(self.days())
 
@@ -358,15 +361,27 @@ class Ticket(models.Model):
         else:
             return self.invitation().email_addr
 
+    def rate(self):
+        if self.order is None:
+            return 'free'
+        else:
+            return self.order.rate
+
     def cost_incl_vat(self):
-        return cost_incl_vat(self.order.rate, self.num_days())
+        return cost_incl_vat(self.rate(), self.num_days())
 
     def cost_excl_vat(self):
-        return cost_excl_vat(self.order.rate, self.num_days())
+        return cost_excl_vat(self.rate(), self.num_days())
 
     def invitation(self):
         # This will raise an exception if a ticket has multiple invitations
         return self.invitations.get()
+
+    def is_free_ticket(self):
+        return not self.order
+
+    def is_incomplete(self):
+        return self.days() == []
 
     def update_days(self, days):
         for day in DAYS:

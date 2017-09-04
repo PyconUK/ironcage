@@ -250,6 +250,9 @@ def ticket(request, ticket_id):
         messages.warning(request, 'Only the owner of a ticket can view the ticket')
         return redirect('index')
 
+    if ticket.is_free_ticket() and ticket.is_incomplete():
+        return redirect('tickets:ticket_edit', ticket.ticket_id)
+
     if not request.user.profile_complete():
         messages.warning(request, 'Your profile is incomplete')
 
@@ -257,6 +260,33 @@ def ticket(request, ticket_id):
         'ticket': ticket,
     }
     return render(request, 'tickets/ticket.html', context)
+
+
+@login_required
+def ticket_edit(request, ticket_id):
+    ticket = Ticket.objects.get_by_ticket_id_or_404(ticket_id)
+
+    if request.user != ticket.owner:
+        messages.warning(request, 'Only the owner of a ticket can edit the ticket')
+        return redirect('index')
+
+    if not ticket.is_free_ticket():
+        messages.warning(request, 'This ticket cannot be edited')
+        return redirect(ticket)
+
+    if request.method == 'POST':
+        form = TicketForSelfForm(request.POST)
+        if form.is_valid():
+            days = form.cleaned_data['days']
+            actions.update_free_ticket(ticket, days)
+            return redirect(ticket)
+
+    context = {
+        'ticket': ticket,
+        'form': TicketForSelfForm({'days': ticket.days_abbrev()}),
+    }
+
+    return render(request, 'tickets/ticket_edit.html', context)
 
 
 def ticket_invitation(request, token):

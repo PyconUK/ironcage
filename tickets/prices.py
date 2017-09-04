@@ -1,4 +1,8 @@
 PRICES_EXCL_VAT = {
+    'free': {
+        'ticket_price': 0,
+        'day_price': 0,
+    },
     'individual': {
         'ticket_price': 15,
         'day_price': 30,
