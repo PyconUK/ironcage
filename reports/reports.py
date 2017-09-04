@@ -221,7 +221,7 @@ class UnclaimedTicketsReport(ReportView, TicketsMixin):
     title = 'Unclaimed tickets'
 
     def get_queryset(self):
-        return Ticket.objects.filter(owner=None)
+        return Ticket.objects.filter(owner=None).order_by('id')
 
 
 class ChildrensDayTicketsReport(ReportView):
