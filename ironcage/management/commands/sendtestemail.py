@@ -15,5 +15,6 @@ class Command(BaseCommand):
             f'This is a test, generated at {datetime.now()}',
             settings.SERVER_EMAIL,
             [kwargs['to_addr']],
+            reply_to=['pyconuk-committee@uk.python.org'],
             fail_silently=False,
         )
