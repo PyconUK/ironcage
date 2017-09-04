@@ -7,10 +7,12 @@
     <th>Days</th>
     <td>{{ ticket.details.days }}</td>
   </tr>
+  {% if not ticket.is_free_ticket %}
   <tr>
     <th>Cost (incl. VAT)</th>
     <td>{{ ticket.details.cost_incl_vat }}</td>
   </tr>
+  {% endif %}
   <tr>
     <th>Accessibility</th>
     <td>

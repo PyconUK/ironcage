@@ -1,3 +1,12 @@
+# The functions defined in this module should be the only way that Orders,
+# Tickets, and TicketInvitations are created or updated by the rest of the
+# code.  This has at least two benefits:
+#
+#  * It makes it easier to see how and when data is changed.
+#  * The only way that data can be set up for testing is through calling
+#    functions in this module.  This means that test data should always be
+#    in a consistent state.
+
 from django_slack import slack_message
 import stripe
 
@@ -7,7 +16,7 @@ from django.db.utils import IntegrityError
 from ironcage.stripe_integration import create_charge_for_order, refund_charge
 
 from .mailer import send_invitation_mail, send_order_confirmation_mail
-from .models import Order
+from .models import Order, Ticket
 
 import structlog
 logger = structlog.get_logger()
@@ -65,6 +74,23 @@ def mark_order_as_errored_after_charge(order, charge_id):
         order.march_as_errored_after_charge(charge_id)
 
 
+def create_free_ticket(email_addr, pot):
+    logger.info('create_free_ticket', email_addr=email_addr, pot=pot)
+    with transaction.atomic():
+        ticket = Ticket.objects.create_free_with_invitation(
+            email_addr=email_addr,
+            pot=pot,
+        )
+    send_invitation_mail(ticket)
+    return ticket
+
+
+def update_free_ticket(ticket, days):
+    logger.info('update_free_ticket', ticket=ticket.ticket_id, days=days)
+    with transaction.atomic():
+        ticket.update_days(days)
+
+
 def send_receipt(order):
     logger.info('send_receipt', order=order.order_id)
     send_order_confirmation_mail(order)
@@ -73,7 +99,7 @@ def send_receipt(order):
 def send_ticket_invitations(order):
     logger.info('send_ticket_invitations', order=order.order_id)
     for ticket in order.unclaimed_tickets():
-        send_invitation_mail(ticket.invitation())
+        send_invitation_mail(ticket)
 
 
 def claim_ticket_invitation(owner, invitation):

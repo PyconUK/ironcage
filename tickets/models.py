@@ -155,7 +155,7 @@ class Order(models.Model):
                     tickets.append(ticket)
             return tickets
         else:
-            return self.tickets.all()
+            return self.tickets.order_by('id')
 
     def form_data(self):
         assert self.payment_required()
@@ -288,7 +288,8 @@ class Order(models.Model):
 
 
 class Ticket(models.Model):
-    order = models.ForeignKey(Order, related_name='tickets', on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, related_name='tickets', null=True, on_delete=models.CASCADE)
+    pot = models.CharField(max_length=100, null=True)
     owner = models.OneToOneField(settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE)
     thu = models.BooleanField()
     fri = models.BooleanField()
@@ -308,12 +309,19 @@ class Ticket(models.Model):
 
         def create_for_user(self, user, days):
             day_fields = {day: (day in days) for day in DAYS}
-            self.create(owner=user, **day_fields)
+            return self.create(owner=user, **day_fields)
 
         def create_with_invitation(self, email_addr, days):
             day_fields = {day: (day in days) for day in DAYS}
             ticket = self.create(**day_fields)
             ticket.invitations.create(email_addr=email_addr)
+            return ticket
+
+        def create_free_with_invitation(self, email_addr, pot):
+            days = {day: False for day in DAYS}
+            ticket = self.create(pot=pot, **days)
+            ticket.invitations.create(email_addr=email_addr)
+            return ticket
 
     objects = Manager()
 
@@ -341,6 +349,9 @@ class Ticket(models.Model):
     def days(self):
         return [DAYS[day] for day in DAYS if getattr(self, day)]
 
+    def days_abbrev(self):
+        return [day for day in DAYS if getattr(self, day)]
+
     def num_days(self):
         return len(self.days())
 
@@ -350,15 +361,32 @@ class Ticket(models.Model):
         else:
             return self.invitation().email_addr
 
+    def rate(self):
+        if self.order is None:
+            return 'free'
+        else:
+            return self.order.rate
+
     def cost_incl_vat(self):
-        return cost_incl_vat(self.order.rate, self.num_days())
+        return cost_incl_vat(self.rate(), self.num_days())
 
     def cost_excl_vat(self):
-        return cost_excl_vat(self.order.rate, self.num_days())
+        return cost_excl_vat(self.rate(), self.num_days())
 
     def invitation(self):
         # This will raise an exception if a ticket has multiple invitations
         return self.invitations.get()
+
+    def is_free_ticket(self):
+        return not self.order
+
+    def is_incomplete(self):
+        return self.days() == []
+
+    def update_days(self, days):
+        for day in DAYS:
+            setattr(self, day, (day in days))
+        self.save()
 
 
 class UnconfirmedTicket:
@@ -394,8 +422,8 @@ class UnconfirmedTicket:
 
 
 class TicketInvitation(models.Model):
-    ticket = models.ForeignKey(Ticket, related_name='invitations', on_delete=models.CASCADE)
-    email_addr = models.EmailField()
+    ticket = models.ForeignKey(Ticket, related_name='invitations', on_delete=models.CASCADE)  # This should be a OneToOneField
+    email_addr = models.EmailField()  # This should be unique=True
     token = models.CharField(max_length=12, unique=True)  # An index is automatically created since unique=True
     status = models.CharField(max_length=10, default='unclaimed')
 
@@ -413,6 +441,8 @@ class TicketInvitation(models.Model):
         return reverse('tickets:ticket_invitation', args=[self.token])
 
     def claim_for_owner(self, owner):
+        # This would fail if owner already has a ticket, as Ticket.owner is a
+        # OneToOneField.
         assert self.status == 'unclaimed'
         ticket = self.ticket
         ticket.owner = owner

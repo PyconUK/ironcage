@@ -1,0 +1,27 @@
+{% extends 'ironcage/base.html' %}
+
+{% block content %}
+<h1>Update your ticket ({{ ticket.ticket_id }})</h1>
+
+<form method="post">
+  {% csrf_token %}
+  <div class="panel panel-default">
+    <div class="panel-heading">Your ticket</div>
+    <div class="panel-body">
+      <div class="row">
+        <div class="col-md-4">
+          <label>Which days are you coming?</label>
+        </div>
+        <div class="col-md-8">
+          <div class="btn-group{% if form.days.errors %} error{% endif %}" data-toggle="buttons">
+            {{ form.days }}
+          </div>
+        </div>
+        <div class="col-md-4">
+          <input type="submit" value="Update my ticket" class="btn btn-primary" />
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+{% endblock %}
