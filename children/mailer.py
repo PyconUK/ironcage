@@ -1,9 +1,10 @@
+import re
+
 from django.conf import settings
-from django.core.mail import send_mail
 from django.template.loader import get_template
 from django.urls import reverse
 
-import re
+from ironcage.emails import send_mail
 
 
 def send_order_confirmation_mail(order):
@@ -21,7 +22,5 @@ def send_order_confirmation_mail(order):
     send_mail(
         f"PyCon UK 2017 children's day order confirmation ({order.order_id})",
         body,
-        settings.SERVER_EMAIL,
-        [order.purchaser.email_addr],
-        fail_silently=True,
+        order.purchaser.email_addr,
     )

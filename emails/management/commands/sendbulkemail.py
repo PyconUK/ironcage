@@ -2,12 +2,11 @@ from argparse import RawTextHelpFormatter
 import os
 import re
 
-from django.conf import settings
-from django.core.mail import send_mail
 from django.core.management import BaseCommand
 from django.template.loader import get_template
 
 from accounts.models import User
+from ironcage.emails import send_mail
 
 import structlog
 logger = structlog.get_logger()
@@ -105,9 +104,7 @@ subject "This is a test".
             send_mail(
                 qualified_subject,
                 body,
-                settings.SERVER_EMAIL,
-                [recipient.email_addr],
-                fail_silently=False,
+                recipient.email_addr,
             )
 
 

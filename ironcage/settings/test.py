@@ -14,3 +14,5 @@ LOGGING['loggers']['']['handlers'].remove('console')
 
 # Email address to send mail from
 SERVER_EMAIL = 'PyCon UK 2017 <noreply@pyconuk.org>'
+EMAIL_FROM_ADDR = f'PyCon UK 2017 <noreply@pyconuk.org>'
+EMAIL_REPLY_TO_ADDR = 'PyCon UK 2017 <pyconuk-committee@uk.python.org>'
