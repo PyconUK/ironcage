@@ -10,7 +10,7 @@ class Command(BaseCommand):
     def handle(self, *args, pot, **kwargs):
         self.stdout.write('Enter email addresses to send ticket invitations to')
         while True:
-            email_addr = input()
+            email_addr = input().strip()
             try:
                 if email_addr == '':
                     break
