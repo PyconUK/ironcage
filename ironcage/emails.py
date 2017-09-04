@@ -7,9 +7,9 @@ def send_mail(subject, message, to_addr):
     mail = EmailMultiAlternatives(
         subject,
         message,
-        'noreply@pyconuk.org',
+        settings.EMAIL_FROM_ADDR,,
         [to_addr],
-        reply_to=['pyconuk-committee@uk.python.org'],
+        reply_to=[settings.EMAIL_REPLY_TO_ADDR],
         connection=connection
     )
 
