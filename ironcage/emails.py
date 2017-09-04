@@ -1,4 +1,4 @@
-from django.core.mail import import get_connection, EmailMultiAlternatives
+from django.core.mail import get_connection, EmailMultiAlternatives
 
 
 def send_mail(subject, message, to_addr):
