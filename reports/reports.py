@@ -12,7 +12,7 @@ from children.models import Ticket as ChildTicket
 from grants.models import Application
 from tickets.constants import DAYS
 from tickets.models import Order, Ticket
-from tickets.prices import cost_incl_vat
+from tickets.prices import PRICES_EXCL_VAT, cost_incl_vat
 from ukpa.models import Nomination
 
 
@@ -49,11 +49,7 @@ class AttendanceByDayReport(ReportView):
         rows = []
 
         for day in DAYS:
-            num_tickets = {
-                'individual': 0,
-                'corporate': 0,
-                'education': 0,
-            }
+            num_tickets = {rate: 0 for rate in PRICES_EXCL_VAT}
 
             for ticket in tickets:
                 if getattr(ticket, day):
@@ -125,11 +121,7 @@ class TicketSalesReport(ReportView):
             corporate_rate = cost_incl_vat('corporate', num_days)
             education_rate = cost_incl_vat('education', num_days)
 
-            num_tickets = {
-                'individual': 0,
-                'corporate': 0,
-                'education': 0,
-            }
+            num_tickets = {rate: 0 for rate in PRICES_EXCL_VAT}
 
             for ticket in tickets:
                 if sum(getattr(ticket, day) for day in DAYS) == num_days:
