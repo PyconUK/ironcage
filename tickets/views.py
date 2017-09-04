@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
-from .actions import claim_ticket_invitation, create_pending_order, process_stripe_charge, update_pending_order
+from . import actions
 from .forms import CompanyDetailsForm, TicketForm, TicketForSelfForm, TicketForOthersFormSet
 from .models import Order, Ticket, TicketInvitation
 from .prices import PRICES_INCL_VAT, cost_incl_vat
@@ -54,7 +54,7 @@ def new_order(request):
                     company_details = None
 
             if valid:
-                order = create_pending_order(
+                order = actions.create_pending_order(
                     purchaser=request.user,
                     rate=rate,
                     days_for_self=days_for_self,
@@ -136,7 +136,7 @@ def order_edit(request, order_id):
                     company_details = None
 
             if valid:
-                update_pending_order(
+                actions.update_pending_order(
                     order,
                     rate=rate,
                     days_for_self=days_for_self,
@@ -214,7 +214,7 @@ def order_payment(request, order_id):
         return redirect('tickets:order_edit', order.order_id)
 
     token = request.POST['stripeToken']
-    process_stripe_charge(order, token)
+    actions.process_stripe_charge(order, token)
 
     if not order.payment_required():
         messages.success(request, 'Payment for this order has been received.')
@@ -274,7 +274,7 @@ def ticket_invitation(request, token):
 
     if invitation.status == 'unclaimed':
         assert ticket.owner is None
-        claim_ticket_invitation(request.user, invitation)
+        actions.claim_ticket_invitation(request.user, invitation)
     elif invitation.status == 'claimed':
         assert ticket.owner is not None
         messages.info(request, 'This invitation has already been claimed')
