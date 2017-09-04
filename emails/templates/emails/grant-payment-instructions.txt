@@ -1,0 +1,31 @@
+Hi {{ recipient.name }},
+
+Here are some instructions for claiming financial assistance to attend PyCon
+UK.
+
+We prefer to disburse grants immediately after the conference.  However we
+realise that some travellers will need the funds in advance.  If that's the
+case for you, please let us know straight away, so that we can make the
+necessary arrangements.
+
+Our preferred means of payment is by bank transfer to a UK bank account, but we
+should be able to make transfers to banks overseas.  Please send us:
+
+ * your full bank account details (for a UK bank, this would be your sort code
+   and account number), and the address of your bank
+ * your own address (as given on your bank account)
+
+If you have not already booked accommodation in Cardiff for the duration of the
+conference, you will find that your options are limited.  This is because of a
+heavyweight boxing match that may be taking place in Cardiff on October 28th.
+There are details about accommodation options on our website[0].
+
+Additionally, the conference committee have made some block bookings for
+dormitories at a couple of hostels in central Cardiff, and we can assign you a
+bed there if you need it.  We'll publish more details of this soon.
+
+If you have any questions, please let us know.
+
+Best wishes,
+
+~ The PyCon UK committee
