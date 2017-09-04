@@ -7,9 +7,14 @@ from accounts.models import User
 
 
 class Command(BaseCommand):
-    def handle(self, *args, **kwargs):
+    def add_arguments(self, parser):
+        parser.add_argument('--dry-run', action='store_true')
+
+    def handle(self, *args, dry_run, **kwargs):
         for u in User.objects.filter(
             Q(grant_application__amount_offered__gt=0) | Q(requested_ticket_only=True),
             ticket=None
         ):
-            create_free_ticket(u.email_addr, 'Financial assistance')
+            print(u.email_addr)
+            if not dry_run:
+                create_free_ticket(u.email_addr, 'Financial assistance')
