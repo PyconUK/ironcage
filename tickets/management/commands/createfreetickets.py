@@ -8,10 +8,10 @@ class Command(BaseCommand):
         parser.add_argument('--pot', required=True, help='Pot to which tickets are to be assigned')
 
     def handle(self, *args, pot, **kwargs):
-        self.stdout.write('Enter email addresses to send ticket invitations to')
+        self.stdout.write('Enter email addresses to send ticket invitations to one-by-one')
         while True:
-            email_addr = input().strip()
             try:
+                email_addr = input('> ').strip()
                 if email_addr == '':
                     break
                 create_free_ticket(email_addr, pot)
