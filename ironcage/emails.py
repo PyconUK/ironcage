@@ -9,7 +9,7 @@ def send_mail(subject, message, to_addr):
         message,
         'noreply@pyconuk.org',
         [to_addr],
-        reply_to=['pyconuk-committee@uk.python.org']
+        reply_to=['pyconuk-committee@uk.python.org'],
         connection=connection
     )
 
