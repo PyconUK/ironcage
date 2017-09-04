@@ -57,7 +57,7 @@ class AttendanceByDayReport(ReportView):
 
             for ticket in tickets:
                 if getattr(ticket, day):
-                    num_tickets[ticket.order.rate] += 1
+                    num_tickets[ticket.rate] += 1
 
             rows.append([
                 DAYS[day],
@@ -133,7 +133,7 @@ class TicketSalesReport(ReportView):
 
             for ticket in tickets:
                 if sum(getattr(ticket, day) for day in DAYS) == num_days:
-                    num_tickets[ticket.order.rate] += 1
+                    num_tickets[ticket.rate] += 1
 
             num_tickets_rows.append([
                 num_days,
