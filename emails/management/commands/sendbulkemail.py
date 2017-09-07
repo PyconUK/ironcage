@@ -42,7 +42,10 @@ subject "This is a test".
         ).distinct(),
         'grant-applicants-with-funds-offered': User.objects.filter(
             grant_application__amount_offered__gt=0,
-        )
+        ),
+        'speakers': User.objects.filter(
+            proposals__state='plan to accept',
+        ).distinct(),
     }
 
     def create_parser(self, *args, **kwargs):

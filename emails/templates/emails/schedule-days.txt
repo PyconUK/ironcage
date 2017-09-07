@@ -1,0 +1,13 @@
+Hi {{ recipient.name }},
+
+We mentioned in an email last week that we have published a provisional
+day-by-day schedule for PyCon UK 2017, which you can find our website at
+http://2017.pyconuk.org/schedule/.
+
+We'd like to minimise further changes to the schedule; so if you can't speak on
+the day that you've been assigned, please let us know by replying to this email
+by the end of Sunday 10th September.
+
+Best wishes,
+
+~ The PyCon UK Committee
