@@ -49,7 +49,7 @@ class TicketSummaryReport(ReportView):
         rows = [
             ['Tickets', len(tickets)],
             ['Days', sum(t.num_days() for t in tickets)],
-            ['Cost (excl. VAT)', f'{£sum(t.cost_excl_vat() for t in tickets)}'], 
+            ['Cost (excl. VAT)', f'£{sum(t.cost_excl_vat() for t in tickets)}'], 
         ]
 
         return {
