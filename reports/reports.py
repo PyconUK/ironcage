@@ -153,7 +153,7 @@ class TicketSalesReport(ReportView):
                 num_tickets['corporate'],
                 num_tickets['education'],
                 num_tickets['free'],
-                num_tickets['individual'] + num_tickets['corporate'] + num_tickets['education'] + num_days['free'],
+                num_tickets['individual'] + num_tickets['corporate'] + num_tickets['education'] + num_tickets['free'],
             ])
 
             ticket_cost_rows.append([
