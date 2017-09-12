@@ -133,7 +133,8 @@ class TicketSalesReport(ReportView):
                 num_tickets['individual'],
                 num_tickets['corporate'],
                 num_tickets['education'],
-                num_tickets['individual'] + num_tickets['corporate'] + num_tickets['education'],
+                num_tickets['free'],
+                num_tickets['individual'] + num_tickets['corporate'] + num_tickets['education'] + num_days['free'],
             ])
 
             ticket_cost_rows.append([
@@ -141,12 +142,13 @@ class TicketSalesReport(ReportView):
                 f'£{num_tickets["individual"] * individual_rate}',
                 f'£{num_tickets["corporate"] * corporate_rate}',
                 f'£{num_tickets["education"] * education_rate}',
+                f'£0',
                 f'£{num_tickets["individual"] * individual_rate + num_tickets["corporate"] * corporate_rate + num_tickets["education"] * education_rate}',
             ])
 
         return {
             'title': self.title,
-            'headings': ['Days', 'Individual rate', 'Corporate rate', 'Education rate', 'Total'],
+            'headings': ['Days', 'Individual rate', 'Corporate rate', 'Education rate', 'Free', 'Total'],
             'num_tickets_rows': num_tickets_rows,
             'ticket_cost_rows': ticket_cost_rows,
         }
