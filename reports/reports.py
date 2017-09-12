@@ -40,6 +40,25 @@ class ReportView(TemplateView):
         return f'reports:{cls.url_name()}'
 
 
+class TicketSummaryReport(ReportView):
+    title = 'Ticket summary'
+
+    def get_context_data(self):
+        tickets = Ticket.objects.all()
+
+        rows = [
+            ['Tickets', len(tickets)],
+            ['Days', sum(t.num_days() for t in tickets)],
+            ['Cost (excl. VAT)', f'{£sum(t.cost_excl_vat() for t in tickets)}'], 
+        ]
+
+        return {
+            'title': self.title,
+            'rows': rows,
+            'headings': [],
+        }
+
+
 class AttendanceByDayReport(ReportView):
     title = 'Attendance by day'
 
@@ -484,8 +503,7 @@ class AccommodationReport(ReportView):
 
 reports = [
     AttendanceByDayReport,
-    UKPAReport,
-    CandidateReport,
+    TicketSummaryReport,
     TicketSalesReport,
     OrdersReport,
     UnpaidOrdersReport,
@@ -509,4 +527,6 @@ reports = [
     GrantApplicationsWithFundsOffered,
     PeopleReport,
     AccommodationReport,
+    UKPAReport,
+    CandidateReport,
 ]
