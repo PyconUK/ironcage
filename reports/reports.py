@@ -60,12 +60,13 @@ class AttendanceByDayReport(ReportView):
                 num_tickets['individual'],
                 num_tickets['corporate'],
                 num_tickets['education'],
-                num_tickets['individual'] + num_tickets['corporate'] + num_tickets['education'],
+                num_tickets['free'],
+                num_tickets['individual'] + num_tickets['corporate'] + num_tickets['education'] + num_tickets['free'],
             ])
 
         return {
             'title': self.title,
-            'headings': ['Day', 'Individual rate', 'Corporate rate', 'Education rate', 'Total'],
+            'headings': ['Day', 'Individual rate', 'Corporate rate', 'Education rate', 'Free', 'Total'],
             'rows': rows,
         }
 
