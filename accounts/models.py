@@ -7,6 +7,7 @@ from django.contrib.auth.base_user import AbstractBaseUser
 from django.db import models
 from django.shortcuts import get_object_or_404
 
+from accommodation.models import Booking
 from grants.models import Application
 from ironcage.utils import Scrambler
 from tickets.models import Ticket
@@ -106,6 +107,12 @@ class User(AbstractBaseUser, PermissionsMixin):
         try:
             return self.ticket
         except Ticket.DoesNotExist:
+            return None
+
+    def get_accommodation_booking(self):
+        try:
+            return self.booking
+        except Booking.DoesNotExist:
             return None
 
     def get_grant_application(self):

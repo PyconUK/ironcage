@@ -1,0 +1,44 @@
+{% extends 'ironcage/base.html' %}
+
+{% load static %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-6 col-md-offset-3">
+    <h1>Accommodation booking payment</h1>
+
+    <table class="table">
+      <tr>
+        <th>Room</th>
+        <td>{{ room.description }}</td>
+      </tr>
+      <tr>
+        <th>Cost (incl. VAT)</th>
+        <td>&pound;{{ room.cost_incl_vat }}</td>
+      </tr>
+    </table>
+
+    <div id="stripe-form">
+      <form method="POST">
+        {% csrf_token %}
+        <script
+          src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+          data-key="{{ stripe_api_key }}"
+          data-amount="{{ amount_pence }}"
+          data-currency="gbp"
+          data-name="PyCon UK Society Ltd"
+          data-image="{% static 'ironcage/img/yellow.png' %}"
+          data-description="PyCon UK 2017 accommodation"
+          data-locale="auto"
+          data-email="{{ user.email_addr }}"
+        >
+        </script>
+
+        <!-- https://stackoverflow.com/a/41527060 -->
+        <style>.stripe-button-el { display: none; }</style>
+        <button class="btn btn-primary" type="submit">Pay by card</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
