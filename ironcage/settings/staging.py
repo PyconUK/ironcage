@@ -21,3 +21,5 @@ SLACK_USERNAME = 'ironcage-log-bot-staging'
 
 # Email address to send error mails from
 SERVER_EMAIL = f'PyCon UK 2017 <noreply@{ALLOWED_HOSTS[0]}>'
+EMAIL_FROM_ADDR = f'PyCon UK 2017 <noreply@{ALLOWED_HOSTS[0]}>'
+EMAIL_REPLY_TO_ADDR = 'PyCon UK 2017 <pyconuk-committee@uk.python.org>'
