@@ -30,9 +30,10 @@ class Booking(models.Model):
 Room = namedtuple('Room', ['key', 'description', 'capacity', 'cost_incl_vat'])
 
 ROOMS = [
-    Room('mrs-potts-women', "Bed in women's dorm at Mrs Potts", 15, 130),
-    Room('mrs-potts-men', "Bed in men's dorm at Mrs Potts", 15, 130),
-    Room('mrs-potts-mixed', 'Bed in mixed dorm at Mrs Potts', 15, 130),
+    Room('mrs-potts-women', "Bed in women's dorm at Mrs Potts, breakfast included", 15, 130),
+    Room('mrs-potts-men', "Bed in men's dorm at Mrs Potts, breakfast included", 15, 130),
+    Room('mrs-potts-mixed', 'Bed in mixed dorm at Mrs Potts, breakfast included', 15, 130),
+    Room('bunkhouse-mixed', "Bed in mixed dorm at Bunkhouse Cardif", 20, 98),
 ]
 
 
