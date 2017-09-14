@@ -1,0 +1,5 @@
+{% extends django_slack %}
+
+{% block text %}
+{{ booking.guest.name }} has just booked themself into {{ booking.room_description }}.
+{% endblock %}
