@@ -28,20 +28,20 @@ class NewBookingTests(TestCase):
     def test_get_when_some_rooms_available(self):
         factories.create_some_bookings()
         rsp = self.client.get('/accommodation/bookings/new/')
-        self.assertContains(rsp, 'The following accommodation options are available')
+        self.assertContains(rsp, 'Beds in the following dorms are available')
         self.assertContains(rsp, ROOMS[0].description.replace("'", '&#39;'))
         self.assertNotContains(rsp, ROOMS[1].description.replace("'", '&#39;'))
 
     def test_get_when_no_rooms_available(self):
         factories.create_all_bookings()
         rsp = self.client.get('/accommodation/bookings/new/')
-        self.assertNotContains(rsp, 'The following accommodation options are available')
+        self.assertNotContains(rsp, 'Beds in the following dorms are available')
         self.assertContains(rsp, 'There are currently no rooms available')
 
     def test_get_when_not_authenticated(self):
         self.client.logout()
         rsp = self.client.get('/accommodation/bookings/new/')
-        self.assertContains(rsp, 'The following accommodation options are available')
+        self.assertContains(rsp, 'Beds in the following dorms are available')
         self.assertNotContains(rsp, '<form')
         self.assertContains(rsp, 'Please <a href="/accounts/register/?next=/accommodation/bookings/new/">sign up</a> or <a href="/accounts/login/?next=/accommodation/bookings/new/">sign in</a> to book accommodation.', html=True)
 

@@ -7,8 +7,16 @@
   <div class="col-md-6 col-md-offset-3">
     <h1>Accommodation booking</h1>
 
+    <p>We have made block booking for beds in small (4-6 person) dormitories at two hostels in Central Cardiff: <a href="http://www.mrspottsbackpackers.co.uk/">Mrs Potts Backpackers</a> and at <a href="http://www.bunkhousecardiff.co.uk/">Bunkhouse Cardiff</a> .</p>
+
+    <p>If you would like to make a booking for a bed in a dormitory, use the form below.  Bookings are only available for four nights, from Thursday 26th to Sunday 29th October.</p>
+
+    <p>We have also reserved some rooms at <a href="http://www.urdd.cymru/en/residential-centres/cardiff/">Urdd Cardiff</a>, which is a short two miles from the conference venue.  You can make a booking for any number of nights through the PyCon UK page on the <a href="https://aws.passkey.com/go/Pyconuk17">Visit Cardiff</a> website.</p>
+
+    <p>You can read about other accommodation options <a href="http://2017.pyconuk.org/accommodation/">here</a>.</p>
+
     {% if rooms %}
-    <p>The following accommodation options are available:</p>
+    <p>Beds in the following dorms are available:</p>
     <ul>
       {% for room in rooms %}
       <li>{{ room.description }} (£{{ room.cost_incl_vat }})</li>
