@@ -1,0 +1,14 @@
+Hi {{ recipient.name }},
+
+As you've not yet told us whether you've arranged accommodation in Cardiff
+during the conference, we wanted to let you know that we've made reservations
+for around 200 beds for conference delegates in hostels in Cardiff.
+
+More details are on our website: http://2017.pyconuk.org/accommodation/.
+
+Once you have made arrangements, please let us know by updating your conference
+profile https://hq.pyconuk.org/profile/.
+
+All the best
+
+~ The PyCon UK Committee

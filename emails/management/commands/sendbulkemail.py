@@ -31,6 +31,7 @@ subject "This is a test".
         'staff': User.objects.filter(is_staff=True),
         'all': User.objects.all(),
         'ticket-holders': User.objects.exclude(ticket=None),
+        'ticket-holders-without-accommodation': User.objects.exclude(ticket=None).exclude(has_booked_hotel=True),
         'cfp-proposers': User.objects.filter(
             proposals__isnull=False,
             proposals__special_reply_required=False,
