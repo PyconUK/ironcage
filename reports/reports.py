@@ -553,6 +553,31 @@ class AccommodationBookingsReport(ReportView):
         ]
 
 
+class TalkVotingReport(ReportView):
+    title = 'Talk voting'
+    headings = ['ID', 'Title', 'Proposer', 'Number of votes', 'Number interested']
+
+    def get_queryset(self):
+        return Proposal.objects.accepted_talks().annotate(
+                num_votes=Count('vote'),
+                num_interested=Sum(Case(When(vote__is_interested=True, then=Value(1))), output_field=IntegerField())
+            ).order_by('-num_interested')
+
+    def presenter(self, proposal):
+        link = {
+            'href': reverse('reports:cfp_proposal', args=[proposal.proposal_id]),
+            'text': proposal.proposal_id,
+        }
+
+        return [
+            link,
+            proposal.full_title(),
+            proposal.proposer.name,
+            proposal.num_votes,
+            proposal.num_interested,
+        ]
+
+
 reports = [
     AttendanceByDayReport,
     TicketSummaryReport,
@@ -564,6 +589,7 @@ reports = [
     UnclaimedTicketsReport,
     FreeTicketsReport,
     ChildrensDayTicketsReport,
+    TalkVotingReport,
     CFPPropsals,
     CFPPropsalsForEducationTrack,
     CFPPropsalsPlanToAccept,
