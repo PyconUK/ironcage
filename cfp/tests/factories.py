@@ -3,13 +3,14 @@ from accounts.tests.factories import create_user
 from cfp.models import Proposal
 
 
-def create_proposal(user=None):
+def create_proposal(user=None, session_type='talk', state='accepted'):
     if user is None:
         user = create_user()
 
     return Proposal.objects.create(
         proposer=user,
-        session_type='talk',
+        session_type=session_type,
+        state=state,
         title='Python is brilliant',
         subtitle='From abs to ZeroDivisionError',
         copresenter_names='',

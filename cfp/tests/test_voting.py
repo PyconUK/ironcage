@@ -20,6 +20,9 @@ class VotingModelTests(TestCase):
         cls.proposals[0].vote(cls.carol, True)
         cls.proposals[3].vote(cls.carol, False)
 
+        factories.create_proposal(session_type='workshop')
+        factories.create_proposal(state='rejected')
+
     def test_vote(self):
         self.assertTrue(self.proposals[0].is_interested(self.alice))
         self.assertFalse(self.proposals[1].is_interested(self.alice))

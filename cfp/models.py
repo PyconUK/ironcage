@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 
@@ -46,17 +47,20 @@ class Proposal(models.Model):
             id = self.model.id_scrambler.backward(proposal_id)
             return get_object_or_404(self.model, pk=id)
 
+        def accepted_talks(self):
+            return self.filter(Q(session_type='talk') & Q(state='accepted'))
+
         def reviewed_by_user(self, user):
-            return self.filter(vote__user=user).order_by('id')
+            return self.accepted_talks().filter(vote__user=user).order_by('id')
 
         def unreviewed_by_user(self, user):
-            return self.exclude(vote__user=user).order_by('id')
+            return self.accepted_talks().exclude(vote__user=user).order_by('id')
 
         def of_interest_to_user(self, user):
-            return self.filter(vote__user=user, vote__is_interested=True).order_by('id')
+            return self.accepted_talks().filter(vote__user=user, vote__is_interested=True).order_by('id')
 
         def not_of_interest_to_user(self, user):
-            return self.filter(vote__user=user, vote__is_interested=False).order_by('id')
+            return self.accepted_talks().filter(vote__user=user, vote__is_interested=False).order_by('id')
 
         def get_random_unreviewed_by_user(self, user):
             return self.unreviewed_by_user(user).order_by('?').first()

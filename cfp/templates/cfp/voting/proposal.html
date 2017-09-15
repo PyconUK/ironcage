@@ -2,7 +2,16 @@
 
 {% block content %}
 {% include './_voting_nav.html' %}
-{% include '../_proposal_details.html' %}
+
+<p>To help us allocate rooms for talks, please let us know if you would be interested in attending the following talk.</p>
+
+<hr />
+
+<h3>{{ proposal.full_title }} <span class="small">({{ proposal.proposer.name }})</span></h3>
+
+<div>{{ proposal.description|linebreaks }}</div>
+
+<hr />
 
 <form method="POST" id="voting-form">
   {% csrf_token %}
