@@ -562,8 +562,8 @@ class TalkVotingReport(ReportView):
     def get_queryset(self):
         return Proposal.objects.accepted_talks().annotate(
                 num_votes=Count('vote'),
-                num_interested=Sum(Case(When(vote__is_interested=True, then=Value(1))), output_field=IntegerField())
-            ).order_by('-num_interested')
+                num_interested=Sum(Case(When(vote__is_interested=True, then=Value(1)), default=Value(0)), output_field=IntegerField())
+            ).order_by('-num_interested', '-num_votes')
 
     def presenter(self, proposal):
         link = {
