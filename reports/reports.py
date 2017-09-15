@@ -6,6 +6,7 @@ from django.utils.text import slugify
 from django.views.generic import TemplateView
 from avatar.templatetags.avatar_tags import avatar_url
 
+from accommodation.models import Booking
 from accounts.models import User
 from cfp.models import Proposal
 from children.models import Ticket as ChildTicket
@@ -516,6 +517,20 @@ class AccommodationReport(ReportView):
         ]
 
 
+class AccommodationBookingsReport(ReportView):
+    title = 'Accommodation booked through us'
+
+    def get_queryset(self):
+        return Booking.objects.order_by('room_key')
+
+    def presenter(self, booking):
+        return [
+            booking.room_description(),
+            booking.guest.name,
+            booking.guest.email_addr,
+        ]
+
+
 reports = [
     AttendanceByDayReport,
     TicketSummaryReport,
@@ -543,6 +558,7 @@ reports = [
     GrantApplicationsWithFundsOffered,
     PeopleReport,
     AccommodationReport,
+    AccommodationBookingsReport,
     UKPAReport,
     CandidateReport,
 ]
