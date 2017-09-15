@@ -239,6 +239,27 @@ class UnclaimedTicketsReport(ReportView, TicketsMixin):
         return Ticket.objects.filter(owner=None).order_by('id')
 
 
+class FreeTicketsReport(ReportView):
+    title = 'Free tickets'
+    headings = ['ID', 'Ticket holder', 'Days', 'Pot', 'Status']
+
+    def get_queryset(self,):
+        return Ticket.objects.filter(pot__isnull=False)
+
+    def presenter(self, ticket):
+        link = {
+            'href': reverse('reports:tickets_ticket', args=[ticket.ticket_id]),
+            'text': ticket.ticket_id,
+        }
+        return [
+            link,
+            ticket.ticket_holder_name(),
+            ', '.join(ticket.days()),
+            ticket.pot,
+            'Assigned' if ticket.owner else 'Unclaimed',
+        ]
+
+
 class ChildrensDayTicketsReport(ReportView):
     title = "Children's day tickets"
     headings = [
@@ -541,6 +562,7 @@ reports = [
     UnpaidOrdersReport,
     TicketsReport,
     UnclaimedTicketsReport,
+    FreeTicketsReport,
     ChildrensDayTicketsReport,
     CFPPropsals,
     CFPPropsalsForEducationTrack,
