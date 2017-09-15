@@ -261,6 +261,21 @@ class ChildrensDayTicketsReport(ReportView):
         return ChildTicket.objects.order_by('name')
 
 
+class ChildrensDaySummaryReport(ReportView):
+    title = "Children's day summary"
+
+    def get_context_data(self):
+        rows = [
+            ['Tickets', len(ChildTicket.objects.count())],
+        ]
+
+        return {
+            'title': self.title,
+            'rows': rows,
+            'headings': [],
+        }
+
+
 class CFPPropsalsMixin:
     headings = [
         'ID',
@@ -504,6 +519,7 @@ class AccommodationReport(ReportView):
 reports = [
     AttendanceByDayReport,
     TicketSummaryReport,
+    ChildrensDaySummaryReport,
     TicketSalesReport,
     OrdersReport,
     UnpaidOrdersReport,
