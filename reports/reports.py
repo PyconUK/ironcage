@@ -1,5 +1,7 @@
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db.models import Count
+from django.db.models import Count, IntegerField, Sum, Value
+from django.db.models.expressions import Case, When
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.utils.text import slugify
