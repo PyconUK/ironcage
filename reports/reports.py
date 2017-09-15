@@ -267,7 +267,7 @@ class ChildrensDaySummaryReport(ReportView):
 
     def get_context_data(self):
         rows = [
-            ['Tickets', len(ChildTicket.objects.count())],
+            ['Tickets', ChildTicket.objects.count()],
         ]
 
         return {
