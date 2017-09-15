@@ -244,7 +244,7 @@ class FreeTicketsReport(ReportView):
     headings = ['ID', 'Ticket holder', 'Days', 'Pot', 'Status']
 
     def get_queryset(self,):
-        return Ticket.objects.filter(pot__isnull=False)
+        return Ticket.objects.filter(pot__isnull=False).order_by('pot')
 
     def presenter(self, ticket):
         link = {
