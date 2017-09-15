@@ -519,6 +519,7 @@ class AccommodationReport(ReportView):
 
 class AccommodationBookingsReport(ReportView):
     title = 'Accommodation booked through us'
+    headings = ['Room', 'Name', 'Email address']
 
     def get_queryset(self):
         return Booking.objects.order_by('room_key')
