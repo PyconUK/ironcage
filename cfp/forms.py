@@ -52,8 +52,8 @@ class ProposalForm(forms.ModelForm):
 
 
 IS_INTERESTED_CHOICES = [
-    ('yes', 'Should be considered'),
-    ('no', 'Should not be considered'),
+    ('yes', 'Interested'),
+    ('no', 'Not interested'),
     ('skip', 'Skip'),
 ]
 
