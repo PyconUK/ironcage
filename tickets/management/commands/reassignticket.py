@@ -1,6 +1,7 @@
 from django.core.management import BaseCommand
 
 from ...actions import reassign_ticket
+from ...models import Ticket
 
 
 class Command(BaseCommand):
