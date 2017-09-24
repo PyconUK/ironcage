@@ -337,6 +337,19 @@ class Ticket(models.Model):
     def get_absolute_url(self):
         return reverse('tickets:ticket', args=[self.ticket_id])
 
+    def reassign(self, email_addr):
+        if self.owner is not None:
+            self.owner = None
+            self.save()
+
+        try:
+            invitation = self.invitation()
+            invitation.delete()
+        except TicketInvitation.DoesNotExist:
+            pass
+
+        self.invitations.create(email_addr=email_addr)
+
     def details(self):
         return {
             'id': self.ticket_id,

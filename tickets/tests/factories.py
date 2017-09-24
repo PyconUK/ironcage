@@ -98,6 +98,19 @@ def create_ticket(user=None, rate=None, num_days=None):
     return order.all_tickets()[0]
 
 
+def create_ticket_with_unclaimed_invitation():
+    order = create_confirmed_order_for_others()
+    return order.all_tickets()[0]
+
+
+def create_ticket_with_claimed_invitation(owner=None):
+    order = create_confirmed_order_for_others()
+    ticket = order.all_tickets()[0]
+    owner = owner or create_user()
+    actions.claim_ticket_invitation(owner, ticket.invitation())
+    return ticket
+
+
 def create_free_ticket(email_addr=None, pot='Financial assistance'):
     if email_addr is None:
         email_addr = create_user().email_addr

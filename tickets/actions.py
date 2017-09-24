@@ -106,3 +106,10 @@ def claim_ticket_invitation(owner, invitation):
     logger.info('claim_ticket_invitation', owner=owner.id, invitation=invitation.token)
     with transaction.atomic():
         invitation.claim_for_owner(owner)
+
+
+def reassign_ticket(ticket, email_addr):
+    logger.info('reassign_ticket', ticket=ticket.ticket_id, email_addr=email_addr)
+    with transaction.atomic():
+        ticket.reassign(email_addr)
+    send_invitation_mail(ticket)

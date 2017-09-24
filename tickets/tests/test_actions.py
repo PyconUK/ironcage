@@ -358,3 +358,51 @@ class TicketInvitationTests(TestCase):
         actions.claim_ticket_invitation(bob, invitation)
 
         self.assertIsNotNone(bob.get_ticket())
+
+
+class ReassignTicketTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.alice = factories.create_user()
+
+    def test_reassign_assigned_ticket_with_existing_invitation(self):
+        ticket = factories.create_ticket_with_claimed_invitation(self.alice)
+        mail.outbox = []
+
+        actions.reassign_ticket(ticket, 'zoe@example.com')
+        self.alice.refresh_from_db()
+        self.assertIsNone(self.alice.get_ticket())
+
+        ticket.refresh_from_db()
+        self.assertEqual(ticket.invitation().status, 'unclaimed')
+
+        self.assertEqual(len(mail.outbox), 1)
+
+    def test_reassign_assigned_ticket_with_no_existing_invitation(self):
+        ticket = factories.create_ticket(self.alice)
+        mail.outbox = []
+
+        actions.reassign_ticket(ticket, 'zoe@example.com')
+
+        # For some reason, refresh_from_db doesn't work here (although it does
+        # in test_reassign_assigned_ticket_with_existing_invitation), so let's
+        # get the object from the database directly.
+        # self.alice.refresh_from_db()
+        alice = type(self.alice).objects.get(id=self.alice.id)
+        self.assertIsNone(alice.get_ticket())
+
+        ticket.refresh_from_db()
+        self.assertEqual(ticket.invitation().status, 'unclaimed')
+
+        self.assertEqual(len(mail.outbox), 1)
+
+    def test_reassign_unassigned_ticket(self):
+        ticket = factories.create_ticket_with_unclaimed_invitation()
+        mail.outbox = []
+
+        actions.reassign_ticket(ticket, 'zoe@example.com')
+
+        ticket.refresh_from_db()
+        self.assertEqual(ticket.invitation().status, 'unclaimed')
+
+        self.assertEqual(len(mail.outbox), 1)
