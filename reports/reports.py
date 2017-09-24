@@ -262,6 +262,26 @@ class FreeTicketsReport(ReportView):
         ]
 
 
+class DjangoGirlsTicketsReport(ReportView):
+    title = 'Django Girls tickets'
+    headings = ['ID', 'Ticket holder', 'Days', 'Status']
+
+    def get_queryset(self,):
+        return Ticket.objects.filter(pot='Django Girls').order_by('id')
+
+    def presenter(self, ticket):
+        link = {
+            'href': reverse('reports:tickets_ticket', args=[ticket.ticket_id]),
+            'text': ticket.ticket_id,
+        }
+        return [
+            link,
+            ticket.ticket_holder_name(),
+            ', '.join(ticket.days()),
+            'Assigned' if ticket.owner else 'Unclaimed',
+        ]
+
+
 class ChildrensDayTicketsReport(ReportView):
     title = "Children's day tickets"
     headings = [
@@ -590,6 +610,7 @@ reports = [
     TicketsReport,
     UnclaimedTicketsReport,
     FreeTicketsReport,
+    DjangoGirlsTicketsReport,
     ChildrensDayTicketsReport,
     TalkVotingReport,
     CFPPropsals,
