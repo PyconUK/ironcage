@@ -10,5 +10,5 @@ class Command(BaseCommand):
         parser.add_argument('email_addr')
 
     def handle(self, *args, ticket_id, email_addr, **kwargs):
-        ticket = Ticket.objects.get_by_order_id_or_404(ticket_id)
+        ticket = Ticket.objects.get_by_ticket_id_or_404(ticket_id)
         reassign_ticket(ticket, email_addr)
