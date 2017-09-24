@@ -131,6 +131,12 @@ class Order(models.Model):
 
         self.save()
 
+    def delete_tickets_and_mark_as_refunded(self):
+        self.tickets.all().delete()
+        self.status = 'refunded'
+
+        self.save()
+
     def all_tickets(self):
         if self.payment_required():
             tickets = []

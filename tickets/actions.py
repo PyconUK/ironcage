@@ -15,7 +15,7 @@ from django.db.utils import IntegrityError
 
 from ironcage.stripe_integration import create_charge_for_order, refund_charge
 
-from .mailer import send_invitation_mail, send_order_confirmation_mail
+from .mailer import send_invitation_mail, send_order_confirmation_mail, send_order_refund_mail
 from .models import Order, Ticket
 
 import structlog
@@ -113,3 +113,12 @@ def reassign_ticket(ticket, email_addr):
     with transaction.atomic():
         ticket.reassign(email_addr)
     send_invitation_mail(ticket)
+
+
+def refund_order(order):
+    logger.info('refund_order', order=order.order_id)
+    assert order.status == 'successful'
+    with transaction.atomic():
+        order.delete_tickets_and_mark_as_refunded()
+    refund_charge(order.stripe_charge_id)
+    send_order_refund_mail(order)

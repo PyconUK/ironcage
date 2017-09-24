@@ -406,3 +406,17 @@ class ReassignTicketTests(TestCase):
         self.assertEqual(ticket.invitation().status, 'unclaimed')
 
         self.assertEqual(len(mail.outbox), 1)
+
+
+class OrderRefundTests(TestCase):
+    def test_refund_order(self):
+        order = factories.create_confirmed_order_for_self()
+        mail.outbox = []
+
+        with utils.patched_refund_creation_expected():
+            actions.refund_order(order)
+
+        self.assertEqual(order.status, 'refunded')
+        self.assertEqual(order.tickets.count(), 0)
+
+        self.assertEqual(len(mail.outbox), 1)

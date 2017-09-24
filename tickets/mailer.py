@@ -72,3 +72,22 @@ def send_order_confirmation_mail(order):
         body,
         order.purchaser.email_addr,
     )
+
+
+ORDER_REFUND_TEMPLATE = '''
+Hi {purchaser_name},
+
+Your order for PyCon UK 2017 has been refunded.
+
+~ The PyCon UK 2017 team
+'''.strip()
+
+
+def send_order_refund_mail(order):
+    body = ORDER_REFUND_TEMPLATE.format(purchaser_name=order.purchaser.name)
+
+    send_mail(
+        f'PyCon UK 2017 order refund ({order.order_id})',
+        body,
+        order.purchaser.email_addr,
+    )
