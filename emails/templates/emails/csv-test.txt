@@ -1,0 +1,7 @@
+Hi {{ name }},
+
+This is a test email.  You can safely ignore it!
+
+Cheers,
+
+Peter.
