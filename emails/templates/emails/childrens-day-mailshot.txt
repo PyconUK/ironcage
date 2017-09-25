@@ -1,0 +1,39 @@
+Dear {{ name }},
+
+We hope you remember the young person's programming day from last year's
+PyCon UK.
+
+Well, we're back!
+
+On Saturday 28th October, at Cardiff City Hall, we're running two types
+of event suitable for young people: A Code Club
+(https://www.codeclub.org.uk/), for primary school aged children, and, a
+Raspberry Jam (https://www.raspberrypi.org/jam/) for secondary aged
+children. Both events will be run in collaboration with the Raspberry Pi
+Foundation (https://www.raspberrypi.org/) - the world's most successful
+computing education project in history.
+
+Young people will be introduced to a number of fun, engaging and
+inspiring age-appropriate activities relating to programming with the
+Python programming language. In the afternoon they'll be given an
+opportunity to use their new skills to create exciting projects of their
+own design. At the end of the day, those who want to will be able to
+present their projects to the rest of PyCon UK (the national conference
+for programmers who use Python).
+
+Attendees must be accompanied by an adult at all times and everyone
+(including adults) get lunch provided.
+
+All this for just £5 per person..! Book now since tickets are selling
+out fast.
+
+http://2017.pyconuk.org/kids
+
+Of course, if you know of others who would like to attend, please share
+these details.
+
+We hope to see you at PyCon UK!
+
+Best wishes,
+
+The PyCon UK Education Track Team.
