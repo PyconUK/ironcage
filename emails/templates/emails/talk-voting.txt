@@ -1,0 +1,14 @@
+Hi {{ recipient.name }},
+
+We're in the last stages of putting the conference schedule together, and we'd
+like your help to identify which talks are going to be most popular, so that we
+can allocate them to the largest room.
+
+If you have some spare time this weekend and want to help, all you have to do
+is visit https://hq.pyconuk.org/cfp/voting/, where you'll be presented with
+some randomly selected talks and asked whether you'd be interested in attending
+or not.
+
+Thanks!
+
+~ The PyCon UK Committee
