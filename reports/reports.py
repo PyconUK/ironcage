@@ -1,5 +1,4 @@
 from django.contrib.admin.views.decorators import staff_member_required
-from django.db.models import Count
 from django.db.models import Count, IntegerField, Sum, Value
 from django.db.models.expressions import Case, When
 from django.urls import reverse
@@ -600,6 +599,24 @@ class TalkVotingReport(ReportView):
         ]
 
 
+class TalkVotingByUserReport(ReportView):
+    title = 'Talk voting by user'
+    headings = ['Name', 'Number of votes', 'Number interested']
+
+    def get_queryset(self):
+        return User.objects.annotate(
+                num_votes=Count('vote'),
+                num_interested=Sum(Case(When(vote__is_interested=True, then=Value(1)), default=Value(0)), output_field=IntegerField())
+            ).order_by('-num_votes', '-num_interested')
+
+    def presenter(self, user):
+        return [
+            user.name,
+            user.num_votes,
+            user.num_interested,
+        ]
+
+
 reports = [
     AttendanceByDayReport,
     TicketSummaryReport,
@@ -613,6 +630,7 @@ reports = [
     DjangoGirlsTicketsReport,
     ChildrensDayTicketsReport,
     TalkVotingReport,
+    TalkVotingByUserReport,
     CFPPropsals,
     CFPPropsalsForEducationTrack,
     CFPPropsalsPlanToAccept,
