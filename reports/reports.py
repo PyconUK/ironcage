@@ -370,21 +370,28 @@ class CFPPropsalsForEducationTrack(ReportView, CFPPropsalsMixin):
     title = 'CFP Proposals to be scheduled in education track'
 
     def get_queryset(self):
-        return Proposal.objects.select_related('proposer', 'proposer__grant_application').filter(state='plan to accept', track='education')
+        return Proposal.objects.select_related('proposer', 'proposer__grant_application').filter(state='accepted', track='education')
 
 
 class CFPPropsalsPlanToAccept(ReportView, CFPPropsalsMixin):
-    title = 'CFP Proposals we plan to accept'
+    title = 'CFP Proposals we accepted'
 
     def get_queryset(self):
-        return Proposal.objects.select_related('proposer', 'proposer__grant_application').filter(state='plan to accept')
+        return Proposal.objects.select_related('proposer', 'proposer__grant_application').filter(state='accepted')
+
+
+class CFPPropsalsPlanToAcceptOfTypeOther(ReportView, CFPPropsalsMixin):
+    title = 'CFP Proposals we accepted with type "other"'
+
+    def get_queryset(self):
+        return Proposal.objects.select_related('proposer', 'proposer__grant_application').filter(state='accepted', session_type='other')
 
 
 class CFPPropsalsPlanToAcceptWithGrantApplications(ReportView, CFPPropsalsMixin):
-    title = "CFP Proposals we plan to accept from people who've applied for a grant"
+    title = "CFP Proposals we accepted from people who've applied for a grant"
 
     def get_queryset(self):
-        return Proposal.objects.select_related('proposer', 'proposer__grant_application').filter(state='plan to accept', proposer__grant_application__isnull=False).order_by('proposer__grant_application__amount_requested')
+        return Proposal.objects.select_related('proposer', 'proposer__grant_application').filter(state='accepted', proposer__grant_application__isnull=False).order_by('proposer__grant_application__amount_requested')
 
 
 class CFPPropsalsPlanToReject(ReportView, CFPPropsalsMixin):
@@ -634,6 +641,7 @@ reports = [
     CFPPropsals,
     CFPPropsalsForEducationTrack,
     CFPPropsalsPlanToAccept,
+    CFPPropsalsPlanToAcceptOfTypeOther,
     CFPPropsalsPlanToAcceptWithGrantApplications,
     CFPPropsalsPlanToReject,
     CFPPropsalsNoDecision,
