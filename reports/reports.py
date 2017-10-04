@@ -599,7 +599,7 @@ class TalkVotingReport(ReportView):
 
         return [
             link,
-            proposal.full_title(),
+            proposal.title,
             proposal.proposer.name,
             proposal.num_votes,
             proposal.num_interested,
