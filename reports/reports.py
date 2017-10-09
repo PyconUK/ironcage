@@ -51,7 +51,7 @@ class TicketSummaryReport(ReportView):
         rows = [
             ['Tickets', len(tickets)],
             ['Days', sum(t.num_days() for t in tickets)],
-            ['Cost (excl. VAT)', f'£{sum(t.cost_excl_vat() for t in tickets)}'], 
+            ['Cost (excl. VAT)', f'£{sum(t.cost_excl_vat() for t in tickets)}'],
         ]
 
         return {
@@ -587,9 +587,9 @@ class TalkVotingReport(ReportView):
 
     def get_queryset(self):
         return Proposal.objects.accepted_talks().annotate(
-                num_votes=Count('vote'),
-                num_interested=Sum(Case(When(vote__is_interested=True, then=Value(1)), default=Value(0)), output_field=IntegerField())
-            ).order_by('-num_interested', '-num_votes')
+            num_votes=Count('vote'),
+            num_interested=Sum(Case(When(vote__is_interested=True, then=Value(1)), default=Value(0)), output_field=IntegerField())
+        ).order_by('-num_interested', '-num_votes')
 
     def presenter(self, proposal):
         link = {
@@ -612,9 +612,9 @@ class TalkVotingByUserReport(ReportView):
 
     def get_queryset(self):
         return User.objects.annotate(
-                num_votes=Count('vote'),
-                num_interested=Sum(Case(When(vote__is_interested=True, then=Value(1)), default=Value(0)), output_field=IntegerField())
-            ).order_by('-num_votes', '-num_interested')
+            num_votes=Count('vote'),
+            num_interested=Sum(Case(When(vote__is_interested=True, then=Value(1)), default=Value(0)), output_field=IntegerField())
+        ).order_by('-num_votes', '-num_interested')
 
     def presenter(self, user):
         return [
