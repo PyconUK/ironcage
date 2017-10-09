@@ -24,9 +24,14 @@ def index(request):
             'nomination': user.get_nomination(),
             'cfp_open': datetime.now(timezone.utc) < settings.CFP_CLOSE_AT,
             'grant_applications_open': datetime.now(timezone.utc) < settings.GRANT_APPLICATIONS_CLOSE_AT,
+            'ticket_sales_open': datetime.now(timezone.utc) < settings.TICKET_SALES_CLOSE_AT,
         }
     else:
-        context = {}
+        context = {
+            'cfp_open': datetime.now(timezone.utc) < settings.CFP_CLOSE_AT,
+            'grant_applications_open': datetime.now(timezone.utc) < settings.GRANT_APPLICATIONS_CLOSE_AT,
+            'ticket_sales_open': datetime.now(timezone.utc) < settings.TICKET_SALES_CLOSE_AT,
+        }
 
     return render(request, 'ironcage/index.html', context)
 

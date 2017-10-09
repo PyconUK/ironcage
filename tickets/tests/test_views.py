@@ -1,4 +1,6 @@
-from django.test import TestCase
+from datetime import datetime, timedelta, timezone
+
+from django.test import TestCase, override_settings
 
 from ironcage.tests import utils
 
@@ -19,6 +21,33 @@ class NewOrderTests(TestCase):
         self.assertInHTML('<tr><td class="text-center">5 days</td><td class="text-center">£198</td><td class="text-center">£396</td><td class="text-center">£66</td></tr>', rsp.content.decode())
         self.assertContains(rsp, '<form method="post" id="order-form">')
         self.assertNotContains(rsp, 'to buy a ticket')
+
+    @override_settings(TICKET_SALES_CLOSE_AT=datetime.now(timezone.utc) - timedelta(days=1))
+    def test_get_when_ticket_sales_have_closed(self):
+        self.client.force_login(self.alice)
+        rsp = self.client.get('/tickets/orders/new/', follow=True)
+        self.assertContains(rsp, 'ticket sales have closed')
+        self.assertRedirects(rsp, '/')
+
+    @override_settings(
+        TICKET_SALES_CLOSE_AT=datetime.now(timezone.utc) - timedelta(days=1),
+        TICKET_DEADLINE_BYPASS_TOKEN='abc123',
+    )
+    def test_get_when_ticket_sales_have_closed_but_correct_token_is_provided(self):
+        self.client.force_login(self.alice)
+        rsp = self.client.get('/tickets/orders/new/?deadline-bypass-token=abc123', follow=True)
+        self.assertNotContains(rsp, 'ticket sales have closed')
+        self.assertContains(rsp, '<form method="post" id="order-form">')
+
+    @override_settings(
+        TICKET_SALES_CLOSE_AT=datetime.now(timezone.utc) - timedelta(days=1),
+        TICKET_DEADLINE_BYPASS_TOKEN='abc123',
+    )
+    def test_get_when_ticket_sales_have_closed_and_incorrect_token_is_provided(self):
+        self.client.force_login(self.alice)
+        rsp = self.client.get('/tickets/orders/new/?deadline-bypass-token=321cba', follow=True)
+        self.assertContains(rsp, 'ticket sales have closed')
+        self.assertRedirects(rsp, '/')
 
     def test_get_when_user_has_order_for_self(self):
         self.client.force_login(self.alice)
