@@ -71,8 +71,6 @@
 {% if nomination %}
 <li><a href="{% url 'ukpa:nomination' nomination.nomination_id %}">
 View your nomination for election as a UKPA Trustee</a></li>
-{% else %}
-<li><a href="{% url 'ukpa:new_nomination' %}">Stand for election as a UKPA Trustee</a></li>
 {% endif %}
 </ul>
 
