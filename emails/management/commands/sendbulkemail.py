@@ -47,6 +47,10 @@ subject "This is a test".
         'speakers': User.objects.filter(
             proposals__state='plan to accept',
         ).distinct(),
+        'speakers-without-tickets': User.objects.filter(
+            proposals__state='accepted',
+            ticket__isnull=True
+        ).distinct(),
     }
 
     def create_parser(self, *args, **kwargs):

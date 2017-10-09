@@ -7,6 +7,7 @@ from django.template.loader import get_template
 
 from ironcage.emails import send_mail
 
+
 class Command(BaseCommand):
     help = '''
 Sends emails to everybody listed in a CSV file.
@@ -39,12 +40,12 @@ will have subject "This is a test".
         settings.EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
         template = get_template(f'emails/{template}.txt')
-        
+
         with open(recipients) as f:
             recipients = list(csv.DictReader(f))
 
         num_recipients = len(recipients)
-            
+
         if dry_run:
             self.stdout.write('This is a dry run')
             self.stdout.write(f'Running this would send the email to {num_recipients} recipient(s)')

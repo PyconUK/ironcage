@@ -1,0 +1,17 @@
+Hi {{ recipient.name }},
+
+We're looking forward to your talk at PyCon UK, but you don't appear to have a
+ticket for the conference yet.  Ticket sales close at 23:59 BST on Monday
+(that's tomorrow!).
+
+If you have one (perhaps with a different account to the account that you used
+to submit your talk proposal), then please reply to this email with your ticket
+reference number.
+
+Otherwise, you can buy a ticket by visiting:
+
+    https://hq.pyconuk.org/tickets/orders/new/
+
+All the best
+
+~ The PyCon UK Committee

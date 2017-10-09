@@ -235,16 +235,19 @@ AVATAR_GRAVATAR_DEFAULT = 'mm'
 
 # Last orders...
 
-# When testing locally, we probably don't want the CFP or grant applications to be closed.
+# When testing locally, we probably don't want the CFP etc to be closed
 CFP_CLOSE_AT = datetime.now(timezone.utc) + timedelta(days=100)
 GRANT_APPLICATIONS_CLOSE_AT = datetime.now(timezone.utc) + timedelta(days=100)
+TICKET_SALES_CLOSE_AT = datetime.now(timezone.utc) + timedelta(days=100)
 
-# Uncomment these lines if you do want to CFP and grant applications to be closed
+# Uncomment these lines if you do want to CFP etc to be closed
 # CFP_CLOSE_AT = datetime.now(timezone.utc) - timedelta(days=100)
 # GRANT_APPLICATIONS_CLOSE_AT = datetime.now(timezone.utc) - timedelta(days=100)
+# TICKET_SALES_CLOSE_AT = datetime.now(timezone.utc) - timedelta(days=100)
 
 CFP_DEADLINE_BYPASS_TOKEN = os.environ.get('CFP_DEADLINE_BYPASS_TOKEN')
 GRANT_APPLICATIONS_DEADLINE_BYPASS_TOKEN = os.environ.get('GRANT_APPLICATIONS_DEADLINE_BYPASS_TOKEN')
+TICKET_DEADLINE_BYPASS_TOKEN = os.environ.get('TICKET_DEADLINE_BYPASS_TOKEN')
 
 # Email address to send mail from
 

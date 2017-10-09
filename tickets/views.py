@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -65,6 +67,11 @@ def new_order(request):
                 return redirect(order)
 
     else:
+        if datetime.now(timezone.utc) > settings.TICKET_SALES_CLOSE_AT:
+            if request.GET.get('deadline-bypass-token', '') != settings.TICKET_DEADLINE_BYPASS_TOKEN:
+                messages.warning(request, "We're sorry, ticket sales have closed")
+                return redirect('index')
+
         form = TicketForm()
         self_form = TicketForSelfForm()
         others_formset = TicketForOthersFormSet()
