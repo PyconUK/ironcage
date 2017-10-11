@@ -110,7 +110,7 @@ subject "This is a test".
         for recipient in recipients.order_by('id'):
             context = {'recipient': recipient}
             body = render(template, context)
-            qualified_subject = f'[{recipient.user_id}] {subject}'
+            qualified_subject = f'{subject} | {recipient.user_id}'
             logger.info('sending email', recipient=recipient.id, email_addr=recipient.email_addr)
             send_mail(
                 qualified_subject,
