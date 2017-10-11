@@ -31,6 +31,8 @@ class Proposal(models.Model):
     state = models.CharField(max_length=40, blank=True)
     track = models.CharField(max_length=40, blank=True)
     special_reply_required = models.BooleanField(default=False)
+    scheduled_room = models.CharField(max_length=40, blank=True)
+    scheduled_time = models.DateTimeField(null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
