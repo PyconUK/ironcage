@@ -331,6 +331,8 @@ class CFPPropsalsMixin:
         'Mentor?',
         'Amount requested',
         'Special reply required',
+        'Room',
+        'Time',
     ]
 
     def presenter(self, proposal):
@@ -356,6 +358,8 @@ class CFPPropsalsMixin:
             '✔' if proposal.would_like_mentor else '✘',
             amount_requested,
             '✔' if proposal.special_reply_required else '✘',
+            proposal.scheduled_room,
+            proposal.scheduled_time,
         ]
 
 
