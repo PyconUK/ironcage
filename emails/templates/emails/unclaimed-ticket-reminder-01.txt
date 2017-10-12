@@ -184,8 +184,8 @@ all of our sponsors:
 * Pluralsight (https://www.pluralsight.com/)
 * PythonAnywhere (https://www.pythonanywhere.com/)
 * Reckon Digital (https://reckondigital.com/)
-* Micro:bit Foundation (http://microbit.org/)
 * Raspberry Pi Foundation (https://www.raspberrypi.org/)
+* Micro:bit Foundation (http://microbit.org/)
 
 You can find out more about our sponsors on the website:
 
