@@ -1,0 +1,198 @@
+Hi {{ recipient.name }},
+
+With two weeks to go until PyCon UK opens, we wanted to tell you a bit more
+about what's happening at the conference.
+
+You can view the details of your ticket at:
+
+    https://hq.pyconuk.org/tickets/tickets/{{ recipient.ticket.ticket_id }}/
+
+~~~
+
+Timetable
+---------
+
+Each day, the registration desk opens at 08:00.  You only need to register
+once!  We're expecting a lot of people to turn up on Thursday morning, so
+please arrive as soon after 08:00 as you can.  We'll be providing tea and
+coffee in the Lower Hall during the registration period.
+
+Each day's activities begin at 09:00 in the Assembly Room.  From Thursday to
+Sunday, there are talks and workshops scheduled until 18:30.  On Monday, we
+will finish at 16:00.
+
+You can find a full schedule on our website:
+
+    http://2017.pyconuk.org/schedule/
+
+
+Accessibility, childcare, and dietary requirements
+--------------------------------------------------
+
+If you have any special accessibility, childcare, or dietary requirements,
+please let us know by completing your profile in our ticketing system:
+
+    https://hq.pyconuk.org/profile/edit/
+
+(In fact, it'd be helpful if you could tell us if you don't have any special
+requirements too!)
+
+
+Children's day
+--------------
+
+There are still a handful of tickets left for the children's day on Saturday
+28th:
+
+    https://hq.pyconuk.org/children/orders/new/
+
+
+Conference dinner
+-----------------
+
+There will be a conference dinner at City Hall on the Friday of the conference.
+Tickets will go on sale at 09:00 on Monday 16th, and we expect them to sell
+out.
+
+
+Poster session
+--------------
+
+We're running a poster session over Saturday lunchtime, and we still have a few
+spaces for posters.
+
+If you'd like to exhibit a poster, please let us know.
+
+
+Jobs fair
+---------
+
+On Sunday lunchtime, there'll be the chance to meet with companies who are
+looking to recruit Python programmers.  If you're looking for work, or might be
+soon, you should bring along some copies of your CV.
+
+
+Lightning talks
+---------------
+
+Each evening, we're hosting an hour-long lightning talk session.  This is a
+chance to give a five-minute talk to the whole conference on any topic.  You'll
+be able to sign up at the registration desk from Thursday lunchtime onwards,
+and slots will be allocated on a first-come first-served basis.
+
+
+Sprints
+-------
+
+Monday is a day of code sprints, and is a chance to work alongside other
+programmers on open source projects.
+
+Sprints are organised on an ad-hoc basis.  If you'd like to run one, you just
+need to turn up on the Monday!
+
+Read more:
+
+    http://2017.pyconuk.org/sessions/workshops/sprint/
+
+
+Volunteering
+------------
+
+We're looking for volunteers to help out during the conference with the
+following:
+
+* Setting up the venue at 06:00 on Thursday †
+* Chairing sessions
+* Videoing talks
+* Staffing the reception desk
+
+† There's a wedding the day before, so we've got an early start -- if you
+volunteer for this we'll give you breakfast!
+
+If you'd like to volunteer, please answer the relevant questions on your
+profile:
+
+    https://hq.pyconuk.org/profile/edit/
+
+
+Code of Conduct
+---------------
+
+PyCon UK has a code of conduct, and we expect all attendees to honour it:
+
+    http://2017.pyconuk.org/code-of-conduct/
+
+Should you experience harassment, notice that someone else is being harassed,
+or have any other concerns, please contact a member of the conference
+committee:
+
+    http://2017.pyconuk.org/code-of-conduct/reporting-harassment/
+
+
+John Pinner Award
+-----------------
+
+This year, we have instituted the John Pinner Awards to celebrate those who
+volunteer their services to the Python Community.
+
+John founded and organised PyCon UK until he passed away in 2015.  He was the
+personification of a Pythonista who gave time, code and effort back to the
+community. He was a role model, mentor and teacher who is sorely missed by
+many.
+
+If you would like to nominate somebody to receive an award, please do so here:
+
+    http://2017.pyconuk.org/pinner-award/
+
+
+Conference swag
+---------------
+
+Instead of giving them away as we have done in previous years, we're selling
+mugs, t-shirts, and more, through our online shop:
+
+    https://shop.spreadshirt.co.uk/pyconuk/
+
+All proceeds will go towards the financial assistance budget for 2018.
+
+If you want your swag to arrive in time for the start of the conference, you
+should order now!
+
+
+Sponsors
+--------
+
+Finally, the conference really couldn't happen without the generous support of
+all of our sponsors:
+
+* J. P. Morgan (https://www.jpmorgan.com)
+* EDITED (https://edited.com/)
+* Osirium (https://osirium.com/)
+* Anvil (https://anvil.works/)
+* BJSS (http://www.bjss.com/)
+* Cambridge Medical Robotics (http://cmedrobotics.com/)
+* Cambridge Spark (https://cambridgespark.com/)
+* Codethink (https://www.codethink.co.uk/)
+* Data Reply (https://www.datareply.co.uk/)
+* Indeed (https://www.indeed.co.uk/)
+* Mango Solutions (https://www.mango-solutions.com/)
+* MOO (https://www.moo.com/uk/)
+* O'Reilly (https://www.oreilly.com/)
+* Pluralsight (https://www.pluralsight.com/)
+* PythonAnywhere (https://www.pythonanywhere.com/)
+* Reckon Digital (https://reckondigital.com/)
+* Micro:bit Foundation (http://microbit.org/)
+* Raspberry Pi Foundation (https://www.raspberrypi.org/)
+
+You can find out more about our sponsors on the website:
+
+    http://2017.pyconuk.org/sponsors/
+
+They're all important members of the community, and they'll be exhibiting
+during the conference.  Please go and say "hi" and "thanks" to them!
+
+~~~
+
+We're looking forward to seeing you in Cardiff very soon!
+
+~ The PyCon UK Committee
