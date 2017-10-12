@@ -21,6 +21,8 @@ def accounts_user(request, user_id):
     user = User.objects.get_by_user_id_or_404(user_id)
     context = {
         'user': user,
+        'ticket': user.get_ticket(),
+        'orders': user.orders.all(),
     }
     return render(request, 'reports/user.html', context)
 

@@ -5,6 +5,20 @@
   <div class="col-md-8">
     <h2>{{ user.name }}</h2>
 
+    {% if ticket %}
+    <h3>Ticket {{ ticket.ticket_id }}</h3>
+    {% include 'tickets/_ticket_details.html' %}
+    {% endif %}
+
+    {% if orders %}
+    <h3>Order(s)</h3>
+
+    {% for order in orders %}
+    <h4>Order {{ order.order_id }}</h4>
+    {% include 'tickets/_order_details.html' %}
+    {% endfor %}
+
+    <h3>Profile</h3>
     {% include 'accounts/_profile_details.html' %}
   </div>
 </div>
