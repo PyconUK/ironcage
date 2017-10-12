@@ -77,6 +77,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     dietary_reqs = models.TextField(null=True, blank=True)
     is_ukpa_member = models.NullBooleanField(null=True, blank=True)
     has_booked_hotel = models.NullBooleanField()
+    volunteer_setup = models.NullBooleanField()
+    volunteer_session_chair = models.NullBooleanField()
+    volunteer_videoer = models.NullBooleanField()
+    volunteer_reg_desk = models.NullBooleanField()
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -172,3 +176,15 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def one_proposal_accepted(self):
         return len(self.accepted_proposals()) == 1
+
+    def things_volunteered_for(self):
+        things = []
+        if self.volunteer_setup:
+            things.append('Help with setup at 6am on Thursday morning')
+        if self.volunteer_session_chair:
+            things.append('Chair a session')
+        if self.volunteer_videoer:
+            things.append('Help with videoing talks')
+        if self.volunteer_reg_desk:
+            things.append('Staff the registration desk')
+        return things

@@ -11,31 +11,12 @@
         <h3>Basic information</h3>
         <table class="table">
           <tr>
-            <th class="col-md-4">Name</th>
+            <th class="col-md-4">Name (this will appear on your conference badge)</th>
             <td>{% bootstrap_field form.name layout='inline' %}</td>
           </tr>
           <tr>
             <th class="col-md-4">Email address</th>
             <td>{% bootstrap_field form.email_addr layout='inline' %}</td>
-          </tr>
-        </table>
-      </div>
-
-      <div>
-        <h3>Accommodation</h3>
-        <table class="table">
-          <tr>
-            <th class="col-md-4">Have you arranged accommodation for the conference yet?</th>
-            <td>
-              <div class="btn-group" data-toggle="buttons">
-                <label class="btn btn-default{% if form.has_booked_hotel.value == True %} active{% endif %}">
-                  <input type="radio" name="has_booked_hotel" value="2" {% if form.has_booked_hotel.value == True %} checked{% endif %}>Yes
-                </label>
-                <label class="btn btn-default{% if form.has_booked_hotel.value == False %} active{% endif %}">
-                  <input type="radio" name="has_booked_hotel" value="3" {% if form.has_booked_hotel.value == False %} checked{% endif %}>No
-                </label>
-              </div>
-            </td>
           </tr>
         </table>
       </div>
@@ -85,6 +66,68 @@
                 </label>
               </div>
               {% bootstrap_field form.dietary_reqs layout='inline' placeholder='Please tell us more' %}
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <div>
+        <h3>Volunteering</h3>
+        <p>Are you able to help us with the following?</p>
+        <table class="table">
+          <tr>
+            <th class="col-md-4">Setting up the venue at 6am on Thursday</th>
+            <td>
+              <div class="btn-group" data-toggle="buttons">
+                <label class="btn btn-default{% if form.volunteer_setup.value == True %} active{% endif %}">
+                  <input type="radio" name="volunteer_setup" value="2" {% if form.volunteer_setup.value == True %} checked{% endif %}>Yes
+                </label>
+                <label class="btn btn-default{% if form.volunteer_setup.value == False %} active{% endif %}">
+                  <input type="radio" name="volunteer_setup" value="3" {% if form.volunteer_setup.value == False %} checked{% endif %}>No
+                </label>
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <th class="col-md-4">Chairing a session</th>
+            <td>
+              <div class="btn-group" data-toggle="buttons">
+                <label class="btn btn-default{% if form.volunteer_session_chair.value == True %} active{% endif %}">
+                  <input type="radio" name="volunteer_session_chair" value="2" {% if form.volunteer_session_chair.value == True %} checked{% endif %}>Yes
+                </label>
+                <label class="btn btn-default{% if form.volunteer_session_chair.value == False %} active{% endif %}">
+                  <input type="radio" name="volunteer_session_chair" value="3" {% if form.volunteer_session_chair.value == False %} checked{% endif %}>No
+                </label>
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <th class="col-md-4">Videoing talks</th>
+            <td>
+              <div class="btn-group" data-toggle="buttons">
+                <label class="btn btn-default{% if form.volunteer_videoer.value == True %} active{% endif %}">
+                  <input type="radio" name="volunteer_videoer" value="2" {% if form.volunteer_videoer.value == True %} checked{% endif %}>Yes
+                </label>
+                <label class="btn btn-default{% if form.volunteer_videoer.value == False %} active{% endif %}">
+                  <input type="radio" name="volunteer_videoer" value="3" {% if form.volunteer_videoer.value == False %} checked{% endif %}>No
+                </label>
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <th class="col-md-4">Staffing the registration desk</th>
+            <td>
+              <div class="btn-group" data-toggle="buttons">
+                <label class="btn btn-default{% if form.volunteer_reg_desk.value == True %} active{% endif %}">
+                  <input type="radio" name="volunteer_reg_desk" value="2" {% if form.volunteer_videoer.value == True %} checked{% endif %}>Yes
+                </label>
+                <label class="btn btn-default{% if form.volunteer_reg_desk.value == False %} active{% endif %}">
+                  <input type="radio" name="volunteer_reg_desk" value="3" {% if form.volunteer_videoer.value == False %} checked{% endif %}>No
+                </label>
+              </div>
             </td>
           </tr>
         </table>

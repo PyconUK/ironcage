@@ -59,7 +59,10 @@ class ProfileForm(forms.ModelForm):
         fields = [
             'name',
             'email_addr',
-            'has_booked_hotel',
+            'volunteer_setup',
+            'volunteer_session_chair',
+            'volunteer_videoer',
+            'volunteer_reg_desk',
             'accessibility_reqs_yn',
             'accessibility_reqs',
             'childcare_reqs_yn',
