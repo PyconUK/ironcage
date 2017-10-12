@@ -17,6 +17,7 @@
     <h4>Order {{ order.order_id }}</h4>
     {% include 'tickets/_order_details.html' %}
     {% endfor %}
+    {% endif %}
 
     <h3>Profile</h3>
     {% include 'accounts/_profile_details.html' %}
