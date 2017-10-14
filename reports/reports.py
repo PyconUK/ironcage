@@ -536,12 +536,8 @@ class GrantApplicationsWithFundsOffered(ReportView, GrantApplicationsMixin):
         return Application.objects.filter(amount_offered__gt=0).select_related('applicant').order_by('amount_offered').all()
 
 
-class PeopleReport(ReportView):
-    title = 'People'
+class PeopleMixin:
     headings = ['ID', 'Name', 'Email address']
-
-    def get_queryset(self):
-        return User.objects.order_by('name').all()
 
     def presenter(self, user):
         link = {
@@ -554,6 +550,20 @@ class PeopleReport(ReportView):
             user.name,
             user.email_addr,
         ]
+
+
+class PeopleReport(ReportView, PeopleMixin):
+    title = 'People'
+
+    def get_queryset(self):
+        return User.objects.order_by('name').all()
+
+
+class ContributorReport(ReportView):
+    title = 'Contributors'
+
+    def get_queryset(self):
+        return User.objects.filter(is_contributor=True).order_by('name')
 
 
 class AccommodationReport(ReportView):
@@ -659,6 +669,7 @@ reports = [
     GrantApplications,
     GrantApplicationsWithFundsOffered,
     PeopleReport,
+    ContributorReport,
     AccommodationReport,
     AccommodationBookingsReport,
     UKPAReport,

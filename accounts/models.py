@@ -81,6 +81,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     volunteer_session_chair = models.NullBooleanField()
     volunteer_videoer = models.NullBooleanField()
     volunteer_reg_desk = models.NullBooleanField()
+    is_contributor = models.BooleanField(default=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
