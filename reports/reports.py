@@ -559,7 +559,7 @@ class PeopleReport(ReportView, PeopleMixin):
         return User.objects.order_by('name').all()
 
 
-class ContributorReport(ReportView):
+class ContributorReport(ReportView, PeopleMixin):
     title = 'Contributors'
 
     def get_queryset(self):
