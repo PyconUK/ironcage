@@ -43,3 +43,7 @@ def error(request):
 def log(request):
     logger.info('Test log')
     return redirect('index')
+
+
+def maintenance_mode(request):
+    return render(request, 'ironcage/maintenance_mode.html')
