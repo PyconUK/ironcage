@@ -122,11 +122,11 @@ class ConferenceDinnerTests(TestCase):
     def test_get_when_contributer_not_booked_for_any_dinner(self):
         rsp = self.client.get(self.url, follow=True)
         self.assertRedirects(rsp, f'/dinners/contributors-dinner/')
-        self.assertContains(rsp, 'Tickets to the conference dinner cost &pound;30')
 
     def test_get_when_contributer_booked_for_contributors_dinner(self):
         factories.create_contributors_booking(self.alice)
         rsp = self.client.get(self.url, follow=True)
+        self.assertContains(rsp, 'Tickets to the conference dinner cost &pound;30')
         self.assertContains(rsp, 'Place your order below')
         self.assertContains(rsp, '<form action="/dinners/conference-dinner/payment/')
 
