@@ -1,0 +1,65 @@
+{% extends 'ironcage/base.html' %}
+
+{% block content %}
+{% if contributors_dinner_seats_left and conference_dinner_seats_left %}
+<p>
+  As a contributor to the conference, we'd like to invite you to the contributors' dinner at <a href="http://theclinkcharity.org/the-clink-restaurants/cardiff-wales/">the Clink</a> on Sunday night.
+</p>
+
+<p>
+  However, we know that a lot of people are heading home on Sunday evening, so if you can't make it, we'd like to offer you a ticket to the conference dinner at City Hall on Friday night instead.
+</p>
+{% elif contributors_dinner_seats_left %}
+<p>
+  As a contributor to the conference, we'd like to invite you to the contributors' dinner at <a href="http://theclinkcharity.org/the-clink-restaurants/cardiff-wales/">the Clink</a> on Sunday night.
+</p>
+{% elif conference_dinner_seats_left %}
+<p>
+  As a contributor to the conference, we'd like to invite you to the conference dinner at at City Hall on Friday night.
+</p>
+
+<p>
+  However, there are no seats left at the contributors' dinner, so we'd like to invite offer you a ticket to the conference dinner on Friday night instead.
+</p>
+{% else %}
+<p>Unfortunately, there are no tickets left to either the contributors' dinner or the conference dinner.  Please get in touch with the committee and we'll try to squeeze you in!</p>
+{% endif %}
+
+<form method="post" class="form">
+  {% csrf_token %}
+
+  {% if contributors_dinner_seats_left and conference_dinner_seats_left %}
+  <div class="panel panel-default">
+    <div class="panel-heading">Choose your dinner</div>
+    <div class="panel-body">
+      <div class="row">
+        <div class="col-md-4">
+          <label>Which dinner would you like to come to?</label>
+        </div>
+        <div class="col-md-8">
+          <div class="btn-group" data-toggle="buttons">
+            {{ which_dinner_form.which_dinner }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% include './_dinner_form.html' with form=contributors_dinner_form id='contributors-dinner-form' %}
+  {% include './_dinner_form.html' with form=conference_dinner_form id='conference-dinner-form' %}
+
+  <input type="submit" value="Place your order" id="dinner-submit" class="btn btn-primary">
+
+  {% elif contributors_dinner_seats_left %}
+  {% include './_dinner_form.html' with form=contributors_dinner_form %}
+  <input type="hidden" name="which_dinner" value="contributors">
+  <input type="submit" value="Place your order" class="btn btn-primary">
+
+  {% elif conference_dinner_seats_left %}
+  {% include './_dinner_form.html' with form=conference_dinner_form %}
+  <input type="hidden" name="which_dinner" value="conference">
+  <input type="submit" value="Place your order" class="btn btn-primary">
+
+  {% endif %}
+</form>
+{% endblock %}

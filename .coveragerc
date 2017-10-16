@@ -1,5 +1,5 @@
 [run]
-source = ironcage,accounts,cfp,grants,reports,tickets
+source = ironcage,accommodation,accounts,cfp,children,dinners,emails,grants,reports,tickets,ukpa
 omit = *tests*,*migrations*,ironcage/wsgi.py
 
 [report]

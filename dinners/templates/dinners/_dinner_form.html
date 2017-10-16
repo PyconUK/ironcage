@@ -1,0 +1,37 @@
+{% load bootstrap3 %}
+
+<div class="panel panel-default" id="{{ id }}">
+  <div class="panel-heading">Choose from the menu</div>
+  <div class="panel-body">
+    <div class="row">
+      <div class="col-md-2">
+        <label>Starter</label>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group">
+          {% bootstrap_field form.starter layout='inline' %}
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-2">
+        <label>Main</label>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group">
+          {% bootstrap_field form.main layout='inline' %}
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-2">
+        <label>Pudding</label>
+      </div>
+      <div class="col-md-4">
+        {% bootstrap_field form.pudding layout='inline' %}
+      </div>
+    </div>
+  </div>
+</div>
