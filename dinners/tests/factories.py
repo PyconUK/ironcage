@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+
 from accounts.tests.factories import create_user
 
 from dinners.models import Booking
@@ -32,6 +34,8 @@ def create_paid_booking(user=None):
         starter=menu['starter'][0][0],
         main=menu['main'][0][0],
         pudding=menu['pudding'][0][0],
+        stripe_charge_id='ch_abcdefghijklmnopqurstuvw',
+        stripe_charge_created=datetime.fromtimestamp(1495355163, tz=timezone.utc)
     )
 
 

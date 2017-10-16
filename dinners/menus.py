@@ -1,6 +1,7 @@
 MENUS = {
     'contributors': {
         'capacity': 70,
+        'description': "contributors' dinner on Sunday at the Clink",
         'starter': [
             ('soup', 'Soup of the Day, sour dough bread (V)'),
             ('bruschetta', 'Fig & gorgonzola bruschetta, fennel slaw, candied walnuts (V)'),
@@ -19,6 +20,7 @@ MENUS = {
     },
     'conference': {
         'capacity': 290,
+        'description': 'conference dinner on Friday at City Hall',
         'starter': [
             ('tomato-soup', 'Roasted tomato & garlic soup with crispy Carmarthen ham'),
             ('cauliflower-soup', 'Cream of cauliflower & Perl Las soup with thyme croutons (V)'),

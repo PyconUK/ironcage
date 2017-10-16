@@ -10,6 +10,7 @@ from django.shortcuts import redirect, render
 from ironcage.stripe_integration import create_charge
 
 from .forms import ConferenceDinnerForm, ContributorsDinnerForm, WhichDinnerForm
+from .mailer import send_booking_confirmation_mail
 from .models import Booking, seats_left
 
 
@@ -60,13 +61,14 @@ def _contributors_dinner_unbooked(request):
                 assert False
 
             if menu_form.is_valid():
-                Booking.objects.create(
+                booking = Booking.objects.create(
                     guest=request.user,
                     venue=which_dinner,
                     starter=menu_form.cleaned_data['starter'],
                     main=menu_form.cleaned_data['main'],
                     pudding=menu_form.cleaned_data['pudding'],
                 )
+                send_booking_confirmation_mail(booking)
                 return redirect('dinners:contributors_dinner')
 
     context = {
@@ -141,6 +143,8 @@ def conference_dinner_payment(request):
         booking.stripe_charge_created = datetime.fromtimestamp(charge.created, tz=timezone.utc)
         booking.save()
 
+        send_booking_confirmation_mail(booking)
+
         messages.info(request, 'Payment succeeded')
         return redirect('dinners:conference_dinner')
 
@@ -152,3 +156,20 @@ def conference_dinner_payment(request):
     }
 
     return render(request, 'dinners/conference_dinner_payment.html', context)
+
+
+@login_required
+def conference_dinner_receipt(request):
+    booking = request.user.get_conference_dinner_booking()
+    if not booking:
+        messages.warning(request, "You haven't booked for the conference dinner")
+        return redirect('dinners:conference_dinner')
+
+    if booking.stripe_charge_id is None:
+        return redirect('dinners:conference_dinner')
+
+    context = {
+        'booking': booking,
+    }
+
+    return render(request, 'dinners/conference_dinner_receipt.html', context)

@@ -1,3 +1,4 @@
+from django.core import mail
 from django.test import TestCase
 from django.utils.http import urlquote
 
@@ -91,6 +92,14 @@ class ContributorsDinnerTests(TestCase):
         self.assertContains(rsp, 'Main: Broad bean risotto')
         self.assertContains(rsp, 'Pudding: Dark chocolate and cardamom cheesecake')
         self.assertRedirects(rsp, self.url)
+
+        self.assertEqual(len(mail.outbox), 1)
+        email = mail.outbox[0]
+        self.assertIn(
+            "You're coming to the contributors' dinner on Sunday at the Clink",
+            email.body
+        )
+        self.assertNotIn('You can download a receipt', email.body)
 
     def test_post_when_no_seats_available(self):
         factories.create_all_bookings('contributors')
@@ -204,6 +213,15 @@ class ConferenceDinnerPaymentTests(TestCase):
         self.assertContains(rsp, 'Payment succeeded')
         self.assertRedirects(rsp, '/dinners/conference-dinner/')
 
+        self.assertEqual(len(mail.outbox), 1)
+        email = mail.outbox[0]
+        self.assertIn(
+            "You're coming to the conference dinner on Friday at City Hall",
+            email.body
+        )
+        self.assertIn('You can download a receipt', email.body)
+        self.assertIn('/dinners/conference-dinner/receipt/', email.body)
+
     def test_post_stripe_failure(self):
         with utils.patched_charge_creation_failure():
             rsp = self.client.post(
@@ -221,3 +239,39 @@ class ConferenceDinnerPaymentTests(TestCase):
         self.assertContains(rsp, 'Unfortunately, there are no tickets left')
         self.assertContains(rsp, 'Sorry, there are now no seats left for the conference dinner')
         self.assertNotContains(rsp, MENUS['conference']['main'][0][1])
+
+
+class ConferenceDinnerReciptTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.alice = factories.create_user(is_contributor=True)
+
+    def setUp(self):
+        self.client.force_login(self.alice)
+        self.url = '/dinners/conference-dinner/receipt/'
+
+    def test_get_when_not_logged_in(self):
+        self.client.logout()
+        rsp = self.client.get(self.url, follow=True)
+        self.assertRedirects(rsp, f'/accounts/login/?next={urlquote(self.url)}')
+
+    def test_get_when_not_booked(self):
+        rsp = self.client.get(self.url, follow=True)
+        self.assertRedirects(rsp, f'/dinners/contributors-dinner/')
+        self.assertContains(rsp, 'You haven&#39;t booked for the conference dinner')
+
+    def test_get_when_booked_for_contributors_dinner(self):
+        factories.create_contributors_booking(self.alice)
+        rsp = self.client.get(self.url, follow=True)
+        self.assertRedirects(rsp, f'/dinners/conference-dinner/')
+        self.assertContains(rsp, 'You haven&#39;t booked for the conference dinner')
+
+    def test_get_when_booked_as_contributor(self):
+        factories.create_contributors_booking(self.alice, venue='conference')
+        rsp = self.client.get(self.url, follow=True)
+        self.assertRedirects(rsp, f'/dinners/conference-dinner/')
+
+    def test_get_when_booked(self):
+        factories.create_paid_booking(self.alice)
+        rsp = self.client.get(self.url, follow=True)
+        self.assertContains(rsp, 'Receipt for PyCon UK 2017 conference dinner')

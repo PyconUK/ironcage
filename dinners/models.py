@@ -17,6 +17,9 @@ class Booking(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def dinner_description(self):
+        return MENUS[self.venue]['description']
+
     def starter_descr(self):
         return dict(MENUS[self.venue]['starter'])[self.starter]
 
@@ -25,6 +28,9 @@ class Booking(models.Model):
 
     def pudding_descr(self):
         return dict(MENUS[self.venue]['pudding'])[self.pudding]
+
+    def paid_booking(self):
+        return bool(self.stripe_charge_id)
 
 
 def seats_left(venue):
