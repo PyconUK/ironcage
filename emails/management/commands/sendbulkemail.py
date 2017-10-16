@@ -51,6 +51,8 @@ subject "This is a test".
             proposals__state='accepted',
             ticket__isnull=True
         ).distinct(),
+        'contributors': User.objects.filter(is_contributor=True),
+        'ticket-holders-who-are-not-contributors': User.objects.exclude(ticket=None).filter(is_contributor=False),
     }
 
     def create_parser(self, *args, **kwargs):

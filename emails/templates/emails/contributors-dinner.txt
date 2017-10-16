@@ -1,0 +1,13 @@
+Hi {{ recipient.name }},
+
+To thank you for your contributions to the conference, we'd like to invite you
+to the contributors' dinner at the Clink on Sunday evening.
+
+If you can't make the Sunday evening, then we'd like to invite you to the
+conference dinner on the Friday evening instead.
+
+Please click here to respond to the invitation:
+
+    https://hq.pyconuk.org/dinners/contributors-dinner/
+
+~ The PyCon UK Committee

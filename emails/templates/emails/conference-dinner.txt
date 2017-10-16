@@ -1,0 +1,15 @@
+Hi {{ recipient.name }},
+
+Tickets to the conference dinner are now available:
+
+    https://hq.pyconuk.org/dinners/conference-dinner/
+
+(Sorry about the low quality of the web design!)
+
+The dinner will be at 19:30 on Friday night in the Lower Hall at City Hall, and
+tickets cost £30 for a three-course meal.  Alcoholic drinks are not included in
+the ticket price, but there will be a bar.
+
+Places are limited, so please book as soon as you can!
+
+~ The PyCon UK Committee
