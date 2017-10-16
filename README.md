@@ -5,11 +5,6 @@
 This is a web application for managing ticket sales, attendee preferences,
 the CFP, financial applications, and possibly other aspects of organising PyCon UK.
 
-We have not committed to using this for the 2017 conference,
-and it is not too late to re-use the 2016 system of Tito and Google Forms.
-
-At the moment, only a ticket-purchasing workflow has been sketched out.
-
 ## How do I run it?
 
 This is a standard Django project.
