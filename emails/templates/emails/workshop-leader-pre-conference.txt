@@ -1,0 +1,63 @@
+Hi {{ recipient.name }},
+
+This email contains details about giving your workshop at PyCon UK.
+
+
+Schedule
+--------
+
+You should by now have seen the conference schedule, which is on the
+website[0].  Please make sure that you know when and where your workshop is!
+
+The schedule won't change now without a very good reason, and if we do have to
+move your session, we'll let you know.
+
+Giving your workshop
+--------------------
+
+You'll be responsible for starting your workshop, but somebody from the
+committee will look in on you towards the start of your session to make sure
+everything's OK.
+
+The room will be laid out with chairs around round tables, with a VGA projector
+and screen.
+
+Most workshops are scheduled over breaks.  Please let your attendees go and
+grab a coffee!
+
+You should not assume that the conference wifi will be good enough for all
+attendees to be able to download resources from the internet, so you should
+update the workshop description on the website to include any installation
+instructions.  To do this, make a pull request against the website repo[1], or
+send us an email.
+
+
+Green room
+----------
+
+Room 136 will be available for speakers, and stocked with water and hot drinks
+throughout the conference.  Please make use of it if you need somewhere to
+prepare.
+
+
+Contributors' dinner
+--------------------
+
+You should already have received an invitation to the contributors' dinner, but
+if not, please tell us whether you're coming via the ticketing system[2].
+
+
+Finally...
+----------
+
+If you have any questions or concerns, please let us know by replying to this email!
+
+And thank you, on behalf of the whole Python community in the UK, for the work
+you're doing to make the conference a success.
+
+~ The PyCon UK Committee
+
+
+[0] http://2017.pyconuk.org/schedule/
+[1] https://github.com/PyconUK/2017.pyconuk.org/
+[2] https://hq.pyconuk.org/dinners/contributors-dinner/

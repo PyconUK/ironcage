@@ -1,0 +1,17 @@
+Hi {{ recipient.name }},
+
+This email contains details about giving your poster at PyCon UK.
+
+The poster session will take place outside the Lower Hall on Saturday lunchtime.
+If you are exhibiting a poster, please come to the registration desk with your
+poster during the morning break on Saturday.
+
+You should feel free to leave your poster, skip any queues, and grab your own
+lunch during the poster session!
+
+If you have any questions or concerns, please let us know by replying to this email!
+
+And thank you, on behalf of the whole Python community in the UK, for the work
+you're doing to make the conference a success.
+
+~ The PyCon UK Committee

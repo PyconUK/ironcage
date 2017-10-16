@@ -45,12 +45,29 @@ subject "This is a test".
             grant_application__amount_offered__gt=0,
         ),
         'speakers': User.objects.filter(
-            proposals__state='plan to accept',
+            proposals__state='accepted',
         ).distinct(),
         'speakers-without-tickets': User.objects.filter(
             proposals__state='accepted',
             ticket__isnull=True
         ).distinct(),
+        'talk-speakers': User.objects.filter(
+            proposals__state='accepted',
+            proposals__session_type='talk',
+        ).distinct(),
+        'workshop-speakers': User.objects.filter(
+            proposals__state='accepted',
+            proposals__session_type='workshop',
+        ).distinct(),
+        'poster-speakers': User.objects.filter(
+            proposals__state='accepted',
+            proposals__session_type='workshop',
+        ).distinct(),
+        'accepted-speakers-seeking-mentors': User.objects.filter(
+            proposals__state='accepted',
+            proposals__would_like_mentor=True,
+        ).distinct(),
+
         'contributors': User.objects.filter(is_contributor=True),
         'ticket-holders-who-are-not-contributors': User.objects.exclude(ticket=None).filter(is_contributor=False),
     }

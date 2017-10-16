@@ -1,0 +1,70 @@
+Hi {{ recipient.name }},
+
+This email contains details about giving your talk at PyCon UK.
+
+
+Schedule
+--------
+
+You should by now have seen the conference schedule, which is on the
+website[0].  Please make sure that you know when and where your talk is!
+
+The schedule won't change now without a very good reason, and if we do have to
+move your session, we'll let you know.
+
+
+Giving your talk
+----------------
+
+You'll have a session chair who will introduce you, help you keep to time, and
+help you with questions (if you choose to take them).  We're still arranging
+chairs, but we'll introduce you to your chair by email beforehand.
+
+You will have twenty five minutes for your talk, which may include questions if
+you would like to take them.  
+
+We will be filming almost all the talks, and will put the videos on YouTube.
+If you would not like your talk to be filmed, please let us know.
+
+Speakers in the Assembly Room, Ferrier Hall, and Room D will have access to an
+HDMI projecter.  All other speakers will have a VGA projector.
+
+If you're speaking in the Assembly Room, your talk will be transcribed and
+displayed on screens around the room.  The stenographers (who are used to local
+council meetings and company AGMs!) have requested that we tell them in advance
+about any unusual words that may come up.  If you'll be using any techincal
+terms, please let us know and we'll pass them on.
+
+If you would like to make any changes to the talk description on our website,
+either make a pull request against the website repo[1] , or drop us an email.
+
+
+Green room
+----------
+
+Room 136 will be available for speakers, and stocked with water and hot drinks
+throughout the conference.  Please make use of it if you need somewhere to
+prepare.
+
+
+Contributors' dinner
+--------------------
+
+You should already have received an invitation to the contributors' dinner, but
+if not, please tell us whether you're coming via the ticketing system[2].
+
+
+Finally...
+----------
+
+If you have any questions or concerns, please let us know by replying to this email!
+
+And thank you, on behalf of the whole Python community in the UK, for the work
+you're doing to make the conference a success.
+
+~ The PyCon UK Committee
+
+
+[0] http://2017.pyconuk.org/schedule/
+[1] https://github.com/PyconUK/2017.pyconuk.org/
+[2] https://hq.pyconuk.org/dinners/contributors-dinner/

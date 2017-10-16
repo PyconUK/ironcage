@@ -1,0 +1,11 @@
+Hi {{ recipient.name }},
+
+When you submitted your proposal to PyCon UK, you requested a mentor.
+Unfortunately, we haven't had the capacity to organise a proper mentorship
+programme this year, and we're sorry about that.
+
+However if you'd like somebody to look over your slides or discuss something
+else relating to your session, please reply to this email and we'll put you in
+touch with somebody who can help.
+
+~ The PyCon UK Committee
