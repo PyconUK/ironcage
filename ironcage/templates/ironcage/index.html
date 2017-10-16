@@ -72,6 +72,40 @@
 <li><a href="{% url 'ukpa:nomination' nomination.nomination_id %}">
 View your nomination for election as a UKPA Trustee</a></li>
 {% endif %}
+
+{% if is_contributor %}
+{% if free_dinner_booking %}
+{% if free_dinner_booking.venue == 'conference' %}
+<li><a href="{% url 'dinners:conference_dinner' %}">
+View your conference dinner booking
+</a></li>
+{% else %}
+<li><a href="{% url 'dinners:contributors_dinner' %}">
+View your contributors' dinner booking
+</a></li>
+<li><a href="{% url 'dinners:conference_dinner' %}">
+{% if conference_dinner_booking %}
+View your conference dinner booking
+{% else %}
+Make a booking for the conference dinner
+{% endif %}
+</a></li>
+{% endif %}
+{% else %}
+<li><a href="{% url 'dinners:contributors_dinner' %}">
+Make a booking for the contributors' dinner
+</a></li>
+{% endif %}
+{% else %}
+<li><a href="{% url 'dinners:conference_dinner' %}">
+{% if conference_dinner_booking %}
+View your conference dinner booking
+{% else %}
+Make a booking for the conference dinner
+{% endif %}
+</a></li>
+{% endif %}
+
 </ul>
 
 {% if ticket %}

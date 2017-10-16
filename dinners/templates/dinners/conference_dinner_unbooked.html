@@ -1,0 +1,18 @@
+{% extends 'ironcage/base.html' %}
+
+{% block content %}
+
+{% if seats_left %}
+<p>Tickets to the conference dinner cost &pound;{{ amount_pounds }}.</p>
+
+<p>Place your order below.</p>
+
+<form action="{% url 'dinners:conference_dinner_payment' %}" class="form">
+  {% include './_dinner_form.html %}
+
+  <input type="submit" value="Place your order" class="btn btn-primary">
+</form>
+{% else %}
+<p>Unfortunately, there are no tickets left to the conference dinner.</p>
+{% endif %}
+{% endblock %}

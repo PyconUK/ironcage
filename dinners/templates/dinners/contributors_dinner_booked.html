@@ -1,0 +1,21 @@
+{% extends 'ironcage/base.html' %}
+
+{% block content %}
+<div class="row">
+  {% if booking.venue == 'contributors' %}
+  <p>You're coming to the contributors' dinner on Sunday at the Clink.</p>
+  {% else %}
+  <p>You're coming to the conference dinner on Friday at City Hall.</p>
+  {% endif %}
+
+  <p>You're having:</p>
+</div>
+
+<div class="row">
+  <div class="col-md-offset-1">
+    <p>Starter: {{ booking.starter_descr }}</p>
+    <p>Main: {{ booking.main_descr }}</p>
+    <p>Pudding: {{ booking.pudding_descr }}</p>
+  </div>
+</div>
+{% endblock %}

@@ -189,3 +189,15 @@ class User(AbstractBaseUser, PermissionsMixin):
         if self.volunteer_reg_desk:
             things.append('Staff the registration desk')
         return things
+
+    def get_free_dinner_booking(self):
+        if not self.is_contributor:
+            return None
+
+        return self.dinner_bookings.filter(stripe_charge_id=None).first()
+
+    def get_contributors_dinner_booking(self):
+        return self.dinner_bookings.filter(venue='contributors').first()
+
+    def get_conference_dinner_booking(self):
+        return self.dinner_bookings.filter(venue='conference').first()

@@ -1,0 +1,52 @@
+{% extends 'ironcage/base.html' %}
+
+{% load static %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-6 col-md-offset-3">
+    <h1>Conference dinner payment</h1>
+
+    <table class="table">
+      <tr>
+        <th>Starter</th>
+        <td>{{ booking.starter_descr }}</td>
+      </tr>
+      <tr>
+        <th>Main</th>
+        <td>{{ booking.main_descr }}</td>
+      </tr>
+      <tr>
+        <th>Pudding</th>
+        <td>{{ booking.pudding_descr }}</td>
+      </tr>
+      <tr>
+        <th>Cost (incl. VAT)</th>
+        <td>&pound;{{ amount_pounds }}</td>
+      </tr>
+    </table>
+
+    <div id="stripe-form">
+      <form method="POST">
+        {% csrf_token %}
+        <script
+          src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+          data-key="{{ stripe_api_key }}"
+          data-amount="{{ amount_pence }}"
+          data-currency="gbp"
+          data-name="PyCon UK Society Ltd"
+          data-image="{% static 'ironcage/img/yellow.png' %}"
+          data-description="PyCon UK 2017 conference dinner"
+          data-locale="auto"
+          data-email="{{ user.email_addr }}"
+        >
+        </script>
+
+        <!-- https://stackoverflow.com/a/41527060 -->
+        <style>.stripe-button-el { display: none; }</style>
+        <button class="btn btn-primary" type="submit">Pay by card</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

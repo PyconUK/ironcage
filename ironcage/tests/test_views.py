@@ -4,6 +4,7 @@ from django.test import TestCase, override_settings
 
 from accounts.tests import factories as account_factories
 from cfp.tests import factories as cfp_factories
+from dinners.tests import factories as dinners_factories
 from grants.tests import factories as grants_factories
 from tickets.tests import factories as ticket_factories
 
@@ -110,3 +111,62 @@ class IndexTests(TestCase):
     def test_when_has_no_grant_application_and_applications_closed(self):
         rsp = self.client.get('/')
         self.assertNotContains(rsp, 'Apply for financial assistance')
+
+    def test_when_is_contributor_and_has_no_dinner_bookings(self):
+        self.alice.is_contributor = True
+        self.alice.save()
+
+        rsp = self.client.get('/')
+        self.assertContains(rsp, "Make a booking for the contributors' dinner")
+        self.assertNotContains(rsp, 'Make a booking for the conference dinner')
+        self.assertNotContains(rsp, "View your contributors' dinner booking")
+        self.assertNotContains(rsp, 'View your conference dinner booking')
+
+    def test_when_is_contributor_and_is_booked_for_contributors_dinner(self):
+        self.alice.is_contributor = True
+        self.alice.save()
+        dinners_factories.create_contributors_booking(self.alice)
+
+        rsp = self.client.get('/')
+        self.assertNotContains(rsp, "Make a booking for the contributors' dinner")
+        self.assertContains(rsp, 'Make a booking for the conference dinner')
+        self.assertContains(rsp, "View your contributors' dinner booking")
+        self.assertNotContains(rsp, 'View your conference dinner booking')
+
+    def test_when_is_contributor_and_is_booked_for_conference_dinner(self):
+        self.alice.is_contributor = True
+        self.alice.save()
+        dinners_factories.create_contributors_booking(self.alice, 'conference')
+
+        rsp = self.client.get('/')
+        self.assertNotContains(rsp, "Make a booking for the contributors' dinner")
+        self.assertNotContains(rsp, 'Make a booking for the conference dinner')
+        self.assertNotContains(rsp, "View your contributors' dinner booking")
+        self.assertContains(rsp, 'View your conference dinner booking')
+
+    def test_when_is_contributor_and_is_booked_for_both_dinners(self):
+        self.alice.is_contributor = True
+        self.alice.save()
+        dinners_factories.create_contributors_booking(self.alice)
+        dinners_factories.create_paid_booking(self.alice)
+
+        rsp = self.client.get('/')
+        self.assertNotContains(rsp, "Make a booking for the contributors' dinner")
+        self.assertNotContains(rsp, 'Make a booking for the conference dinner')
+        self.assertContains(rsp, "View your contributors' dinner booking")
+        self.assertContains(rsp, 'View your conference dinner booking')
+
+    def test_when_is_not_contributor_and_has_no_dinner_bookings(self):
+        rsp = self.client.get('/')
+        self.assertNotContains(rsp, "Make a booking for the contributors' dinner")
+        self.assertContains(rsp, 'Make a booking for the conference dinner')
+        self.assertNotContains(rsp, "View your contributors' dinner booking")
+        self.assertNotContains(rsp, 'View your conference dinner booking')
+
+    def test_when_is_not_contributor_and_is_booked_for_conference_dinner(self):
+        dinners_factories.create_paid_booking(self.alice)
+        rsp = self.client.get('/')
+        self.assertNotContains(rsp, "Make a booking for the contributors' dinner")
+        self.assertNotContains(rsp, 'Make a booking for the conference dinner')
+        self.assertNotContains(rsp, "View your contributors' dinner booking")
+        self.assertContains(rsp, 'View your conference dinner booking')
