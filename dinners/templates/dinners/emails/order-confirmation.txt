@@ -1,13 +1,13 @@
 {% autoescape off %}
-Hi {{ name }},
+Hi {{ booking.guest.name }},
 
 You're coming to the {{ booking.dinner_description }}.
 
 You've ordered:
 
     Starter: {{ booking.starter_descr }}
-    Main: {{ main_descr }}
-    Pudding: {{ pudding_descr }}
+    Main: {{ booking.main_descr }}
+    Pudding: {{ booking.pudding_descr }}
 
 {% if booking.paid_booking %}
 You can download a receipt at :
