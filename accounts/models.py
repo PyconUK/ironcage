@@ -196,5 +196,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
         return self.dinner_bookings.filter(stripe_charge_id=None).first()
 
+    def get_contributors_dinner_booking(self):
+        return self.dinner_bookings.filter(venue='contributors').first()
+
     def get_conference_dinner_booking(self):
         return self.dinner_bookings.filter(venue='conference').first()
