@@ -1,6 +1,6 @@
 Hi {{ recipient.name }},
 
-This email contains details about giving your poster at PyCon UK.
+This email contains details about sharing your poster at PyCon UK.
 
 The poster session will take place outside the Lower Hall on Saturday lunchtime.
 If you are exhibiting a poster, please come to the registration desk with your

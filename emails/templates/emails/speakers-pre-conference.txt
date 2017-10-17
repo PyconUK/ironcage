@@ -27,16 +27,16 @@ We will be filming almost all the talks, and will put the videos on YouTube.
 If you would not like your talk to be filmed, please let us know.
 
 Speakers in the Assembly Room, Ferrier Hall, and Room D will have access to an
-HDMI projecter.  All other speakers will have a VGA projector.
+HDMI projector.  All other speakers will have a VGA projector.
 
 If you're speaking in the Assembly Room, your talk will be transcribed and
 displayed on screens around the room.  The stenographers (who are used to local
 council meetings and company AGMs!) have requested that we tell them in advance
-about any unusual words that may come up.  If you'll be using any techincal
+about any unusual words that may come up.  If you'll be using any technincal
 terms, please let us know and we'll pass them on.
 
 If you would like to make any changes to the talk description on our website,
-either make a pull request against the website repo[1] , or drop us an email.
+either make a pull request against the website repo[1], or drop us an email.
 
 
 Green room
