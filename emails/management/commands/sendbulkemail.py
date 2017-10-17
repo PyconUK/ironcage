@@ -61,7 +61,7 @@ subject "This is a test".
         ).distinct(),
         'poster-speakers': User.objects.filter(
             proposals__state='accepted',
-            proposals__session_type='workshop',
+            proposals__session_type='poster',
         ).distinct(),
         'accepted-speakers-seeking-mentors': User.objects.filter(
             proposals__state='accepted',
