@@ -1,0 +1,12 @@
+Hi,
+
+We're looking forward to seeing you at PyCon UK in Cardiff at the end of the
+month, but you haven't responded to your ticket invitation yet!
+
+To do so, please visit:
+
+    https://hq.pyconuk.org{{ invitation.get_absolute_url }}
+
+Thanks!
+
+~ The PyCon UK Committee
