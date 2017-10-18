@@ -581,27 +581,29 @@ class TicketInvitationTests(TestCase):
         factories.create_confirmed_order_for_others()
         cls.invitation = TicketInvitation.objects.get(email_addr='bob@example.com')
         cls.bob = factories.create_user('Bob')
+        cls.url = f'/tickets/invitations/{cls.invitation.token}/'
 
     def test_for_unclaimed_invitation(self):
         self.client.force_login(self.bob)
-        rsp = self.client.get(f'/tickets/invitations/{self.invitation.token}/', follow=True)
+        rsp = self.client.get(self.url, follow=True)
         self.assertContains(rsp, f'Details of your ticket ({self.invitation.ticket.ticket_id})')
         self.assertNotContains(rsp, 'This invitation has already been claimed', html=True)
 
     def test_for_claimed_invitation(self):
         self.client.force_login(factories.create_user('Carol'))
         actions.claim_ticket_invitation(self.bob, self.invitation)
-        rsp = self.client.get(f'/tickets/invitations/{self.invitation.token}/', follow=True)
+        rsp = self.client.get(self.url, follow=True)
         self.assertRedirects(rsp, '/')
         self.assertContains(rsp, '<div class="alert alert-info" role="alert">This invitation has already been claimed</div>', html=True)
 
     def test_when_user_has_ticket(self):
         factories.create_ticket(self.bob)
         self.client.force_login(self.bob)
-        rsp = self.client.get(f'/tickets/invitations/{self.invitation.token}/', follow=True)
+        rsp = self.client.get(self.url, follow=True)
         self.assertRedirects(rsp, '/')
         self.assertContains(rsp, '<div class="alert alert-danger" role="alert">You already have a ticket!  Please contact pyconuk-enquiries@python.org to arrange transfer of this invitaiton to somebody else.</div>', html=True)
 
     def test_when_not_authenticated(self):
-        rsp = self.client.get(f'/tickets/invitations/{self.invitation.token}/', follow=True)
+        rsp = self.client.get(self.url, follow=True)
         self.assertContains(rsp, '<div class="alert alert-info" role="alert">You need to create an account to claim your invitation</div>', html=True)
+        self.assertRedirects(rsp, f'/accounts/register/?next={self.url}')

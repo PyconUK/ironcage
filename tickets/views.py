@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.views.decorators.http import require_POST
 
 from . import actions
@@ -301,7 +302,7 @@ def ticket_invitation(request, token):
 
     if not request.user.is_authenticated:
         messages.info(request, 'You need to create an account to claim your invitation')
-        return redirect(settings.LOGIN_URL)
+        return redirect(reverse('register') + f'?next={invitation.get_absolute_url()}')
 
     if request.user.get_ticket() is not None:
         messages.error(request, 'You already have a ticket!  Please contact pyconuk-enquiries@python.org to arrange transfer of this invitaiton to somebody else.')
