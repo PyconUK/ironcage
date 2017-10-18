@@ -35,6 +35,7 @@ class Command(BaseCommand):
             self.stdout.write(body)
             return
 
+        self.stdout.write(f'Sending {num_recipients} email(s)')
         self.stdout.write('Are you sure? [yN]')
 
         while True:
@@ -45,7 +46,6 @@ class Command(BaseCommand):
             elif rsp in ['y', 'Y']:
                 break
 
-        self.stdout.write(f'Sending {num_recipients} email(s)')
         logger.info('sending ticket reminder', template=template.template.name, num_recipients=num_recipients)
 
         for invitation in invitations:
