@@ -692,14 +692,14 @@ class ConferenceDinnerReport(DinnerMixin, ReportView):
     title = 'Conference dinner'
 
     def get_queryset(self):
-        DinnerBooking.objects.filter(venue='conference').select_related('guest').order_by('guest__name')
+        return DinnerBooking.objects.filter(venue='conference').select_related('guest').order_by('guest__name')
 
 
 class ContributorsDinnerReport(DinnerMixin, ReportView):
     title = "Contributors' dinner"
 
     def get_queryset(self):
-        DinnerBooking.objects.filter(venue='contributors').select_related('guest').order_by('guest__name')
+        return DinnerBooking.objects.filter(venue='contributors').select_related('guest').order_by('guest__name')
 
 
 reports = [
