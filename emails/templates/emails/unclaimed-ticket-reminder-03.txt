@@ -1,0 +1,25 @@
+Hi,
+
+We're looking forward to seeing you at PyCon UK in Cardiff at the end of the
+month, but you haven't responded to your ticket invitation yet!
+
+{% if invitation.ticket.is_free_ticket %}
+We'd like you to respond to your ticket invitation so that we know which days
+you're coming, and whether you have any special requirements.
+{% else %}
+We'd like you to respond to your ticket invitation so that we know that you're
+definitely coming, and whether you have any special requirements.
+{% endif %}
+
+We'd also like to know your full name so that we can include it on the badges
+which are being sent to the printers at 08:00 BST on Monday.
+
+To respond to your ticket invitation, please visit:
+
+    https://hq.pyconuk.org{{ invitation.get_absolute_url }}
+
+If you have any problems, please let us know by replying to this email.
+
+Thanks!
+
+~ The PyCon UK Committee
