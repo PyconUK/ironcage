@@ -681,7 +681,7 @@ class DinnerMixin:
         return [
             booking.guest.name,
             booking.guest.email_addr,
-            '✘' if booking.paid_booking else '✔',
+            '✘' if booking.paid_booking() else '✔',
             booking.starter,
             booking.main,
             booking.pudding,
