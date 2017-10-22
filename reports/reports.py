@@ -566,6 +566,13 @@ class ContributorReport(ReportView, PeopleMixin):
         return User.objects.filter(is_contributor=True).order_by('name')
 
 
+class TicketHoldersWithIncompleteNameReport(ReportView, PeopleMixin):
+    title = 'Ticket holders with incomplete name'
+
+    def get_queryset(self):
+        return User.objects.filter(ticket__isnull=False).exclude(name__contains=' ')
+
+
 class AccommodationReport(ReportView):
     title = 'Accommodation booked'
     headings = []
@@ -707,4 +714,5 @@ reports = [
     VolunteerSessionChairReport,
     VolunteerVideorReport,
     VolunteerRegDeskReport,
+    TicketHoldersWithIncompleteNameReport,
 ]

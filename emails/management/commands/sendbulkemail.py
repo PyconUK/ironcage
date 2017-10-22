@@ -67,9 +67,9 @@ subject "This is a test".
             proposals__state='accepted',
             proposals__would_like_mentor=True,
         ).distinct(),
-
         'contributors': User.objects.filter(is_contributor=True),
         'ticket-holders-who-are-not-contributors': User.objects.exclude(ticket=None).filter(is_contributor=False),
+        'ticket-holders-with-incomplete-name': User.objects.filter(ticket__isnull=False).exclude(name__contains=' '),
     }
 
     def create_parser(self, *args, **kwargs):

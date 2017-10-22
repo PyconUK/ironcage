@@ -1,0 +1,13 @@
+Hi {{ recipient.name }},
+
+We're contacting you because you're coming to PyCon UK, but you've not told us
+your full name.  Most people have their full name on their badge, although we
+understand that this is not appropriate for everybody.
+
+Badges are being sent to the printer at 08:00 BST on Monday morning, so if
+you'd like your full name on your badge, please update your profile at
+https://hq.pyconuk.org/profile/edit/ (or send us an email).
+
+Thanks!
+
+~ The PyCon UK Committee
