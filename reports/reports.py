@@ -7,10 +7,11 @@ from django.utils.text import slugify
 from django.views.generic import TemplateView
 from avatar.templatetags.avatar_tags import avatar_url
 
-from accommodation.models import Booking
+from accommodation.models import Booking as AccommodationBooking
 from accounts.models import User
 from cfp.models import Proposal
 from children.models import Ticket as ChildTicket
+from dinners.models import Booking as DinnerBooking
 from grants.models import Application
 from tickets.constants import DAYS
 from tickets.models import Order, Ticket
@@ -592,7 +593,7 @@ class AccommodationBookingsReport(ReportView):
     headings = ['Room', 'Name', 'Email address']
 
     def get_queryset(self):
-        return Booking.objects.order_by('room_key')
+        return AccommodationBooking.objects.order_by('room_key')
 
     def presenter(self, booking):
         return [
@@ -673,6 +674,33 @@ class VolunteerRegDeskReport(ReportView, PeopleMixin):
         return User.objects.filter(volunteer_reg_desk=True)
 
 
+class DinnerMixin:
+    headings = ['Name', 'Email address', 'Complimentary', 'Starter', 'Main', 'Pudding']
+
+    def presenter(self, booking):
+        return [
+            booking.guest.name,
+            booking.guest.email_addr,
+            '✘' if booking.paid_booking else '✔',
+            booking.starter,
+            booking.main,
+            booking.pudding,
+        ]
+
+
+class ConferenceDinnerReport(DinnerMixin, ReportView):
+    title = 'Conference dinner'
+
+    def get_queryset(self):
+        DinnerBooking.objects.filter(venue='conference').select_related('guest').order_by('guest__name')
+
+
+def ContributorsDinnerReport(DinnerMixin, ReportView):
+    title = "Contributors' dinner"
+
+    def get_queryset(self):
+        DinnerBooking.objects.filter(venue='contributors').select_related('guest').order_by('guest__name')
+
 
 reports = [
     AttendanceByDayReport,
@@ -715,4 +743,6 @@ reports = [
     VolunteerVideorReport,
     VolunteerRegDeskReport,
     TicketHoldersWithIncompleteNameReport,
+    ConferenceDinnerReport,
+    ContributorsDinnerReport,
 ]
