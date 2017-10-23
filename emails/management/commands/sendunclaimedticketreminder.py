@@ -1,5 +1,6 @@
 import re
 
+from django.conf import settings
 from django.core.management import BaseCommand
 from django.template.loader import get_template
 
@@ -25,7 +26,7 @@ class Command(BaseCommand):
         for invitation in invitations:
             # Here, we are making sure that template.render() raises no errors,
             # *before* we start to send any emails.
-            context = {'invitation': invitation}
+            context = {'invitation': invitation, 'settings': settings}
             body = render(template, context)
             assert 'THIS SHOULD NEVER HAPPEN' not in body, f'Could not render template'
 
@@ -49,7 +50,7 @@ class Command(BaseCommand):
         logger.info('sending ticket reminder', template=template.template.name, num_recipients=num_recipients)
 
         for invitation in invitations:
-            context = {'invitation': invitation}
+            context = {'invitation': invitation, 'settings': settings}
             body = render(template, context)
             qualified_subject = f'{subject} | {invitation.ticket.ticket_id}'
             logger.info('sending email', email_addr=invitation.email_addr)

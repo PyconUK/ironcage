@@ -1,0 +1,115 @@
+Hi {{ recipient.name }},
+
+The homepage of the conference website now contains comprehensive information
+about what's happening at the conference.
+
+    http://2017.pyconuk.org/
+
+If there's anything missing, please let us know.
+
+This email contains information that requires immediate action.
+
+
+Slack
+-----
+
+We have set up a Slack team to share announcements during the conference, and
+for conference delegates to get to know each other.  (Slack is a web-based chat
+program.  It's like IRC but is more user-friendly.)
+
+To join the team, please follow the link below.  Once you've signed up,
+introduce yourself in the #intros channel.
+
+    {{ settings.SLACK_INVITE_LINK }}
+
+(Please don't share this link with people who are not ticket holders!)
+
+
+Conference dinner
+-----------------
+
+The conference dinner is on Friday evening.  There are still some tickets
+left, and ticket sales close at 3pm on Tuesday.
+
+    https://hq.pyconuk.org/dinners/conference-dinner/
+
+
+Evening things
+--------------
+
+On Thursday evening, the London Python Code Dojo team are running a Code Dojo.
+This is a chance to tackle a coding challenge as part of a team.  It's not a
+competition, and beginners and less experienced coders are encouraged to join
+in.
+
+    http://2017.pyconuk.org/dojo/
+
+On Saturday evening, we're hosting an evening of board games.  If you have a
+game you'd like to play, please bring it along!
+
+    http://2017.pyconuk.org/board-games/
+
+At both events, there will be pizza for sale and a cash bar.
+
+Places to both are limited, so if you're planning to come, please let us know
+by updating your profile:
+
+    https://hq.pyconuk.org/profile/
+
+
+Accommodation
+-------------
+
+If you're having trouble finding somewhere to stay please see the accommodation
+page as we have made some arrangements with local hostels who may still be able
+to put you up.
+
+    http://2017.pyconuk.org/accommodation/
+
+
+Free e-book
+-----------
+
+O'Reilly are offering all conference delegates a free e-book.  Please use the
+link below to claim yours!
+
+    http://www.oreilly.com/pub/get/pyconuk17
+
+
+Sponsors
+--------
+
+Finally, the conference really couldn't happen without the generous support of
+all of our sponsors:
+
+* J. P. Morgan (https://www.jpmorgan.com)
+* EDITED (https://edited.com/)
+* Osirium (https://osirium.com/)
+* Anvil (https://anvil.works/)
+* BJSS (http://www.bjss.com/)
+* Cambridge Medical Robotics (http://cmedrobotics.com/)
+* Cambridge Spark (https://cambridgespark.com/)
+* Codethink (https://www.codethink.co.uk/)
+* Data Reply (https://www.datareply.co.uk/)
+* Indeed (https://www.indeed.co.uk/)
+* Mango Solutions (https://www.mango-solutions.com/)
+* MOO (https://www.moo.com/uk/)
+* O'Reilly (https://www.oreilly.com/)
+* Pluralsight (https://www.pluralsight.com/)
+* PythonAnywhere (https://www.pythonanywhere.com/)
+* Reckon Digital (https://reckondigital.com/)
+* Raspberry Pi Foundation (https://www.raspberrypi.org/)
+* Micro:bit Foundation (http://microbit.org/)
+
+You can find out more about our sponsors on the website:
+
+    http://2017.pyconuk.org/sponsors/
+
+They're all important members of the community, and they'll be exhibiting
+during the conference.  Please go and say "hi" and "thanks" to them!
+
+~~~
+
+All the best,
+
+~ The PyCon UK Committee

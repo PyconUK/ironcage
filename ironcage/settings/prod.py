@@ -26,3 +26,5 @@ bst = timezone(timedelta(hours=1))
 CFP_CLOSE_AT = datetime(2017, 8, 11, 0, 0, tzinfo=bst)
 GRANT_APPLICATIONS_CLOSE_AT = datetime(2017, 8, 11, 0, 0, tzinfo=bst)
 TICKET_SALES_CLOSE_AT = datetime(2017, 10, 10, 0, 0, tzinfo=bst)
+
+SLACK_INVITE_LINK = os.environ.get('SLACK_INVITE_LINK')

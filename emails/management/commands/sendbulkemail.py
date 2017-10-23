@@ -2,6 +2,7 @@ from argparse import RawTextHelpFormatter
 import os
 import re
 
+from django.conf import settings
 from django.core.management import BaseCommand
 from django.template.loader import get_template
 
@@ -104,7 +105,7 @@ subject "This is a test".
 
             # Here, we are making sure that template.render() raises no errors,
             # *before* we start to send any emails.
-            context = {'recipient': recipient}
+            context = {'recipient': recipient, 'settings': settings}
             body = render(template, context)
             assert 'THIS SHOULD NEVER HAPPEN' not in body, f'Could not render template for {recipient.email_addr}'
             if dry_run:
@@ -127,7 +128,7 @@ subject "This is a test".
         logger.info('sending bulk email', template=template.template.name, num_recipients=num_recipients)
 
         for recipient in recipients.order_by('id'):
-            context = {'recipient': recipient}
+            context = {'recipient': recipient, 'settings': settings}
             body = render(template, context)
             qualified_subject = f'{subject} | {recipient.user_id}'
             logger.info('sending email', recipient=recipient.id, email_addr=recipient.email_addr)
