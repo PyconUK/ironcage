@@ -748,6 +748,7 @@ reports = [
     GrantApplicationsWithFundsOffered,
     PeopleReport,
     ContributorReport,
+    ContributorsWithoutDinnerReport,
     StaffReport,
     AccommodationReport,
     AccommodationBookingsReport,
