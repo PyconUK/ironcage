@@ -76,20 +76,6 @@
         <p>Are you able to help us with the following?</p>
         <table class="table">
           <tr>
-            <th class="col-md-4">Chairing a session</th>
-            <td>
-              <div class="btn-group" data-toggle="buttons">
-                <label class="btn btn-default{% if form.volunteer_session_chair.value == True %} active{% endif %}">
-                  <input type="radio" name="volunteer_session_chair" value="2" {% if form.volunteer_session_chair.value == True %} checked{% endif %}>Yes
-                </label>
-                <label class="btn btn-default{% if form.volunteer_session_chair.value == False %} active{% endif %}">
-                  <input type="radio" name="volunteer_session_chair" value="3" {% if form.volunteer_session_chair.value == False %} checked{% endif %}>No
-                </label>
-              </div>
-            </td>
-          </tr>
-
-          <tr>
             <th class="col-md-4">Videoing talks</th>
             <td>
               <div class="btn-group" data-toggle="buttons">
