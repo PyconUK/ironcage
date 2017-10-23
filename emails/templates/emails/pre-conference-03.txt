@@ -1,5 +1,12 @@
 Hi {{ recipient.name }},
 
+Please read this email carefully, as it contains information that requires
+immediate action.
+
+
+Information for attendees
+-------------------------
+
 The homepage of the conference website now contains comprehensive information
 about what's happening at the conference.
 
@@ -7,14 +14,12 @@ about what's happening at the conference.
 
 If there's anything missing, please let us know.
 
-This email contains information that requires immediate action.
-
 
 Slack
 -----
 
 We have set up a Slack team to share announcements during the conference, and
-for conference delegates to get to know each other.  (Slack is a web-based chat
+for conference attendees to get to know each other.  (Slack is a web-based chat
 program.)
 
 To join the team, please follow the link below.  Once you've signed up,
@@ -70,7 +75,7 @@ to put you up.
 Free e-book
 -----------
 
-O'Reilly are offering all conference delegates a free e-book.  Please use the
+O'Reilly are offering all conference attendees a free e-book.  Please use the
 link below to claim yours!
 
     http://www.oreilly.com/pub/get/pyconuk17
