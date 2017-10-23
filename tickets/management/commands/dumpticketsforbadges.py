@@ -21,11 +21,17 @@ class Command(BaseCommand):
                 email_addr = user.email_addr
                 is_staff = user.is_staff
                 is_contributor = user.is_contributor
+
             if ticket.pot is None:
                 company_name = ticket.order.company_name
             elif 'Sponsor: ' in ticket.pot:
                 company_name = ticket.pot[len('Sponsor: '):]
+            else:
+                company_name = None
+
             if user is not None and user.is_staff:
                 company_name = 'PyCon UK committee'
+
             days = ', '.join(day.title() for day in ticket.days_abbrev())
+
             writer.writerow([ticket.ticket_id, name, email_addr, company_name, days, is_staff, is_contributor])
