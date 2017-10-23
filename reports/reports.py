@@ -567,6 +567,13 @@ class ContributorReport(ReportView, PeopleMixin):
         return User.objects.filter(is_contributor=True).order_by('name')
 
 
+class ContributorsWithoutDinnerReport(ReportView, PeopleMixin):
+    title = "Contributors who haven't booked dinner"
+
+    def get_queryset(self):
+        return User.objects.filter(is_contributor=True, dinner_bookings__isnull=True).order_by('name')
+
+
 class StaffReport(ReportView, PeopleMixin):
     title = 'Staff'
 

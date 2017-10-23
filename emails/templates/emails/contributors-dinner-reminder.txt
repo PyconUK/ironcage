@@ -1,0 +1,17 @@
+Hi {{ recipient.name }},
+
+As a contributor to the conference, you're invited to the contributors' dinner
+on Sunday evening at the Clink, but you haven't told us you're coming yet.
+
+If you can't make the Sunday evening, then we'd like to invite you to the
+conference dinner on the Friday evening instead.
+
+There are only a handful of places left for the contributors' dinner, and
+orders for the conference dinner close at 15:00 on Tuesday afternoon, so please
+don't hang about!
+
+You can click here to respond to the invitation:
+
+    https://hq.pyconuk.org/dinners/contributors-dinner/
+
+~ The PyCon UK Committee
