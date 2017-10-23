@@ -15,7 +15,7 @@ Slack
 
 We have set up a Slack team to share announcements during the conference, and
 for conference delegates to get to know each other.  (Slack is a web-based chat
-program.  It's like IRC but is more user-friendly.)
+program.)
 
 To join the team, please follow the link below.  Once you've signed up,
 introduce yourself in the #intros channel.
