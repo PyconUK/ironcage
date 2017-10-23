@@ -82,6 +82,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     volunteer_videoer = models.NullBooleanField()
     volunteer_reg_desk = models.NullBooleanField()
     is_contributor = models.BooleanField(default=False)
+    coming_to_dojo = models.NullBooleanField()
+    coming_to_board_games = models.NullBooleanField()
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

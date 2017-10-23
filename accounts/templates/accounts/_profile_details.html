@@ -68,6 +68,37 @@
 </div>
 {% endif %}
 
+<div>
+  <h3>Evening events</h3>
+  <table class="table">
+    <tr>
+      <th class="col-md-4">Thursday evening code dojo</th>
+      <td>
+        {% if user.coming_to_dojo == None %}
+        unknown
+        {% elif user.coming_to_dojo %}
+        Yes
+        {% else %}
+        No
+        {% endif %}
+      </td>
+    </tr>
+
+    <tr>
+      <th class="col-md-4">Saturday evening board games</th>
+      <td>
+        {% if user.coming_to_board_games == None %}
+        unknown
+        {% elif user.coming_to_board_games %}
+        Yes
+        {% else %}
+        No
+        {% endif %}
+      </td>
+    </tr>
+  </table>
+</div>
+
 {% if user.get_ticket is not None %}
 <div>
   <h3>UK Python Association</h3>

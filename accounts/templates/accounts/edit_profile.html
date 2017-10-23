@@ -76,20 +76,6 @@
         <p>Are you able to help us with the following?</p>
         <table class="table">
           <tr>
-            <th class="col-md-4">Setting up the venue at 6am on Thursday</th>
-            <td>
-              <div class="btn-group" data-toggle="buttons">
-                <label class="btn btn-default{% if form.volunteer_setup.value == True %} active{% endif %}">
-                  <input type="radio" name="volunteer_setup" value="2" {% if form.volunteer_setup.value == True %} checked{% endif %}>Yes
-                </label>
-                <label class="btn btn-default{% if form.volunteer_setup.value == False %} active{% endif %}">
-                  <input type="radio" name="volunteer_setup" value="3" {% if form.volunteer_setup.value == False %} checked{% endif %}>No
-                </label>
-              </div>
-            </td>
-          </tr>
-
-          <tr>
             <th class="col-md-4">Chairing a session</th>
             <td>
               <div class="btn-group" data-toggle="buttons">
@@ -126,6 +112,40 @@
                 </label>
                 <label class="btn btn-default{% if form.volunteer_reg_desk.value == False %} active{% endif %}">
                   <input type="radio" name="volunteer_reg_desk" value="3" {% if form.volunteer_videoer.value == False %} checked{% endif %}>No
+                </label>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <div>
+        <h3>Evening events</h3>
+        <p>Please tell us if you plan to come to the following</p>
+        <table class="table">
+          <tr>
+            <th class="col-md-4">Thursday evening code dojo</th>
+            <td>
+              <div class="btn-group" data-toggle="buttons">
+                <label class="btn btn-default{% if form.coming_to_dojo.value == True %} active{% endif %}">
+                  <input type="radio" name="coming_to_dojo" value="2" {% if form.coming_to_dojo.value == True %} checked{% endif %}>Yes
+                </label>
+                <label class="btn btn-default{% if form.coming_to_dojo.value == False %} active{% endif %}">
+                  <input type="radio" name="coming_to_dojo" value="3" {% if form.coming_to_dojo.value == False %} checked{% endif %}>No
+                </label>
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <th class="col-md-4">Saturday evening board games</th>
+            <td>
+              <div class="btn-group" data-toggle="buttons">
+                <label class="btn btn-default{% if form.coming_to_board_games.value == True %} active{% endif %}">
+                  <input type="radio" name="coming_to_board_games" value="2" {% if form.coming_to_board_games.value == True %} checked{% endif %}>Yes
+                </label>
+                <label class="btn btn-default{% if form.coming_to_board_games.value == False %} active{% endif %}">
+                  <input type="radio" name="coming_to_board_games" value="3" {% if form.coming_to_board_games.value == False %} checked{% endif %}>No
                 </label>
               </div>
             </td>

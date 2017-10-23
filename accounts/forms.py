@@ -63,6 +63,8 @@ class ProfileForm(forms.ModelForm):
             'volunteer_session_chair',
             'volunteer_videoer',
             'volunteer_reg_desk',
+            'coming_to_dojo',
+            'coming_to_board_games',
             'accessibility_reqs_yn',
             'accessibility_reqs',
             'childcare_reqs_yn',
