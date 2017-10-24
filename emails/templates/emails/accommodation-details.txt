@@ -1,0 +1,14 @@
+Hi {{ recipient.name }},
+
+This is a reminder that you're booked into Mrs Potts Backpackers for four
+nights from Thursday to Sunday this week.
+
+The hostel is at 109 St Mary Street, and more details are on its website:
+
+    http://www.mrspottsbackpackers.co.uk/
+
+Checkin is from 2pm, and you will need to bring photo ID and a £5 key deposit.
+
+Let us know if you have any problems.
+
+~ The PyCon UK committee
