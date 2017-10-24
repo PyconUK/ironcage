@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db.models import Count, IntegerField, Sum, Value
 from django.db.models.expressions import Case, When
@@ -290,15 +292,22 @@ class ChildrensDayTicketsReport(ReportView):
         'Adult name',
         'Adult email address',
         'Adult phone number',
+        'Age',
     ]
 
     def presenter(self, ticket):
+        if ticket.date_of_birth is not None:
+            age = (date.today() - ticket.date_of_birth).days // 365
+        else:
+            age = None
+
         return [
             ticket.ticket_id,
             ticket.name,
             ticket.order.adult_name,
             ticket.order.adult_email_addr,
             ticket.order.adult_phone_number,
+            age,
         ]
 
     def get_queryset(self):
