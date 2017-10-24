@@ -33,6 +33,7 @@ MENUS = {
         ],
         'pudding': [
             ('tart', 'Tangy lemon tart with strawberry & blackpepper ice cream'),
+            ('fudge', 'Alabama fudge cake with fruits of the forest'),
         ],
     },
 }
