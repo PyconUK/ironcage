@@ -299,7 +299,7 @@ class ChildrensDayTicketsReport(ReportView):
         if ticket.date_of_birth is not None:
             age = (date.today() - ticket.date_of_birth).days // 365
         else:
-            age = None
+            age = ''
 
         return [
             ticket.ticket_id,
