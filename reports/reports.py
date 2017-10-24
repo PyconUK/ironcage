@@ -716,6 +716,34 @@ class ContributorsDinnerReport(DinnerMixin, ReportView):
         return DinnerBooking.objects.filter(venue='contributors').select_related('guest').order_by('guest__name')
 
 
+class DinnerSummaryReport(ReportView):
+    title = 'Dinner summary'
+    headings = ['Dinner', 'Numbers']
+
+    def get_queryset(self):
+        return DinnerBooking.objects.values('venue').annotate(total=Count('venue')).order_by('venue')
+
+    def presenter(self, result):
+        return [
+            result['venue'],
+            result['venue__count'],
+        ]
+
+
+class EveningEventSummaryReport(ReportView):
+    title = 'Evening event summary'
+    headings = ['Event', 'Numbers']
+
+    def get_queryset(self):
+        return [
+            ['Dojo', User.objects.filter(coming_to_dojo).count()],
+            ['Board games', User.objects.filter(coming_to_dojo).count()],
+        ]
+
+    def presenter(self, result):
+        return result
+
+
 reports = [
     AttendanceByDayReport,
     TicketSummaryReport,
@@ -761,4 +789,6 @@ reports = [
     TicketHoldersWithIncompleteNameReport,
     ConferenceDinnerReport,
     ContributorsDinnerReport,
+    DinnerSummaryReport,
+    EveningEventSummaryReport,
 ]
