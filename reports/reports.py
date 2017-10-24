@@ -726,7 +726,7 @@ class DinnerSummaryReport(ReportView):
     def presenter(self, result):
         return [
             result['venue'],
-            result['venue__count'],
+            result['total'],
         ]
 
 
@@ -736,8 +736,8 @@ class EveningEventSummaryReport(ReportView):
 
     def get_queryset(self):
         return [
-            ['Dojo', User.objects.filter(coming_to_dojo).count()],
-            ['Board games', User.objects.filter(coming_to_dojo).count()],
+            ['Dojo', User.objects.filter(coming_to_dojo=True).count()],
+            ['Board games', User.objects.filter(coming_to_board_games=True).count()],
         ]
 
     def presenter(self, result):
