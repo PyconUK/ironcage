@@ -1,0 +1,11 @@
+Hi {{ recipient.name }},
+
+We've noticed that you've chosen a vegan starter and vegan main for the
+conference dinner on Friday.
+
+There's now a vegan dessert (Alabama fudge cake with fruits of the forest)
+available.  If you'd like to have that, please let us know by 18:00 on
+Wednesday if you'd like to have that instead of the tangy lemon tart with
+strawberry & blackpepper ice cream.
+
+~ The PyCon UK committee

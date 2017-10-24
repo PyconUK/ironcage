@@ -76,6 +76,10 @@ subject "This is a test".
         'ticket-holders-who-are-not-contributors': User.objects.exclude(ticket=None).filter(is_contributor=False),
         'ticket-holders-with-incomplete-name': User.objects.filter(ticket__isnull=False).exclude(name__contains=' '),
         'accommodation-guests': User.objects.filter(booking__isnull=False),
+        'possible-vegans': User.objects.filter(
+            dinner_bookings__starter='courgette',
+            dinner_bookings__main='stew',
+        )
     }
 
     def create_parser(self, *args, **kwargs):
