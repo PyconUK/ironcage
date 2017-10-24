@@ -14,6 +14,7 @@ from accounts.models import User
 from cfp.models import Proposal
 from children.models import Ticket as ChildTicket
 from dinners.models import Booking as DinnerBooking
+from dinners.menus import MENUS
 from grants.models import Application
 from tickets.constants import DAYS
 from tickets.models import Order, Ticket
@@ -29,8 +30,11 @@ class ReportView(TemplateView):
         return {
             'title': self.title,
             'headings': self.headings,
-            'rows': [self.presenter(item) for item in self.get_queryset()],
+            'rows': self.get_rows(),
         }
+
+    def get_rows(self):
+        return [self.presenter(item) for item in self.get_queryset()]
 
     @classmethod
     def path(cls):
@@ -718,6 +722,24 @@ class ConferenceDinnerReport(DinnerMixin, ReportView):
         return DinnerBooking.objects.filter(venue='conference').select_related('guest').order_by('guest__name')
 
 
+class ConferenceDinnerSummary(ReportView):
+    title = 'Conference dinner summary'
+    headings = ['Course', 'Option', 'Number']
+
+    def get_rows(self):
+        menu = MENUS['conference']
+        rows = []
+
+        for course in ['starter', 'main', 'pudding']:
+            counts = DinnerBooking.objects.filter(venue='conference').values(course).annotate(total=Count(course)).order_by(course)
+            key_to_total = {count[course]: count['total'] for count in counts}
+
+            for key, description in menu[course]:
+                rows.append([course, description, key_to_total[key]])
+
+        return rows
+
+
 class ContributorsDinnerReport(DinnerMixin, ReportView):
     title = "Contributors' dinner"
 
@@ -797,6 +819,7 @@ reports = [
     VolunteerRegDeskReport,
     TicketHoldersWithIncompleteNameReport,
     ConferenceDinnerReport,
+    ConferenceDinnerSummary,
     ContributorsDinnerReport,
     DinnerSummaryReport,
     EveningEventSummaryReport,
