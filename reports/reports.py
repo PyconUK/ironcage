@@ -747,6 +747,24 @@ class ContributorsDinnerReport(DinnerMixin, ReportView):
         return DinnerBooking.objects.filter(venue='contributors').select_related('guest').order_by('guest__name')
 
 
+class ContributorsDinnerSummary(ReportView):
+    title = "Contributors' dinner summary"
+    headings = ['Course', 'Option', 'Number']
+
+    def get_rows(self):
+        menu = MENUS['contributors']
+        rows = []
+
+        for course in ['starter', 'main', 'pudding']:
+            counts = DinnerBooking.objects.filter(venue='contributors').values(course).annotate(total=Count(course)).order_by(course)
+            key_to_total = {count[course]: count['total'] for count in counts}
+
+            for key, description in menu[course]:
+                rows.append([course, description, key_to_total[key]])
+
+        return rows
+
+
 class DinnerSummaryReport(ReportView):
     title = 'Dinner summary'
     headings = ['Dinner', 'Numbers']
@@ -821,6 +839,7 @@ reports = [
     ConferenceDinnerReport,
     ConferenceDinnerSummary,
     ContributorsDinnerReport,
+    ContributorsDinnerSummary,
     DinnerSummaryReport,
     EveningEventSummaryReport,
 ]
