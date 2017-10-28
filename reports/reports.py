@@ -623,11 +623,18 @@ class AccommodationBookingsReport(ReportView):
         return AccommodationBooking.objects.order_by('room_key')
 
     def presenter(self, booking):
+        guest = booking.guest
+        ticket = guest.get_ticket()
+        if ticket:
+            days = ticket.days()
+        else:
+            days = ''
+
         return [
             booking.room_description(),
             booking.guest.name,
             booking.guest.email_addr,
-            booking.guest.days(),
+            days,
         ]
 
 
