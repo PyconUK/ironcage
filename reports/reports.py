@@ -627,6 +627,7 @@ class AccommodationBookingsReport(ReportView):
             booking.room_description(),
             booking.guest.name,
             booking.guest.email_addr,
+            booking.guest.days(),
         ]
 
 
