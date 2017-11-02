@@ -1,0 +1,30 @@
+{% extends 'ironcage/base.html' %}
+
+{% block content %}
+<h1>Receipt for PyCon UK 2017 accommodation</h1>
+
+<p>Issued by the PyCon UK Society Ltd, c/o Acconomy, Arena Business Centre, Holyrood Close, Poole, BH17 7FJ, United Kingdom (VAT Number 249244982)</p>
+
+<p>Issued to {{ booking.guest.name }}</p>
+
+<div class="row">
+  <div class="col-md-6">
+    <table class="table table-condensed">
+      <tr>
+        <th>Booking</th>
+        <td>{{ booking.room_description }}</td>
+      </tr>
+
+      <tr>
+        <th>Date</th>
+        <td>{{ booking.stripe_charge_created|date }}</td>
+      </tr>
+
+      <tr>
+        <th>Cost (incl. VAT)</th>
+        <td>&pound;{{ booking.get_room.cost_incl_vat }}</td>
+      </tr>
+    </table>
+  </div>
+</div>
+{% endblock %}

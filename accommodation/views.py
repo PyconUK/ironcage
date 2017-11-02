@@ -76,3 +76,18 @@ def booking_payment(request):
     }
 
     return render(request, 'accommodation/booking_payment.html', context)
+
+
+@login_required
+def booking_receipt(request):
+    booking = request.user.get_accommodation_booking()
+    if not booking:
+        messages.warning(request, "You haven't booked accommodation")
+        return redirect('index')
+
+    context = {
+        'booking': booking,
+        'no_navbar': True,
+    }
+
+    return render(request, 'accommodation/booking_receipt.html', context)
