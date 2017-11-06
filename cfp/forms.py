@@ -51,6 +51,39 @@ class ProposalForm(forms.ModelForm):
         }
 
 
+class AcceptedForm(forms.ModelForm):
+    class Meta:
+        model = Proposal
+        fields = [
+            'slide_url',
+            'info_url',
+            'video_url',
+            'transcription',
+        ]
+
+        labels = {
+            'copresenter_names': 'Are you presenting with anybody else?',
+            'description': 'What is your session about?',
+            'slide_url': 'At what URL can your slides be accessed?',
+            'info_url': 'Do you have a URL for additional information?',
+            'transcription': 'The transcription for your talk from the STTRs, if provided'
+        }
+
+        help_texts = {
+            'slide_url': 'You do not need to fill this out until after your talk if you wish to.',
+            'info_url': 'You do not need to fill this out until after your talk if you wish to.',
+            'video_url': 'The conference team will update this field after the conference.',
+            'transcription': 'The conference team will update this field after the conference, you may wish to edit the raw text to speech for accuracy and clarity.'
+        }
+
+        widgets = {
+            'slide_url': forms.TextInput(attrs={'placeholder': False}),
+            'info_url': forms.TextInput(attrs={'placeholder': False}),
+            'video_url': forms.TextInput(attrs={'placeholder': False}),
+            'transcription': forms.TextInput(attrs={'placeholder': False}),
+        }
+
+
 IS_INTERESTED_CHOICES = [
     ('yes', 'Interested'),
     ('no', 'Not interested'),

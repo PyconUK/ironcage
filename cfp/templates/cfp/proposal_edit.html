@@ -5,7 +5,11 @@
   <div class="col-md-6 col-md-offset-3">
     <h1>Update your proposal</h1>
     <hr />
-    {% include './_proposal_form.html' %}
+    {% if cfp_open %}
+    	{% include './_proposal_form.html' %}
+    {% else %}
+    	{% include './_proposal_update.html' %}
+    {% endif %}
   </div>
 </div>
 {% endblock %}

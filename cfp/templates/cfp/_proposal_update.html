@@ -1,0 +1,56 @@
+{% load bootstrap3 %}
+
+<h3>[{{ proposal.proposal_id }}] {{ proposal.full_title }}</h3>
+<hr />
+
+{% if not proposal.session_type == 'other' %}
+<div>This is a proposal for a {{ proposal.session_type }}.</div>
+<hr />
+{% endif %}
+
+<h4>Description</h4>
+<div>{{ proposal.description|linebreaks }}</div>
+<hr />
+
+<ul>
+  {% if proposal.aimed_at_new_programmers %}
+  <li>This talk is suitable for new programmers.</li>
+  {% endif %}
+
+  {% if proposal.aimed_at_teachers %}
+  <li>This talk is suitable for teachers.</li>
+  {% endif %}
+
+  {% if proposal.aimed_at_data_scientists %}
+  <li>This talk is suitable for data scientists.</li>
+  {% endif %}
+
+  {% if proposal.would_like_mentor %}
+  <li>You have requested assistance from a mentor.</li>
+  {% endif %}
+
+  {% if proposal.would_like_longer_slot %}
+  <li>You have requested a longer talk slot if available.</li>
+  {% endif %}
+</ul>
+
+{% if proposal.aimed_at_new_programmers or proposal.aimed_at_teachers or proposal.aimed_at_data_scientists or proposal.would_like_mentor or proposal.would_like_longer_slot %}
+<hr />
+{% endif %}
+
+<form method="post">
+  {% csrf_token %}
+
+  {% bootstrap_field form.slide_url %}
+  <hr />
+  {% bootstrap_field form.info_url %}
+  <hr />
+  {% bootstrap_field form.video_url %}
+  <hr />
+  {% bootstrap_field form.transcription %}
+  <hr />
+  {% buttons %}
+  <button type="submit" class="btn btn-primary">Submit</button>
+  {% endbuttons %}
+</form>
+
