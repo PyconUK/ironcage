@@ -91,11 +91,13 @@ class Proposal(models.Model):
         else:
             return self.title
 
+    @property
     def is_accepted(self):
-        return self.state == 'plan to accept'
+        return self.state == 'accepted'
 
+    @property
     def is_rejected(self):
-        return self.state == 'plan to reject'
+        return self.state == 'rejected'
 
     def session_type_for_display(self):
         if self.session_type == 'other':
