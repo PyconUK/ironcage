@@ -33,6 +33,10 @@ class Proposal(models.Model):
     special_reply_required = models.BooleanField(default=False)
     scheduled_room = models.CharField(max_length=40, blank=True)
     scheduled_time = models.DateTimeField(null=True)
+    slide_url = models.URLField(blank=True)
+    info_url = models.URLField(blank=True)
+    video_url = models.URLField(blank=True)
+    transcription = models.TextField(blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
