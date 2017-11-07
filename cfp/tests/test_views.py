@@ -254,7 +254,15 @@ class CFPClosedTests(TestCase):
         rsp = self.client.post('/cfp/proposals/new/?deadline-bypass-token=abc123', form_data, follow=True)
         self.assertContains(rsp, 'Thank you for submitting your proposal')
 
-    def test_get_proposal_edit(self):
+    def test_get_proposal_edit_accepted(self):
+        rsp = self.client.get(f'/cfp/proposals/{self.proposal.proposal_id}/edit/', follow=True)
+        self.assertNotContains(rsp, 'the Call For Participation has closed')
+        self.assertContains(rsp, 'Update your proposal')
+
+    def test_get_proposal_edit_rejected(self):
+        self.proposal.state = 'rejected'
+        self.proposal.save()
+
         rsp = self.client.get(f'/cfp/proposals/{self.proposal.proposal_id}/edit/', follow=True)
         self.assertContains(rsp, 'the Call For Participation has closed')
         self.assertRedirects(rsp, f'/cfp/proposals/{self.proposal.proposal_id}/')
@@ -264,7 +272,21 @@ class CFPClosedTests(TestCase):
         self.assertNotContains(rsp, 'the Call For Participation has closed')
         self.assertContains(rsp, 'Update your proposal')
 
-    def test_post_proposal_edit(self):
+    def test_post_proposal_edit_accepted(self):
+        form_data = {
+            'title': 'Something Different',
+            'subtitle': 'Something Different',
+            'copresenter_names': 'Something Different',
+            'description': 'Something Different',
+            'description_private': 'Something Different',
+        }
+        rsp = self.client.post(f'/cfp/proposals/{self.proposal.proposal_id}/edit/', form_data, follow=True)
+        self.assertNotContains(rsp, 'Something Different')
+
+    def test_post_proposal_edit_rejected(self):
+        self.proposal.state = 'rejected'
+        self.proposal.save()
+
         form_data = {
             'session_type': 'talk',
             'title': 'Python is brilliant',
@@ -292,7 +314,25 @@ class CFPClosedTests(TestCase):
         self.assertNotContains(rsp, 'the Call For Participation has closed')
         self.assertContains(rsp, 'Thank you for updating your proposal')
 
-    def test_get_proposal(self):
+    def test_post_proposal_update_accepted(self):
+        form_data = {
+            'slides_url': 'https://slidedeck.com/mytalk',
+            'info_url': 'https://github.com/mycode',
+            'video_url': 'https://youtube.com/myvideo',
+            'transcription': 'Hello everyone. Python is brilliant. Thanks for listening.',
+        }
+        rsp = self.client.post(f'/cfp/proposals/{self.proposal.proposal_id}/edit/', form_data, follow=True)
+        self.assertNotContains(rsp, 'the Call For Participation has closed')
+        self.assertContains(rsp, 'Thank you for updating your proposal')
+
+    def test_get_proposal_accepted(self):
+        rsp = self.client.get(f'/cfp/proposals/{self.proposal.proposal_id}/', follow=True)
+        self.assertContains(rsp, 'Update your proposal')
+
+    def test_get_proposal_not_accepted(self):
+        self.proposal.state = 'rejected'
+        self.proposal.save()
+
         rsp = self.client.get(f'/cfp/proposals/{self.proposal.proposal_id}/', follow=True)
         self.assertNotContains(rsp, 'Update your proposal')
 
