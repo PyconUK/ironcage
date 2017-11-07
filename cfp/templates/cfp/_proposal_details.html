@@ -40,3 +40,26 @@
 <hr />
 {% endif %}
 
+{% if proposal.state == 'accepted' %}
+  {% if proposal.slide_url %}
+  <h4>Your slides can be accessed at</h4>
+  <div><a href="{{ proposal.slide_url }}">{{ proposal.slide_url }}</a></div>
+  <hr />
+  {% endif %}
+  {% if proposal.info_url %}
+  <h4>You have additional information available at</h4>
+  <div><a href="{{ proposal.info_url }}">{{ proposal.info_url }}</a></div>
+  <hr />
+  {% endif %}
+  {% if proposal.slide_url %}
+  <h4>The video of your talk can be viewed at</h4>
+  <div><a href="{{ proposal.video_url }}">{{ proposal.video_url }}</a></div>
+  <hr />
+  {% endif %}
+  {% if proposal.slide_url %}
+  <h4>Transcription of your talk</h4>
+  <div>{{ proposal.transcription|linebreaks }}</div>
+  <hr />
+  {% endif %}
+{% endif %}
+

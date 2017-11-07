@@ -120,6 +120,7 @@ def proposal(request, proposal_id):
     context = {
         'proposal': proposal,
         'form': ProposalForm(),
+        'accepted_form': AcceptedForm(),
         'cfp_open': _can_submit(request),
     }
     return render(request, 'cfp/proposal.html', context)
