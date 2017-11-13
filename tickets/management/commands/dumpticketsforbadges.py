@@ -5,6 +5,7 @@ from django.core.management import BaseCommand
 
 from tickets.models import Ticket
 
+
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         writer = csv.writer(sys.stdout)
