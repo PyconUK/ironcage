@@ -1,0 +1,12 @@
+Hi {{ recipient.name }},
+
+You booked accommodation in Cardiff through PyCon UK, but we neglected to send
+you a receipt.
+
+Please find a receipt at:
+
+    https://hq.pyconuk.org/accommodation/bookings/receipt/
+
+Thanks,
+
+~ The PyCon UK committee

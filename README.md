@@ -7,6 +7,8 @@ the CFP, financial applications, and possibly other aspects of organising PyCon 
 
 ## How do I run it?
 
+_Note: This project uses Python3.6_
+ 
 This is a standard Django project.
 Dependencies can be installed with `pip install -r requirements.txt`.
 A local server can be started with `./manage.py runserver`, and tests can be run with `./manage.py test`.

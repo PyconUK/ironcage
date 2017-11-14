@@ -623,10 +623,18 @@ class AccommodationBookingsReport(ReportView):
         return AccommodationBooking.objects.order_by('room_key')
 
     def presenter(self, booking):
+        guest = booking.guest
+        ticket = guest.get_ticket()
+        if ticket:
+            days = ticket.days()
+        else:
+            days = ''
+
         return [
             booking.room_description(),
             booking.guest.name,
             booking.guest.email_addr,
+            days,
         ]
 
 
@@ -675,28 +683,28 @@ class TalkVotingByUserReport(ReportView):
 
 class VolunteerSetupReport(ReportView, PeopleMixin):
     title = 'Volunteers to setup'
-    
+
     def get_queryset(self):
         return User.objects.filter(volunteer_setup=True)
 
 
 class VolunteerSessionChairReport(ReportView, PeopleMixin):
     title = 'Volunteers to chair sessions'
-    
+
     def get_queryset(self):
         return User.objects.filter(volunteer_session_chair=True)
 
 
 class VolunteerVideorReport(ReportView, PeopleMixin):
     title = 'Volunteers to help with videoing'
-    
+
     def get_queryset(self):
         return User.objects.filter(volunteer_videoer=True)
 
 
 class VolunteerRegDeskReport(ReportView, PeopleMixin):
     title = 'Volunteers to staff registration desk'
-    
+
     def get_queryset(self):
         return User.objects.filter(volunteer_reg_desk=True)
 

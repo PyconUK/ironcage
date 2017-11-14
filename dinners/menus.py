@@ -19,7 +19,7 @@ MENUS = {
         ],
     },
     'conference': {
-        'capacity': 290,
+        'capacity': 226,
         'description': 'conference dinner on Friday at City Hall',
         'starter': [
             ('tomato-soup', 'Roasted tomato & garlic soup with crispy Carmarthen ham'),
