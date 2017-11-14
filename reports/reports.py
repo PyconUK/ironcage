@@ -683,28 +683,28 @@ class TalkVotingByUserReport(ReportView):
 
 class VolunteerSetupReport(ReportView, PeopleMixin):
     title = 'Volunteers to setup'
-    
+
     def get_queryset(self):
         return User.objects.filter(volunteer_setup=True)
 
 
 class VolunteerSessionChairReport(ReportView, PeopleMixin):
     title = 'Volunteers to chair sessions'
-    
+
     def get_queryset(self):
         return User.objects.filter(volunteer_session_chair=True)
 
 
 class VolunteerVideorReport(ReportView, PeopleMixin):
     title = 'Volunteers to help with videoing'
-    
+
     def get_queryset(self):
         return User.objects.filter(volunteer_videoer=True)
 
 
 class VolunteerRegDeskReport(ReportView, PeopleMixin):
     title = 'Volunteers to staff registration desk'
-    
+
     def get_queryset(self):
         return User.objects.filter(volunteer_reg_desk=True)
 
