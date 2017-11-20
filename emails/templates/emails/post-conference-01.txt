@@ -1,0 +1,30 @@
+Hi everyone!
+
+First, thanks for coming to this year's conference. We hope you enjoyed it as
+much as we did.
+
+We'd like to make next year's conference even better, and it's important we
+hear your views on what we did well and what we could improve on. Therefore, we
+would be grateful if you could fill out this quick feedback form and let us
+know what you thought:
+
+    https://goo.gl/forms/Uk1wTnnooVhg6pey1
+
+Videos of the conference have been appearing on our YouTube channel, so if you
+missed a talk or want to share one you enjoyed with others, check them out:
+
+    https://www.youtube.com/channel/UChA9XP_feY1-1oSy2L7acog
+
+We're busy working on plans for next year already, and hope to be able to share
+them with you soon, along with our plans for the UK Python Association charity.
+You can keep in touch via our websites: uk.python.org, pyconuk.org and via
+Twitter: @pyconuk.
+
+Once again thank you all for coming, and we look forward to seeing you again
+next year!
+
+~~~
+
+All the best,
+
+~ The PyCon UK Committee
