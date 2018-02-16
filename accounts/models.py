@@ -160,10 +160,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         return len(self.proposals.all()) == 1
 
     def accepted_proposals(self):
-        return [p for p in self.proposals.all() if p.is_accepted()]
+        return [p for p in self.proposals.all() if p.is_accepted]
 
     def rejected_proposals(self):
-        return [p for p in self.proposals.all() if p.is_rejected()]
+        return [p for p in self.proposals.all() if p.is_rejected]
 
     def all_proposals_accepted(self):
         return len(self.proposals.all()) > 0 and len(self.proposals.all()) == len(self.accepted_proposals())

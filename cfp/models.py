@@ -33,6 +33,10 @@ class Proposal(models.Model):
     special_reply_required = models.BooleanField(default=False)
     scheduled_room = models.CharField(max_length=40, blank=True)
     scheduled_time = models.DateTimeField(null=True)
+    slide_url = models.URLField(blank=True)
+    info_url = models.URLField(blank=True)
+    video_url = models.URLField(blank=True)
+    transcription = models.TextField(blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -87,11 +91,13 @@ class Proposal(models.Model):
         else:
             return self.title
 
+    @property
     def is_accepted(self):
-        return self.state == 'plan to accept'
+        return self.state == 'accepted'
 
+    @property
     def is_rejected(self):
-        return self.state == 'plan to reject'
+        return self.state == 'rejected'
 
     def session_type_for_display(self):
         if self.session_type == 'other':

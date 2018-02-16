@@ -1,3 +1,5 @@
+{% load bootstrap3 %}
+
 <h3>[{{ proposal.proposal_id }}] {{ proposal.full_title }}</h3>
 <hr />
 
@@ -6,12 +8,8 @@
 <hr />
 {% endif %}
 
-<h4>{{ form.description.label }}</h4>
+<h4>Description</h4>
 <div>{{ proposal.description|linebreaks }}</div>
-<hr />
-
-<h4>{{ form.description_private.label }}</h4>
-<div>{{ proposal.description_private|linebreaks }}</div>
 <hr />
 
 <ul>
@@ -40,26 +38,19 @@
 <hr />
 {% endif %}
 
-{% if proposal.state == 'accepted' %}
-  {% if proposal.slide_url %}
-  <h4>Your slides can be accessed at</h4>
-  <div><a href="{{ proposal.slide_url }}">{{ proposal.slide_url }}</a></div>
+<form method="post">
+  {% csrf_token %}
+
+  {% bootstrap_field form.slide_url %}
   <hr />
-  {% endif %}
-  {% if proposal.info_url %}
-  <h4>You have additional information available at</h4>
-  <div><a href="{{ proposal.info_url }}">{{ proposal.info_url }}</a></div>
+  {% bootstrap_field form.info_url %}
   <hr />
-  {% endif %}
-  {% if proposal.slide_url %}
-  <h4>The video of your talk can be viewed at</h4>
-  <div><a href="{{ proposal.video_url }}">{{ proposal.video_url }}</a></div>
+  {% bootstrap_field form.video_url %}
   <hr />
-  {% endif %}
-  {% if proposal.slide_url %}
-  <h4>Transcription of your talk</h4>
-  <div>{{ proposal.transcription|linebreaks }}</div>
+  {% bootstrap_field form.transcription %}
   <hr />
-  {% endif %}
-{% endif %}
+  {% buttons %}
+  <button type="submit" class="btn btn-primary">Submit</button>
+  {% endbuttons %}
+</form>
 

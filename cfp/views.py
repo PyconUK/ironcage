@@ -8,7 +8,7 @@ from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST
 
-from .forms import ProposalForm, ProposalVotingForm
+from .forms import ProposalForm, ProposalVotingForm, AcceptedForm
 from .models import Proposal
 
 
@@ -57,30 +57,43 @@ def _new_proposal_after_cfp_closes(request):
     return redirect('index')
 
 
+def _proposal_save(form, request):
+    proposal = form.save()
+    proposal.save()
+    messages.success(request, 'Thank you for updating your proposal')
+    return redirect(proposal)
+
+
 @login_required
 def proposal_edit(request, proposal_id):
-    if not _can_submit(request):
-        return _proposal_edit_after_cfp_closes(request, proposal_id)
-
     proposal = Proposal.objects.get_by_proposal_id_or_404(proposal_id)
 
     if request.user != proposal.proposer:
         messages.warning(request, 'Only the proposer of a proposal can update the proposal')
         return redirect('index')
 
-    if request.method == 'POST':
-        form = ProposalForm(request.POST, instance=proposal)
-        if form.is_valid():
-            proposal = form.save()
-            proposal.save()
-            messages.success(request, 'Thank you for updating your proposal')
-            return redirect(proposal)
+    if not _can_submit(request):
+        if proposal.is_accepted:
+            if request.method == 'POST':
+                form = AcceptedForm(request.POST, instance=proposal)
+                if form.is_valid():
+                    return _proposal_save(form, request)
+            else:
+                form = AcceptedForm(instance=proposal)
+        else:
+            return _proposal_edit_after_cfp_closes(request, proposal_id)
     else:
-        form = ProposalForm(instance=proposal)
+        if request.method == 'POST':
+            form = ProposalForm(request.POST, instance=proposal)
+            if form.is_valid():
+                return _proposal_save(form, request)
+        else:
+            form = ProposalForm(instance=proposal)
 
     context = {
         'form': form,
         'js_paths': ['cfp/cfp_form.js'],
+        'proposal': proposal
     }
     return render(request, 'cfp/proposal_edit.html', context)
 
@@ -107,6 +120,7 @@ def proposal(request, proposal_id):
     context = {
         'proposal': proposal,
         'form': ProposalForm(),
+        'accepted_form': AcceptedForm(),
         'cfp_open': _can_submit(request),
     }
     return render(request, 'cfp/proposal.html', context)
