@@ -83,7 +83,7 @@ def new_order(request):
         'self_form': self_form,
         'others_formset': others_formset,
         'company_details_form': company_details_form,
-        'user_can_buy_for_self': request.user.is_authenticated() and not request.user.get_ticket(),
+        'user_can_buy_for_self': request.user.is_authenticated and not request.user.get_ticket(),
         'rates_table_data': _rates_table_data(),
         'rates_data': _rates_data(),
         'js_paths': ['tickets/order_form.js'],
