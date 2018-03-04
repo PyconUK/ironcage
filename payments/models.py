@@ -13,9 +13,9 @@ class Invoice(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    invoicee = models.ForeignKey(settings.AUTH_USER_MODEL,
-                                 related_name='invoices',
-                                 on_delete=models.PROTECT)
+    purchaser = models.ForeignKey(settings.AUTH_USER_MODEL,
+                                  related_name='invoices',
+                                  on_delete=models.PROTECT)
 
     invoice_to = models.TextField()
 
@@ -41,7 +41,7 @@ class InvoiceRow(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    total = models.DecimalField(max_digits=7, decimal_places=2)
+    total_ex_vat = models.DecimalField(max_digits=7, decimal_places=2)
 
     vat_rate = models.DecimalField(max_digits=4, decimal_places=2,
                                    choices=VAT_RATE_CHOICES)
