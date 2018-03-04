@@ -8,7 +8,7 @@ from ironcage.utils import Scrambler
 
 class Invoice(models.Model):
 
-    id_scrambler = Scrambler(1000)
+    id_scrambler = Scrambler(10000)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -49,20 +49,27 @@ class InvoiceRow(models.Model):
 
 class Payment(models.Model):
 
+    STRIPE = 'S'
+
     METHOD_CHOICES = (
-        ('S', 'Stripe'),
-        ('C', 'Cash'),
+        (STRIPE, 'Stripe'),
     )
+
+    SUCCESSFUL = 'SUC'
+    FAILED = 'FLD'
+    ERRORED = 'ERR'
+    REFUNDED = 'RFD'
+    CHARGEBACK = 'CBK'
 
     STATUS_CHOICES = (
-        ('SUC', 'Successful'),
-        ('FLD', 'Failed'),
-        ('ERR', 'Errored'),
-        ('RFD', 'Refunded'),
-        ('CBK', 'Chargeback'),
+        (SUCCESSFUL, 'Successful'),
+        (FAILED, 'Failed'),
+        (ERRORED, 'Errored'),
+        (REFUNDED, 'Refunded'),
+        (CHARGEBACK, 'Chargeback'),
     )
 
-    id_scrambler = Scrambler(1000)
+    id_scrambler = Scrambler(20000)
 
     invoice = models.ForeignKey(Invoice, related_name='invoice',
                                 on_delete=models.PROTECT)
