@@ -71,6 +71,9 @@ class InvoiceRow(models.Model):
     vat_rate = models.DecimalField(max_digits=4, decimal_places=2,
                                    choices=VAT_RATE_CHOICES)
 
+    class Meta:
+        unique_together = ("invoice", "object_type", "object_id")
+
     @property
     def total_inc_vat(self):
         vat_rate_as_percent = 1 + (self.vat_rate / Decimal(100))
