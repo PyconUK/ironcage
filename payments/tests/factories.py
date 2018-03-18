@@ -1,7 +1,11 @@
+import random
+import string
+
+
 from accounts.tests.factories import create_user
 
 from payments import actions
-from payments.models import STANDARD_RATE_VAT
+from payments.models import STANDARD_RATE_VAT, Payment
 from tickets.tests.factories import (
     create_ticket
 )
@@ -36,4 +40,18 @@ def add_invoice_row(item=None, user=None, invoice=None, vat_rate=None):
     return invoice.add_row(
         item=item,
         vat_rate=vat_rate
+    )
+
+
+def make_payment(invoice=None, status=None, amount=None):
+    invoice = invoice or create_invoice(create_user())
+    status = status or Payment.SUCCESSFUL
+    amount = amount or invoice.total
+
+    return Payment.objects.create(
+        invoice=invoice,
+        method=Payment.STRIPE,
+        status=status,
+        charge_id=''.join(random.sample(string.ascii_letters, 10)),
+        amount=amount
     )

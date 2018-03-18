@@ -17,6 +17,10 @@ STANDARD_RATE_VAT = Decimal(20.0)
 ZERO_RATE_VAT = Decimal(0.0)
 
 
+class InvoiceHasPaymentsException(Exception):
+    pass
+
+
 class Invoice(models.Model):
 
     id_scrambler = Scrambler(10000)
@@ -39,6 +43,15 @@ class Invoice(models.Model):
     def add_row(self, item, vat_rate=STANDARD_RATE_VAT):
         logger.info('add invoice row', invoice=self.id, item=item.id,
                     item_type=type(item), vat_rate=vat_rate)
+
+        if self.payments.count() != 0:
+            raise InvoiceHasPaymentsException
+
+        # TODO: Additional logic regarding:
+        # - Only add to credit note if already on paid invoice
+        # - Only add to invoice if not already on paid invoice with no
+        #   credit notes
+        # i.e. ensure each item can be paid for zero or one times
 
         with transaction.atomic():
             return InvoiceRow.objects.create(
@@ -118,13 +131,15 @@ class Payment(models.Model):
 
     id_scrambler = Scrambler(20000)
 
-    invoice = models.ForeignKey(Invoice, related_name='invoice',
+    invoice = models.ForeignKey(Invoice, related_name='payments',
                                 on_delete=models.PROTECT)
 
     method = models.CharField(max_length=1, choices=METHOD_CHOICES)
     status = models.CharField(max_length=3, choices=STATUS_CHOICES)
     charge_id = models.CharField(max_length=80)
-    charge_created = models.DateTimeField(null=True)
     charge_failure_reason = models.CharField(max_length=400, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     amount = models.DecimalField(max_digits=7, decimal_places=2)

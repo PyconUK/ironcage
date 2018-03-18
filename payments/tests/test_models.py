@@ -2,7 +2,11 @@ from django.test import TestCase
 
 from django.db.utils import IntegrityError
 
-from payments.models import STANDARD_RATE_VAT, ZERO_RATE_VAT
+from payments.models import (
+    InvoiceHasPaymentsException,
+    STANDARD_RATE_VAT,
+    ZERO_RATE_VAT,
+)
 from payments.tests import factories
 from tickets.tests import factories as ticket_factories
 
@@ -77,6 +81,15 @@ class AddInvoiceRowTests(TestCase):
         # assert
         self.assertEqual(self.invoice.rows.count(), 2)
         self.assertEqual(self.invoice.total, total_ticket_cost)
+
+    def test_add_invoice_row_to_invoice_with_payment_fails(self):
+        self.invoice.add_row(self.ticket)
+        factories.make_payment(self.invoice)
+
+        ticket_2 = ticket_factories.create_ticket()
+
+        with self.assertRaises(InvoiceHasPaymentsException):
+            self.invoice.add_row(ticket_2)
 
 
 class AddCreditNoteRowTests(TestCase):
