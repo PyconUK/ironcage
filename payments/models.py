@@ -1,12 +1,19 @@
+from decimal import Decimal
+
 from django.conf import settings
 from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.db import transaction
 
 from ironcage.utils import Scrambler
 
-STANDARD_RATE_VAT = 20.0
-ZERO_RATE_VAT = 0.0
+import structlog
+logger = structlog.get_logger()
+
+
+STANDARD_RATE_VAT = Decimal(20.0)
+ZERO_RATE_VAT = Decimal(0.0)
 
 
 class Invoice(models.Model):
@@ -24,7 +31,8 @@ class Invoice(models.Model):
 
     is_credit = models.BooleanField()
 
-    total = models.DecimalField(max_digits=7, decimal_places=2, default=0.0)
+    total = models.DecimalField(max_digits=7, decimal_places=2,
+                                default=Decimal(0.0))
 
 
     def add_row(self, item, vat_rate=STANDARD_RATE_VAT):
@@ -32,7 +40,7 @@ class Invoice(models.Model):
                     item_type=type(item), vat_rate=vat_rate)
 
         with transaction.atomic():
-            InvoiceRow.objects.create(
+            return InvoiceRow.objects.create(
                 invoice=self,
                 invoice_item=item,
                 total_ex_vat=item.cost_excl_vat(),
@@ -61,6 +69,11 @@ class InvoiceRow(models.Model):
 
     vat_rate = models.DecimalField(max_digits=4, decimal_places=2,
                                    choices=VAT_RATE_CHOICES)
+
+    @property
+    def total_inc_vat(self):
+        vat_rate_as_percent = 1 + (self.vat_rate / Decimal(100))
+        return self.total_ex_vat * vat_rate_as_percent
 
 
 class Payment(models.Model):
