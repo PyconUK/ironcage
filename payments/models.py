@@ -5,6 +5,9 @@ from django.contrib.contenttypes.models import ContentType
 
 from ironcage.utils import Scrambler
 
+STANDARD_RATE_VAT = 20.0
+ZERO_RATE_VAT = 0.0
+
 
 class Invoice(models.Model):
 
@@ -21,17 +24,15 @@ class Invoice(models.Model):
 
     is_credit = models.BooleanField()
 
-    total = models.DecimalField(max_digits=7, decimal_places=2)
+    total = models.DecimalField(max_digits=7, decimal_places=2, default=0.0)
+
 
 
 class InvoiceRow(models.Model):
 
-    STANDARD_RATE = 20.0
-    ZERO_RATE = 0.0
-
     VAT_RATE_CHOICES = (
-        (STANDARD_RATE, 'Standard 20%'),
-        (ZERO_RATE, 'Zero Rated'),
+        (STANDARD_RATE_VAT, 'Standard 20%'),
+        (ZERO_RATE_VAT, 'Zero Rated'),
     )
 
     invoice = models.ForeignKey(Invoice, related_name='rows',
