@@ -20,7 +20,7 @@ class AddInvoiceRowTests(TestCase):
         cls.invoice = factories.create_invoice(cls.alice)
 
     def test_add_invoice_row_to_invoice(self):
-        invoice_row = self.invoice.add_row(self.ticket)
+        invoice_row = self.invoice.add_item(self.ticket)
 
         self.assertEqual(self.invoice.rows.count(), 1)
 
@@ -31,7 +31,7 @@ class AddInvoiceRowTests(TestCase):
         self.assertEqual(self.invoice.total, invoice_row.total_inc_vat)
 
     def test_add_invoice_row_to_invoice_zero_vat(self):
-        invoice_row = self.invoice.add_row(self.ticket, ZERO_RATE_VAT)
+        invoice_row = self.invoice.add_item(self.ticket, ZERO_RATE_VAT)
 
         self.assertEqual(self.invoice.rows.count(), 1)
 
@@ -42,10 +42,10 @@ class AddInvoiceRowTests(TestCase):
         self.assertEqual(self.invoice.total, invoice_row.total_inc_vat)
 
     def test_add_same_item_multiple_times_to_invoice_fails(self):
-        self.invoice.add_row(self.ticket)
+        self.invoice.add_item(self.ticket)
 
         with self.assertRaises(IntegrityError):
-            self.invoice.add_row(self.ticket)
+            self.invoice.add_item(self.ticket)
 
     def test_add_two_items_to_invoice(self):
         # arrange
@@ -57,8 +57,8 @@ class AddInvoiceRowTests(TestCase):
         total_ticket_cost = ticket_1_price + ticket_2_price
 
         # act
-        self.invoice.add_row(self.ticket)
-        self.invoice.add_row(ticket_2)
+        self.invoice.add_item(self.ticket)
+        self.invoice.add_item(ticket_2)
 
         # assert
         self.assertEqual(self.invoice.rows.count(), 2)
@@ -74,21 +74,21 @@ class AddInvoiceRowTests(TestCase):
         total_ticket_cost = ticket_1_price + ticket_2_price
 
         # act
-        self.invoice.add_row(self.ticket)
-        self.invoice.add_row(ticket_2, ZERO_RATE_VAT)
+        self.invoice.add_item(self.ticket)
+        self.invoice.add_item(ticket_2, ZERO_RATE_VAT)
 
         # assert
         self.assertEqual(self.invoice.rows.count(), 2)
         self.assertEqual(self.invoice.total, total_ticket_cost)
 
     def test_add_invoice_row_to_invoice_with_payment_fails(self):
-        self.invoice.add_row(self.ticket)
+        self.invoice.add_item(self.ticket)
         factories.make_payment(self.invoice)
 
         ticket_2 = ticket_factories.create_ticket()
 
         with self.assertRaises(InvoiceHasPaymentsException):
-            self.invoice.add_row(ticket_2)
+            self.invoice.add_item(ticket_2)
 
 
 class AddCreditNoteRowTests(TestCase):
@@ -99,7 +99,7 @@ class AddCreditNoteRowTests(TestCase):
         cls.credit_note = factories.create_credit_note(cls.alice)
 
     def test_add_invoice_row_to_credit_note(self):
-        invoice_row = self.credit_note.add_row(self.ticket)
+        invoice_row = self.credit_note.add_item(self.ticket)
 
         self.assertEqual(self.credit_note.rows.count(), 1)
 
@@ -119,8 +119,8 @@ class AddCreditNoteRowTests(TestCase):
         total_ticket_cost = ticket_1_price + ticket_2_price
 
         # act
-        self.credit_note.add_row(self.ticket)
-        self.credit_note.add_row(ticket_2)
+        self.credit_note.add_item(self.ticket)
+        self.credit_note.add_item(ticket_2)
 
         # assert
         self.assertEqual(self.credit_note.rows.count(), 2)
@@ -135,7 +135,7 @@ class InvoiceRowIncVatTests(TestCase):
         cls.invoice = factories.create_invoice(cls.alice)
 
     def test_inc_standard_vat(self):
-        invoice_row = factories.add_invoice_row(
+        invoice_row = factories.add_invoice_item(
             item=self.ticket,
             user=self.alice,
             invoice=self.invoice
@@ -144,7 +144,7 @@ class InvoiceRowIncVatTests(TestCase):
         self.assertEqual(invoice_row.total_inc_vat, self.ticket.cost_incl_vat())
 
     def test_inc_zero_vat(self):
-        invoice_row = factories.add_invoice_row(
+        invoice_row = factories.add_invoice_item(
             item=self.ticket,
             user=self.alice,
             invoice=self.invoice,
@@ -160,10 +160,10 @@ class DeleteInvoiceRowTests(TestCase):
         cls.alice = factories.create_user()
         cls.ticket = ticket_factories.create_ticket(cls.alice)
         cls.invoice = factories.create_invoice(cls.alice)
-        cls.invoice_row = cls.invoice.add_row(cls.ticket)
+        cls.invoice_row = cls.invoice.add_item(cls.ticket)
 
     def test_delete_invoice_row_from_invoice(self):
-        self.invoice.delete_row(self.ticket)
+        self.invoice.delete_item(self.ticket)
 
         self.invoice.refresh_from_db()
 
@@ -173,10 +173,10 @@ class DeleteInvoiceRowTests(TestCase):
     def test_delete_one_of_two_rows_from_invoice(self):
         # arrange
         ticket_2 = ticket_factories.create_ticket(num_days=5)
-        self.invoice.add_row(ticket_2)
+        self.invoice.add_item(ticket_2)
 
         # act
-        self.invoice.delete_row(self.ticket)
+        self.invoice.delete_item(self.ticket)
 
         self.invoice.refresh_from_db()
 
@@ -187,11 +187,11 @@ class DeleteInvoiceRowTests(TestCase):
     def test_delete_two_rows_from_two_row_invoice(self):
         # arrange
         ticket_2 = ticket_factories.create_ticket(num_days=5)
-        self.invoice.add_row(ticket_2)
+        self.invoice.add_item(ticket_2)
 
         # act
-        self.invoice.delete_row(self.ticket)
-        self.invoice.delete_row(ticket_2)
+        self.invoice.delete_item(self.ticket)
+        self.invoice.delete_item(ticket_2)
 
         self.invoice.refresh_from_db()
 
@@ -199,10 +199,16 @@ class DeleteInvoiceRowTests(TestCase):
         self.assertEqual(self.invoice.rows.count(), 0)
         self.assertEqual(self.invoice.total, 0)
 
+    def test_delete_item_from_invoice_with_payment_fails(self):
+        factories.make_payment(self.invoice)
+
+        with self.assertRaises(InvoiceHasPaymentsException):
+            self.invoice.delete_item(self.ticket)
+
     def test_delete_item_not_on_invoice_fails(self):
         # arrange
         ticket_2 = ticket_factories.create_ticket(num_days=5)
 
         with self.assertRaises(ItemNotOnInvoiceException):
-            self.invoice.delete_row(ticket_2)
+            self.invoice.delete_item(ticket_2)
 

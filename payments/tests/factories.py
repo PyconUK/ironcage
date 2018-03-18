@@ -31,24 +31,24 @@ def create_credit_note(user=None, invoice_to=None):
     )
 
 
-def add_invoice_row(item=None, user=None, invoice=None, vat_rate=None):
+def add_invoice_item(item=None, user=None, invoice=None, vat_rate=None):
     user = user or create_user()
     invoice = invoice or create_invoice(user)
     item = item or create_ticket(user)
     vat_rate = vat_rate if vat_rate is not None else STANDARD_RATE_VAT
 
-    return invoice.add_row(
+    return invoice.add_item(
         item=item,
         vat_rate=vat_rate
     )
 
 
-def delete_invoice_row(item=None, user=None, invoice=None):
+def delete_invoice_item(item=None, user=None, invoice=None):
     user = user or create_user()
     invoice = invoice or create_invoice(user)
     item = item or create_ticket(user)
 
-    return invoice.delete_row(
+    return invoice.delete_item(
         item=item
     )
 

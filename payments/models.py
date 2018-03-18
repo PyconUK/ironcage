@@ -55,7 +55,7 @@ class Invoice(models.Model):
 
         self.save()
 
-    def add_row(self, item, vat_rate=STANDARD_RATE_VAT):
+    def add_item(self, item, vat_rate=STANDARD_RATE_VAT):
         logger.info('add invoice row', invoice=self.id, item=item.id,
                     item_type=type(item), vat_rate=vat_rate)
 
@@ -78,7 +78,7 @@ class Invoice(models.Model):
                 vat_rate=vat_rate
             )
 
-    def delete_row(self, item):
+    def delete_item(self, item):
         logger.info('delete invoice row', invoice=self.id, item=item.id,
                     item_type=type(item))
 
