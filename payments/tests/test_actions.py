@@ -80,8 +80,7 @@ class CreateNewInvoiceTests(TestCase):
     @patch('payments.actions._create_invoice')
     def test_create_new_invoice(self, _create_invoice):
         actions.create_new_invoice(
-            self.alice,
-            'Alice'
+            self.alice
         )
 
         _create_invoice.assert_called_once_with(
@@ -108,8 +107,7 @@ class CreateNewCreditNoteTests(TestCase):
     @patch('payments.actions._create_invoice')
     def test_create_new_credit_note(self, _create_invoice):
         actions.create_new_credit_note(
-            self.alice,
-            'Alice'
+            self.alice
         )
 
         _create_invoice.assert_called_once_with(
