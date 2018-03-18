@@ -27,6 +27,18 @@ class Invoice(models.Model):
     total = models.DecimalField(max_digits=7, decimal_places=2, default=0.0)
 
 
+    def add_row(self, item, vat_rate=STANDARD_RATE_VAT):
+        logger.info('add invoice row', invoice=self.id, item=item.id,
+                    item_type=type(item), vat_rate=vat_rate)
+
+        with transaction.atomic():
+            InvoiceRow.objects.create(
+                invoice=self,
+                invoice_item=item,
+                total_ex_vat=item.cost_excl_vat(),
+                vat_rate=vat_rate
+            )
+
 
 class InvoiceRow(models.Model):
 
