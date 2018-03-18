@@ -26,9 +26,12 @@ class Invoice(models.Model):
 
 class InvoiceRow(models.Model):
 
+    STANDARD_RATE = 20.0
+    ZERO_RATE = 0.0
+
     VAT_RATE_CHOICES = (
-        (20.0, 'Standard 20%'),
-        (0.0, 'Zero Rated'),
+        (STANDARD_RATE, 'Standard 20%'),
+        (ZERO_RATE, 'Zero Rated'),
     )
 
     invoice = models.ForeignKey(Invoice, related_name='rows',
