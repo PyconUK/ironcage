@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'reports',
     'tickets',
     'ukpa',
+    'payments',
 
     'bootstrap3',
     'debug_toolbar',

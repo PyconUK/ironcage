@@ -31,7 +31,7 @@ class InvoiceRow(models.Model):
         (0.0, 'Zero Rated'),
     )
 
-    invoice = models.ForeignKey(Invoice, related_name='invoice',
+    invoice = models.ForeignKey(Invoice, related_name='rows',
                                 on_delete=models.PROTECT)
 
     object_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
