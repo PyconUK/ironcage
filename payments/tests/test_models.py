@@ -48,8 +48,7 @@ class AddInvoiceRowTests(TestCase):
 
     def test_add_two_items_to_invoice(self):
         # arrange
-        bob = factories.create_user()
-        ticket_2 = ticket_factories.create_ticket(bob)
+        ticket_2 = ticket_factories.create_ticket()
 
         ticket_1_price = self.ticket.cost_incl_vat()
         ticket_2_price = ticket_2.cost_incl_vat()
@@ -66,8 +65,7 @@ class AddInvoiceRowTests(TestCase):
 
     def test_add_two_items_to_invoice_different_vat_rates(self):
         # arrange
-        bob = factories.create_user()
-        ticket_2 = ticket_factories.create_ticket(bob)
+        ticket_2 = ticket_factories.create_ticket()
 
         ticket_1_price = self.ticket.cost_incl_vat()
         ticket_2_price = ticket_2.cost_excl_vat()
