@@ -85,7 +85,10 @@ def update_invoice_total(sender, instance, **kwargss):
     total = Decimal(0)
 
     for row in instance.invoice.rows.all():
-        total += row.total_inc_vat
+        if instance.invoice.is_credit:
+            total -= row.total_inc_vat
+        else:
+            total += row.total_inc_vat
 
     instance.invoice.total = total
     instance.invoice.save()

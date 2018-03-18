@@ -79,6 +79,43 @@ class AddInvoiceRowTests(TestCase):
         self.assertEqual(self.invoice.total, total_ticket_cost)
 
 
+class AddCreditNoteRowTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.alice = factories.create_user()
+        cls.ticket = ticket_factories.create_ticket(cls.alice)
+        cls.credit_note = factories.create_credit_note(cls.alice)
+
+    def test_add_invoice_row_to_credit_note(self):
+        invoice_row = self.credit_note.add_row(self.ticket)
+
+        self.assertEqual(self.credit_note.rows.count(), 1)
+
+        self.assertEqual(invoice_row.invoice_item, self.ticket)
+        self.assertEqual(invoice_row.total_ex_vat, self.ticket.cost_excl_vat())
+        self.assertEqual(invoice_row.vat_rate, STANDARD_RATE_VAT)
+
+        self.assertEqual(self.credit_note.total, -invoice_row.total_inc_vat)
+
+    def test_add_two_items_to_credit_note(self):
+        # arrange
+        bob = factories.create_user()
+        ticket_2 = ticket_factories.create_ticket(bob)
+
+        ticket_1_price = self.ticket.cost_incl_vat()
+        ticket_2_price = ticket_2.cost_incl_vat()
+
+        total_ticket_cost = ticket_1_price + ticket_2_price
+
+        # act
+        self.credit_note.add_row(self.ticket)
+        self.credit_note.add_row(ticket_2)
+
+        # assert
+        self.assertEqual(self.credit_note.rows.count(), 2)
+        self.assertEqual(self.credit_note.total, -total_ticket_cost)
+
+
 class InvoiceRowIncVatTests(TestCase):
     @classmethod
     def setUpTestData(cls):

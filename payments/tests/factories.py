@@ -17,6 +17,16 @@ def create_invoice(user=None, invoice_to=None):
     )
 
 
+def create_credit_note(user=None, invoice_to=None):
+    user = user or create_user()
+    invoice_to = invoice_to or user.name
+
+    return actions.create_new_credit_note(
+        purchaser=user,
+        invoice_to=invoice_to
+    )
+
+
 def add_invoice_row(item=None, user=None, invoice=None, vat_rate=None):
     user = user or create_user()
     invoice = invoice or create_invoice(user)
