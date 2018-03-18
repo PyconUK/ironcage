@@ -4,7 +4,7 @@ from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models, transaction
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 
 from ironcage.utils import Scrambler
@@ -18,6 +18,10 @@ ZERO_RATE_VAT = Decimal(0.0)
 
 
 class InvoiceHasPaymentsException(Exception):
+    pass
+
+
+class ItemNotOnInvoiceException(Exception):
     pass
 
 
@@ -40,11 +44,24 @@ class Invoice(models.Model):
                                 default=Decimal(0.0))
 
 
+    def _recalculate_total(self):
+        self.total = Decimal(0)
+
+        for row in self.rows.all():
+            if self.is_credit:
+                self.total -= row.total_inc_vat
+            else:
+                self.total += row.total_inc_vat
+
+        self.save()
+
     def add_row(self, item, vat_rate=STANDARD_RATE_VAT):
         logger.info('add invoice row', invoice=self.id, item=item.id,
                     item_type=type(item), vat_rate=vat_rate)
 
+        # Does the invoice have any payments against it?
         if self.payments.count() != 0:
+            logger.error('invoice has payments', invoice=self.id)
             raise InvoiceHasPaymentsException
 
         # TODO: Additional logic regarding:
@@ -60,6 +77,35 @@ class Invoice(models.Model):
                 total_ex_vat=item.cost_excl_vat(),
                 vat_rate=vat_rate
             )
+
+    def delete_row(self, item):
+        logger.info('delete invoice row', invoice=self.id, item=item.id,
+                    item_type=type(item))
+
+        # Is the item on the invoice?
+        # TODO: Make this less crappy
+        content_type = ContentType.objects.get_for_model(item)
+
+        rows_with_item = self.rows.filter(
+            object_type=content_type,
+            object_id=item.id
+        ).count()
+
+        if rows_with_item == 0:
+            logger.error('item not on invoice', invoice=self.id)
+            raise ItemNotOnInvoiceException
+
+        # Does the invoice have any payments against it?
+        if self.payments.count() != 0:
+            logger.error('invoice has payments', invoice=self.id)
+            raise InvoiceHasPaymentsException
+
+        with transaction.atomic():
+            return InvoiceRow.objects.filter(
+                invoice=self,
+                object_type=content_type,
+                object_id=item.id
+            ).delete()
 
 
 class InvoiceRow(models.Model):
@@ -94,17 +140,9 @@ class InvoiceRow(models.Model):
 
 
 @receiver(post_save, sender=InvoiceRow)
-def update_invoice_total(sender, instance, **kwargss):
-    total = Decimal(0)
-
-    for row in instance.invoice.rows.all():
-        if instance.invoice.is_credit:
-            total -= row.total_inc_vat
-        else:
-            total += row.total_inc_vat
-
-    instance.invoice.total = total
-    instance.invoice.save()
+@receiver(post_delete, sender=InvoiceRow)
+def update_invoice_total(sender, instance, **kwargs):
+    instance.invoice._recalculate_total()
 
 
 class Payment(models.Model):

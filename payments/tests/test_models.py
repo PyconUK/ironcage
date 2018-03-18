@@ -4,6 +4,7 @@ from django.db.utils import IntegrityError
 
 from payments.models import (
     InvoiceHasPaymentsException,
+    ItemNotOnInvoiceException,
     STANDARD_RATE_VAT,
     ZERO_RATE_VAT,
 )
@@ -151,3 +152,57 @@ class InvoiceRowIncVatTests(TestCase):
         )
 
         self.assertEqual(invoice_row.total_inc_vat, self.ticket.cost_excl_vat())
+
+
+class DeleteInvoiceRowTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.alice = factories.create_user()
+        cls.ticket = ticket_factories.create_ticket(cls.alice)
+        cls.invoice = factories.create_invoice(cls.alice)
+        cls.invoice_row = cls.invoice.add_row(cls.ticket)
+
+    def test_delete_invoice_row_from_invoice(self):
+        self.invoice.delete_row(self.ticket)
+
+        self.invoice.refresh_from_db()
+
+        self.assertEqual(self.invoice.rows.count(), 0)
+        self.assertEqual(self.invoice.total, 0)
+
+    def test_delete_one_of_two_rows_from_invoice(self):
+        # arrange
+        ticket_2 = ticket_factories.create_ticket(num_days=5)
+        self.invoice.add_row(ticket_2)
+
+        # act
+        self.invoice.delete_row(self.ticket)
+
+        self.invoice.refresh_from_db()
+
+        # assert
+        self.assertEqual(self.invoice.rows.count(), 1)
+        self.assertEqual(self.invoice.total, ticket_2.cost_incl_vat())
+
+    def test_delete_two_rows_from_two_row_invoice(self):
+        # arrange
+        ticket_2 = ticket_factories.create_ticket(num_days=5)
+        self.invoice.add_row(ticket_2)
+
+        # act
+        self.invoice.delete_row(self.ticket)
+        self.invoice.delete_row(ticket_2)
+
+        self.invoice.refresh_from_db()
+
+        # assert
+        self.assertEqual(self.invoice.rows.count(), 0)
+        self.assertEqual(self.invoice.total, 0)
+
+    def test_delete_item_not_on_invoice_fails(self):
+        # arrange
+        ticket_2 = ticket_factories.create_ticket(num_days=5)
+
+        with self.assertRaises(ItemNotOnInvoiceException):
+            self.invoice.delete_row(ticket_2)
+

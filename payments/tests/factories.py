@@ -43,6 +43,16 @@ def add_invoice_row(item=None, user=None, invoice=None, vat_rate=None):
     )
 
 
+def delete_invoice_row(item=None, user=None, invoice=None):
+    user = user or create_user()
+    invoice = invoice or create_invoice(user)
+    item = item or create_ticket(user)
+
+    return invoice.delete_row(
+        item=item
+    )
+
+
 def make_payment(invoice=None, status=None, amount=None):
     invoice = invoice or create_invoice(create_user())
     status = status or Payment.SUCCESSFUL
