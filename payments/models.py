@@ -1,10 +1,11 @@
 from decimal import Decimal
 
 from django.conf import settings
-from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-from django.db import transaction
+from django.db import models, transaction
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 from ironcage.utils import Scrambler
 
@@ -74,6 +75,17 @@ class InvoiceRow(models.Model):
     def total_inc_vat(self):
         vat_rate_as_percent = 1 + (self.vat_rate / Decimal(100))
         return self.total_ex_vat * vat_rate_as_percent
+
+
+@receiver(post_save, sender=InvoiceRow)
+def update_invoice_total(sender, instance, **kwargss):
+    total = Decimal(0)
+
+    for row in instance.invoice.rows.all():
+        total += row.total_inc_vat
+
+    instance.invoice.total = total
+    instance.invoice.save()
 
 
 class Payment(models.Model):

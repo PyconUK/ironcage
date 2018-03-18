@@ -1,6 +1,5 @@
 from django.test import TestCase
 
-from payments.models import STANDARD_RATE_VAT
 from payments.models import STANDARD_RATE_VAT, ZERO_RATE_VAT
 from payments.tests import factories
 from tickets.tests import factories as ticket_factories
@@ -20,8 +19,9 @@ class AddInvoiceRowTests(TestCase):
 
         self.assertEqual(invoice_row.invoice_item, self.ticket)
         self.assertEqual(invoice_row.total_ex_vat, self.ticket.cost_excl_vat())
-        self.assertTrue(invoice_row.total_ex_vat != 0)
         self.assertEqual(invoice_row.vat_rate, STANDARD_RATE_VAT)
+
+        self.assertEqual(self.invoice.total, invoice_row.total_inc_vat)
 
 
 class InvoiceRowIncVatTests(TestCase):
