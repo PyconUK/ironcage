@@ -43,6 +43,11 @@ class Invoice(models.Model):
     total = models.DecimalField(max_digits=7, decimal_places=2,
                                 default=Decimal(0.0))
 
+    @property
+    def invoice_id(self):
+        if self.id is None:
+            return None
+        return self.id_scrambler.forward(self.id)
 
     def _recalculate_total(self):
         self.total = Decimal(0)
@@ -54,6 +59,10 @@ class Invoice(models.Model):
                 self.total += row.total_inc_vat
 
         self.save()
+
+    @property
+    def total_pence_inc_vat(self):
+        return 100 * self.total
 
     def add_item(self, item, vat_rate=STANDARD_RATE_VAT):
         logger.info('add invoice row', invoice=self.id, item=item.id,
