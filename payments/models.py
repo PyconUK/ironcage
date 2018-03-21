@@ -27,8 +27,6 @@ class ItemNotOnInvoiceException(Exception):
 
 class Invoice(models.Model):
 
-    id_scrambler = Scrambler(10000)
-
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -42,12 +40,6 @@ class Invoice(models.Model):
 
     total = models.DecimalField(max_digits=7, decimal_places=2,
                                 default=Decimal(0.0))
-
-    @property
-    def invoice_id(self):
-        if self.id is None:
-            return None
-        return self.id_scrambler.forward(self.id)
 
     def _recalculate_total(self):
         self.total = Decimal(0)
