@@ -104,12 +104,12 @@ class Order(models.Model):
 
         days_for_self = self.unconfirmed_details['days_for_self']
         if days_for_self is not None:
-            self.tickets.create_for_user(self.purchaser, days_for_self)
+            self.tickets.create_for_user(self.purchaser, self.rate, days_for_self)
 
         email_addrs_and_days_for_others = self.unconfirmed_details['email_addrs_and_days_for_others']
         if email_addrs_and_days_for_others is not None:
             for email_addr, days in email_addrs_and_days_for_others:
-                self.tickets.create_with_invitation(email_addr, days)
+                self.tickets.create_with_invitation(email_addr, self.rate,  days)
 
         self.stripe_charge_id = charge_id
         self.stripe_charge_created = datetime.fromtimestamp(charge_created, tz=timezone.utc)
@@ -297,6 +297,7 @@ class Ticket(models.Model):
     order = models.ForeignKey(Order, related_name='tickets', null=True, on_delete=models.CASCADE)
     pot = models.CharField(max_length=100, null=True)
     owner = models.OneToOneField(settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE)
+    rate = models.CharField(max_length=40)
     thu = models.BooleanField()
     fri = models.BooleanField()
     sat = models.BooleanField()
@@ -313,13 +314,13 @@ class Ticket(models.Model):
             id = self.model.id_scrambler.backward(ticket_id)
             return get_object_or_404(self.model, pk=id)
 
-        def create_for_user(self, user, days):
+        def create_for_user(self, user, rate, days):
             day_fields = {day: (day in days) for day in DAYS}
-            return self.create(owner=user, **day_fields)
+            return self.create(owner=user, rate=rate, **day_fields)
 
-        def create_with_invitation(self, email_addr, days):
+        def create_with_invitation(self, email_addr, rate, days):
             day_fields = {day: (day in days) for day in DAYS}
-            ticket = self.create(**day_fields)
+            ticket = self.create(rate=rate, **day_fields)
             ticket.invitations.create(email_addr=email_addr)
             return ticket
 
@@ -380,17 +381,17 @@ class Ticket(models.Model):
         else:
             return self.invitation().email_addr
 
-    def rate(self):
-        if self.order is None:
-            return 'free'
-        else:
-            return self.order.rate
+    # def rate(self):
+    #     if self.order is None:
+    #         return 'free'
+    #     else:
+    #         return self.order.rate
 
     def cost_incl_vat(self):
-        return cost_incl_vat(self.rate(), self.num_days())
+        return cost_incl_vat(self.rate, self.num_days())
 
     def cost_excl_vat(self):
-        return cost_excl_vat(self.rate(), self.num_days())
+        return cost_excl_vat(self.rate, self.num_days())
 
     def invitation(self):
         # This will raise an exception if a ticket has multiple invitations
