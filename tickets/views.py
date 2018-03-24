@@ -7,6 +7,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 
+from payments import actions as payment_actions
 from . import actions
 from .forms import CompanyDetailsForm, TicketForm, TicketForSelfForm, TicketForOthersFormSet
 from .models import Order, Ticket, TicketInvitation
@@ -57,15 +58,30 @@ def new_order(request):
                     company_details = None
 
             if valid:
-                order = actions.create_pending_order(
-                    purchaser=request.user,
-                    rate=rate,
-                    days_for_self=days_for_self,
-                    email_addrs_and_days_for_others=email_addrs_and_days_for_others,
-                    company_details=company_details,
-                )
+                invoice_to = company_details.get('name') if company_details else None
 
-                return redirect(order)
+                invoice = payment_actions.create_new_invoice(request.user, invoice_to)
+
+                if days_for_self:
+                    ticket = Ticket.objects.create_for_user(request.user, rate, days_for_self)
+                    invoice.add_item(ticket)
+
+                if email_addrs_and_days_for_others is not None:
+                    for email_addr, days in email_addrs_and_days_for_others:
+                        ticket = Ticket.objects.create_with_invitation(email_addr, rate, days)
+                        invoice.add_item(ticket)
+
+                # self.save()
+
+                # order = actions.create_pending_order(
+                #     purchaser=request.user,
+                #     rate=rate,
+                #     days_for_self=days_for_self,
+                #     email_addrs_and_days_for_others=email_addrs_and_days_for_others,
+                #     company_details=company_details,
+                # )
+
+                return redirect(invoice)
 
     else:
         if datetime.now(timezone.utc) > settings.TICKET_SALES_CLOSE_AT:
