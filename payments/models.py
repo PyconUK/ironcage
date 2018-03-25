@@ -6,6 +6,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models, transaction
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
+from django.urls import reverse
 
 from ironcage.utils import Scrambler
 
@@ -41,6 +42,10 @@ class Invoice(models.Model):
     total = models.DecimalField(max_digits=7, decimal_places=2,
                                 default=Decimal(0.0))
 
+    @property
+    def invoice_id(self):
+        return 'IC-2018-{}'.format(self.id)
+
     def _recalculate_total(self):
         self.total = Decimal(0)
 
@@ -53,8 +58,38 @@ class Invoice(models.Model):
         self.save()
 
     @property
+    def total_ex_vat(self):
+        total_ex_vat = Decimal(0)
+
+        for row in self.rows.all():
+            if self.is_credit:
+                total_ex_vat -= row.total_ex_vat
+            else:
+                total_ex_vat += row.total_ex_vat
+
+        return total_ex_vat
+
+    @property
+    def total_vat(self):
+        total_vat = Decimal(0)
+
+        for row in self.rows.all():
+            if self.is_credit:
+                total_vat -= row.total_vat
+            else:
+                total_vat += row.total_vat
+
+        return total_vat
+
+    def get_absolute_url(self):
+        return reverse('tickets:order', args=[self.id])
+
+    def get_payment(self):
+        import ipdb; ipdb.set_trace()
+
+    @property
     def total_pence_inc_vat(self):
-        return 100 * self.total
+        return int(100 * self.total)
 
     def add_item(self, item, vat_rate=STANDARD_RATE_VAT):
         logger.info('add invoice row', invoice=self.id, item=item.id,
@@ -108,6 +143,11 @@ class Invoice(models.Model):
                 object_id=item.id
             ).delete()
 
+    @property
+    def payment_required(self):
+        return self.payments.count() == 0
+
+
 
 class InvoiceRow(models.Model):
 
@@ -139,6 +179,11 @@ class InvoiceRow(models.Model):
         vat_rate_as_percent = 1 + (self.vat_rate / Decimal(100))
         return self.total_ex_vat * vat_rate_as_percent
 
+    @property
+    def total_vat(self):
+        vat_rate_as_percent = self.vat_rate / Decimal(100)
+        return self.total_ex_vat * vat_rate_as_percent
+
 
 @receiver(post_save, sender=InvoiceRow)
 @receiver(post_delete, sender=InvoiceRow)
@@ -167,8 +212,6 @@ class Payment(models.Model):
         (REFUNDED, 'Refunded'),
         (CHARGEBACK, 'Chargeback'),
     )
-
-    id_scrambler = Scrambler(20000)
 
     invoice = models.ForeignKey(Invoice, related_name='payments',
                                 on_delete=models.PROTECT)

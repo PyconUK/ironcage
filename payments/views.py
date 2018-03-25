@@ -8,7 +8,7 @@ from django.urls import reverse
 from django.views.decorators.http import require_POST
 
 from payments import actions as payment_actions
-from payments.models import Invoice
+from payments.models import Invoice, Payment
 from tickets import actions
 from tickets.forms import CompanyDetailsForm, TicketForm, TicketForSelfForm, TicketForOthersFormSet
 from tickets.models import Ticket, TicketInvitation
@@ -46,21 +46,128 @@ def order(request, invoice_id):
 
 
 @login_required
-def invoice(request, invoice_id):
-    pass
-    # order = get_object_or_404(Invoice, invoice_id)
+def order_edit(request, order_id):
+    order = get_object_or_404(Invoice, pk=order_id)
 
-    # # if request.user != order.purchaser:
-    # #     messages.warning(request, 'Only the purchaser of an order can view the receipt')
-    # #     return redirect('index')
+    if request.user != order.purchaser:
+        messages.warning(request, 'Only the purchaser of an order can update the order')
+        return redirect('index')
 
-    # # if order.payment_required():
-    # #     messages.error(request, 'This order has not been paid')
-    # #     return redirect(order)
+    if not order.payment_required:
+        messages.error(request, 'This order has already been paid')
+        return redirect(order)
 
-    # context = {
-    #     'order': order,
-    #     'title': f'PyCon UK 2018 invoice {order.order_id}',
-    #     'no_navbar': True,
-    # }
-    # return render(request, 'tickets/order_receipt.html', context)
+    if request.method == 'POST':
+        form = TicketForm(request.POST)
+        self_form = TicketForSelfForm(request.POST)
+        others_formset = TicketForOthersFormSet(request.POST)
+        company_details_form = CompanyDetailsForm(request.POST)
+
+        if form.is_valid():
+            who = form.cleaned_data['who']
+            rate = form.cleaned_data['rate']
+
+            if who == 'self':
+                valid = self_form.is_valid()
+                if valid:
+                    days_for_self = self_form.cleaned_data['days']
+                    email_addrs_and_days_for_others = None
+            elif who == 'others':
+                valid = others_formset.is_valid()
+                if valid:
+                    days_for_self = None
+                    email_addrs_and_days_for_others = others_formset.email_addrs_and_days
+            elif who == 'self and others':
+                valid = self_form.is_valid() and others_formset.is_valid()
+                if valid:
+                    days_for_self = self_form.cleaned_data['days']
+                    email_addrs_and_days_for_others = others_formset.email_addrs_and_days
+            else:
+                assert False
+
+            if valid:
+                if rate == 'corporate':
+                    valid = company_details_form.is_valid()
+                    if valid:
+                        company_details = {
+                            'name': company_details_form.cleaned_data['company_name'],
+                            'addr': company_details_form.cleaned_data['company_addr'],
+                        }
+                else:
+                    company_details = None
+
+            if valid:
+                actions.update_pending_order(
+                    order,
+                    rate=rate,
+                    days_for_self=days_for_self,
+                    email_addrs_and_days_for_others=email_addrs_and_days_for_others,
+                    company_details=company_details,
+                )
+
+                return redirect(order)
+
+    else:
+        form = TicketForm(order.form_data())
+        self_form = TicketForSelfForm(order.self_form_data())
+        others_formset = TicketForOthersFormSet(order.others_formset_data())
+        company_details_form = CompanyDetailsForm(order.company_details_form_data())
+
+    context = {
+        'form': form,
+        'self_form': self_form,
+        'others_formset': others_formset,
+        'company_details_form': company_details_form,
+        'user_can_buy_for_self': not request.user.get_ticket(),
+        'rates_table_data': _rates_table_data(),
+        'rates_data': _rates_data(),
+        'js_paths': ['tickets/order_form.js'],
+    }
+
+    return render(request, 'tickets/order_edit.html', context)
+
+
+@login_required
+@require_POST
+def invoice_payment(request, order_id):
+    order = get_object_or_404(Invoice, pk=order_id)
+
+    if request.user != order.purchaser:
+        messages.warning(request, 'Only the purchaser of an order can pay for the order')
+        return redirect('index')
+
+    if not order.payment_required:
+        messages.error(request, 'This order has already been paid')
+        return redirect(order)
+
+    # if request.user.get_ticket() is not None and order.unconfirmed_details['days_for_self']:
+    #     messages.warning(request, 'You already have a ticket.  Please amend your order.  Your card has not been charged.')
+    #     return redirect('tickets:order_edit', order.order_id)
+
+    token = request.POST['stripeToken']
+    payment_actions.process_stripe_charge(order, token)
+
+    if not order.payment_required:
+        messages.success(request, 'Payment for this order has been received.')
+
+    return redirect(order)
+
+
+@login_required
+def payment(request, payment_id):
+    payment = get_object_or_404(Payment, pk=payment_id)
+
+    if request.user != payment.invoice.purchaser:
+        messages.warning(request, 'Only the purchaser of an order can view the receipt')
+        return redirect('index')
+
+    context = {
+        'payment': payment,
+        'invoice': payment.invoice,
+        'title': f'PyCon UK 2018 Receipt {payment.id}',
+        'no_navbar': True,
+    }
+    return render(request, 'payments/payment_receipt.html', context)
+
+
+

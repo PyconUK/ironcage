@@ -294,7 +294,7 @@ class Order(models.Model):
 
 
 class Ticket(models.Model):
-    order = models.ForeignKey(Order, related_name='tickets', null=True, on_delete=models.CASCADE)
+    # order = models.ForeignKey(Order, related_name='tickets', null=True, on_delete=models.CASCADE)
     pot = models.CharField(max_length=100, null=True)
     owner = models.OneToOneField(settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE)
     rate = models.CharField(max_length=40)
@@ -407,6 +407,14 @@ class Ticket(models.Model):
         for day in DAYS:
             setattr(self, day, (day in days))
         self.save()
+
+    @property
+    def invoice_description(self):
+        return 'Ticket {} for {} ({})'.format(
+            self.ticket_id,
+            self.invitation().email_addr if self.invitation() else self.owner,
+            ', '.join(self.days()),
+        )
 
 
 class UnconfirmedTicket:
