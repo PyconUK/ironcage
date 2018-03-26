@@ -10,7 +10,7 @@ from django.views.decorators.http import require_POST
 from payments import actions as payment_actions
 from . import actions
 from .forms import CompanyDetailsForm, TicketForm, TicketForSelfForm, TicketForOthersFormSet
-from .models import Order, Ticket, TicketInvitation
+from .models import Ticket, TicketInvitation #Order,
 from .prices import PRICES_INCL_VAT, cost_incl_vat
 
 
@@ -122,7 +122,7 @@ def order_receipt(request, order_id):
 
     context = {
         'order': order,
-        'title': f'PyCon UK 2017 receipt for order {order.order_id}',
+        'title': f'PyCon UK 2018 receipt for order {order.order_id}',
         'no_navbar': True,
     }
     return render(request, 'tickets/order_receipt.html', context)

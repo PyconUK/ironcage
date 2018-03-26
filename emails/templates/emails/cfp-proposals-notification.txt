@@ -90,7 +90,7 @@ Hi {{ recipient.name }},
         assistance.
 
       {% elif application.requested_ticket_only %}
-        You have applied for a complementary ticket for PyCon UK 2017, and we're
+        You have applied for a complementary ticket for PyCon UK 2018, and we're
         also pleased to tell you that we can offer you a ticket for the conference.
 
         We will send instructions for claiming your ticket in the next few days.

@@ -131,7 +131,7 @@ def conference_dinner_payment(request):
             token = request.POST['stripeToken']
             charge = create_charge(
                 CONFERENCE_DINNER_PRICE_PENCE,
-                'PyCon UK 2017 dinner',
+                'PyCon UK 2018 dinner',
                 'PyCon UK dinner',
                 token
             )

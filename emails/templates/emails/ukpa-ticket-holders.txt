@@ -5,7 +5,7 @@ Python Association, a newly-formed charity whose purpose is support the Python
 community in the UK.  You can read more about the UKPA on the conference
 website[1].
 
-The UKPA is a membership organisation, and anybody who attends PyCon UK 2017 is
+The UKPA is a membership organisation, and anybody who attends PyCon UK 2018 is
 entitled to membership.  For now, membership entitles you to vote to elect the
 organisation's trustees.  You can indicate that you would like to join the UKPA
 when you fill out your profile[2].

@@ -13,7 +13,7 @@ photographic ID and a £5 key deposit.
 
 We look forward to seeing you in Cardiff!
 
-~ The PyCon UK 2017 team
+~ The PyCon UK 2018 team
 '''.strip()
 
 
@@ -21,7 +21,7 @@ def send_booking_confirmation_mail(booking):
     body = INVITATION_TEMPLATE.format(room_description=booking.room_description())
 
     send_mail(
-        f'PyCon UK 2017 accommodation confirmation',
+        f'PyCon UK 2018 accommodation confirmation',
         body,
         booking.guest.email_addr,
     )

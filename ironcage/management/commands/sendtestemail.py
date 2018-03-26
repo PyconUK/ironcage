@@ -11,7 +11,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, to_addr, **kwargs):
         send_mail(
-            'PyCon UK 2017 test email',
+            'PyCon UK 2018 test email',
             f'This is a test, generated at {datetime.now()}',
             to_addr,
         )
