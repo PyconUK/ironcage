@@ -409,9 +409,12 @@ class Ticket(models.Model):
         self.save()
 
     @property
+    def item_id(self):
+        return self.ticket_id
+
+    @property
     def invoice_description(self):
-        return 'Ticket {} for {} ({})'.format(
-            self.ticket_id,
+        return 'PyCon UK 2018 Ticket for {} ({})'.format(
             self.invitation().email_addr if self.invitation() else self.owner,
             ', '.join(self.days()),
         )

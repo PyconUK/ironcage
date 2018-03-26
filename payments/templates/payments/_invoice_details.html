@@ -52,7 +52,7 @@
       </tr>
       {% for row in invoice.rows.all %}
       <tr>
-        <td>{{ row.id }}</td>
+        <td>{{ row.invoice_item.item_id }}</td>
         <td>{{ row.invoice_item.invoice_description }}</td>
         <td>{{ row.vat_rate|floatformat:0 }}%</td>
         <td>£{{ row.total_inc_vat|floatformat:2 }}</td>

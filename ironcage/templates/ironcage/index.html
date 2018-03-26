@@ -25,7 +25,7 @@
 <li><a href="{% url 'tickets:new_order' %}">Order conference tickets</a></li>
 {% endif %}
 {% elif orders|length == 1 %}
-<li><a href="{% url 'tickets:order' orders.0.order_id %}">View your order</a></li>
+<li><a href="{% url 'payments:order' orders.0.id %}">View your order</a></li>
 {% if ticket_sales_open %}
 <li><a href="{% url 'tickets:new_order' %}">Order more conference tickets</a></li>
 {% endif %}
@@ -33,7 +33,7 @@
 <li>View your orders:</li>
 <ul>
   {% for order in orders %}
-  <li><a href="{% url 'tickets:order' order.order_id %}">Order {{ order.order_id }}</a> ({{ order.brief_summary }})</li>
+  <li><a href="{% url 'payments:order' order.id %}">Order {{ order.id }}</a> (order.brief_summary)</li>
   {% endfor %}
 </ul>
 {% if ticket_sales_open %}

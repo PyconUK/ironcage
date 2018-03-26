@@ -34,7 +34,7 @@
 {% elif not invoice.status == 'errored' %}
 <div class="row">
   <div class="col-md-6">
-    <a href="{% url 'payments:payment' invoice.get_payment %}" class="btn btn-primary">View receipt</a>
+    <a href="{% url 'payments:payment' invoice.get_payment.id %}" class="btn btn-primary">View receipt</a>
     {% if ticket %}
     <a href="{% url 'tickets:ticket' ticket.ticket_id %}" class="btn btn-primary">View your ticket</a>
     {% endif %}

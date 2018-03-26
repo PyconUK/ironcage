@@ -18,7 +18,7 @@ def index(request):
             messages.warning(request, 'Your profile is incomplete')
         context = {
             'ticket': user.get_ticket(),
-            'orders': user.orders.all(),
+            'orders': user.invoices.all(),
             'grant_application': user.get_grant_application(),
             'proposals': user.proposals.all(),
             'nomination': user.get_nomination(),

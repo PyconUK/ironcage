@@ -38,12 +38,12 @@ def create_new_credit_note(purchaser, invoice_to=None):
 
 
 def confirm_order(order, charge_id, charge_created):
-    logger.info('confirm_order', order=order.order_id, charge_id=charge_id)
+    logger.info('confirm_order', invoice=invoice.id, charge_id=charge_id)
     with transaction.atomic():
-        order.confirm(charge_id, charge_created)
-    send_receipt(order)
-    send_ticket_invitations(order)
-    slack_message('tickets/order_created.slack', {'order': order})
+        invoice.confirm(charge_id, charge_created)
+    send_receipt(invoice)
+    send_ticket_invitations(invoice)
+    slack_message('tickets/order_created.slack', {'invoice': invoice})
 
 
 def process_stripe_charge(invoice, token):
@@ -58,7 +58,6 @@ def process_stripe_charge(invoice, token):
             charge_id=charge.id,
             amount=charge.amount/100
         )
-
 
         confirm_order(invoice, charge.id, charge.created)
     except stripe.error.CardError as e:

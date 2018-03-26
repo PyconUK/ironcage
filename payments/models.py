@@ -82,10 +82,11 @@ class Invoice(models.Model):
         return total_vat
 
     def get_absolute_url(self):
-        return reverse('tickets:order', args=[self.id])
+        return reverse('payments:order', args=[self.id])
 
     def get_payment(self):
-        import ipdb; ipdb.set_trace()
+        # TODO: BETTER
+        return self.payments.first()
 
     @property
     def total_pence_inc_vat(self):
