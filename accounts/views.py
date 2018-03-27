@@ -12,7 +12,6 @@ def profile(request):
 
     context = {
         'name': user.name,
-        'orders': user.orders.all(),
         'ticket': user.get_ticket(),
     }
     return render(request, 'accounts/profile.html', context)
