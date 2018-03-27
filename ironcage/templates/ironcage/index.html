@@ -16,102 +16,102 @@
 <p>Here, you can:</p>
 <ul>
 {% if ticket %}
-<li><a href="{% url 'tickets:ticket' ticket.ticket_id %}">View your conference ticket</a></li>
-<li><a href="{% url 'accounts:profile' %}">Update your profile</a></li>
+    <li><a href="{% url 'tickets:ticket' ticket.ticket_id %}">View your conference ticket</a></li>
+    <li><a href="{% url 'accounts:profile' %}">Update your profile</a></li>
 {% endif %}
 
 {% if orders|length == 0 %}
-{% if ticket_sales_open %}
-<li><a href="{% url 'tickets:new_order' %}">Order conference tickets</a></li>
-{% endif %}
+    {% if ticket_sales_open %}
+        <li><a href="{% url 'tickets:new_order' %}">Order conference tickets</a></li>
+    {% endif %}
 {% elif orders|length == 1 %}
-<li><a href="{% url 'payments:order' orders.0.id %}">View your order</a></li>
-{% if ticket_sales_open %}
-<li><a href="{% url 'tickets:new_order' %}">Order more conference tickets</a></li>
-{% endif %}
+    <li><a href="{% url 'payments:order' orders.0.id %}">View your order</a></li>
+    {% if ticket_sales_open %}
+        <li><a href="{% url 'tickets:new_order' %}">Order more conference tickets</a></li>
+    {% endif %}
 {% else %}
-<li>View your orders:</li>
-<ul>
-  {% for order in orders %}
-  <li><a href="{% url 'payments:order' order.id %}">Order {{ order.id }}</a> (order.brief_summary)</li>
-  {% endfor %}
-</ul>
-{% if ticket_sales_open %}
-<li><a href="{% url 'tickets:new_order' %}">Order more conference tickets</a></li>
-{% endif %}
+    <li>View your orders:</li>
+    <ul>
+      {% for order in orders %}
+        <li><a href="{% url 'payments:order' order.id %}">Order {{ order.id }}</a> (order.brief_summary)</li>
+      {% endfor %}
+    </ul>
+    {% if ticket_sales_open %}
+        <li><a href="{% url 'tickets:new_order' %}">Order more conference tickets</a></li>
+    {% endif %}
 {% endif %}
 
 {% if proposals|length == 0 %}
-{% if cfp_open %}
-<li><a href="{% url 'cfp:new_proposal' %}">Make a proposal to our Call for Participation</a></li>
-{% endif %}
+    {% if cfp_open %}
+        <li><a href="{% url 'cfp:new_proposal' %}">Make a proposal to our Call for Participation</a></li>
+    {% endif %}
 {% elif proposals|length == 1 %}
-<li><a href="{% url 'cfp:proposal' proposals.0.proposal_id %}">View your proposal to our Call for Participation</a> ({{ proposals.0.title }})</li>
-{% if cfp_open %}
-<li><a href="{% url 'cfp:new_proposal' %}">Make another proposal to our Call for Participation</a></li>
-{% endif %}
+    <li><a href="{% url 'cfp:proposal' proposals.0.proposal_id %}">View your proposal to our Call for Participation</a> ({{ proposals.0.title }})</li>
+    {% if cfp_open %}
+        <li><a href="{% url 'cfp:new_proposal' %}">Make another proposal to our Call for Participation</a></li>
+    {% endif %}
 {% else %}
-<li>View your proposals to our Call for Participation</li>
-<ul>
-  {% for proposal in proposals %}
-  <li><a href="{% url 'cfp:proposal' proposal.proposal_id %}">{{ proposal.title }}</a></li>
-  {% endfor %}
-</ul>
-<li><a href="{% url 'cfp:new_proposal' %}">Make another proposal to our Call for Participation</a></li>
+    <li>View your proposals to our Call for Participation</li>
+    <ul>
+      {% for proposal in proposals %}
+      <li><a href="{% url 'cfp:proposal' proposal.proposal_id %}">{{ proposal.title }}</a></li>
+      {% endfor %}
+    </ul>
+    <li><a href="{% url 'cfp:new_proposal' %}">Make another proposal to our Call for Participation</a></li>
 {% endif %}
 
 {% if grant_application %}
-<li><a href="{% url 'grants:application' grant_application.application_id %}">View your application for financial assistance</a></li>
+    <li><a href="{% url 'grants:application' grant_application.application_id %}">View your application for financial assistance</a></li>
 {% else %}
-{% if grant_applications_open %}
-<li><a href="{% url 'grants:new_application' %}">Apply for financial assistance</a></li>
-{% endif %}
+    {% if grant_applications_open %}
+        <li><a href="{% url 'grants:new_application' %}">Apply for financial assistance</a></li>
+    {% endif %}
 {% endif %}
 
 {% if nomination %}
-<li><a href="{% url 'ukpa:nomination' nomination.nomination_id %}">
-View your nomination for election as a UKPA Trustee</a></li>
+    <li><a href="{% url 'ukpa:nomination' nomination.nomination_id %}">
+    View your nomination for election as a UKPA Trustee</a></li>
 {% endif %}
 
 {% if is_contributor %}
-{% if free_dinner_booking %}
-{% if free_dinner_booking.venue == 'conference' %}
-<li><a href="{% url 'dinners:conference_dinner' %}">
-View your conference dinner booking
-</a></li>
+    {% if free_dinner_booking %}
+        {% if free_dinner_booking.venue == 'conference' %}
+            <li><a href="{% url 'dinners:conference_dinner' %}">
+            View your conference dinner booking
+            </a></li>
+        {% else %}
+            <li><a href="{% url 'dinners:contributors_dinner' %}">
+            View your contributors' dinner booking
+            </a></li>
+            <li><a href="{% url 'dinners:conference_dinner' %}">
+            {% if conference_dinner_booking %}
+                View your conference dinner booking
+            {% else %}
+                Make a booking for the conference dinner
+            {% endif %}
+            </a></li>
+        {% endif %}
+    {% else %}
+        <li><a href="{% url 'dinners:contributors_dinner' %}">
+        Make a booking for the contributors' dinner
+        </a></li>
+    {% endif %}
 {% else %}
-<li><a href="{% url 'dinners:contributors_dinner' %}">
-View your contributors' dinner booking
-</a></li>
-<li><a href="{% url 'dinners:conference_dinner' %}">
-{% if conference_dinner_booking %}
-View your conference dinner booking
-{% else %}
-Make a booking for the conference dinner
-{% endif %}
-</a></li>
-{% endif %}
-{% else %}
-<li><a href="{% url 'dinners:contributors_dinner' %}">
-Make a booking for the contributors' dinner
-</a></li>
-{% endif %}
-{% else %}
-<li><a href="{% url 'dinners:conference_dinner' %}">
-{% if conference_dinner_booking %}
-View your conference dinner booking
-{% else %}
-Make a booking for the conference dinner
-{% endif %}
-</a></li>
+    <li><a href="{% url 'dinners:conference_dinner' %}">
+    {% if conference_dinner_booking %}
+        View your conference dinner booking
+    {% else %}
+        Make a booking for the conference dinner
+    {% endif %}
+    </a></li>
 {% endif %}
 
 </ul>
 
 {% if ticket %}
-<p>We look forward to seeing you in Cardiff!</p>
+    <p>We look forward to seeing you in Cardiff!</p>
 {% else %}
-<p>We hope to see you in Cardiff!</p>
+    <p>We hope to see you in Cardiff!</p>
 {% endif %}
 
 <p>~ The PyCon UK Committee</p>
