@@ -39,7 +39,7 @@ def order(request, invoice_id):
 
     context = {
         'invoice': invoice,
-        # 'ticket': ticket,
+        'ticket': invoice.tickets()[0],
         'stripe_api_key': settings.STRIPE_API_KEY_PUBLISHABLE,
     }
     return render(request, 'payments/order.html', context)

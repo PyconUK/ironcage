@@ -55,9 +55,9 @@ class MailerTests(TestCase):
         email = mail.outbox[0]
         self.assertEqual(email.to, ['alice@example.com'])
         self.assertEqual(email.from_email, 'PyCon UK 2018 <noreply@pyconuk.org>')
-        self.assertEqual(email.subject, f'PyCon UK 2018 order confirmation ({order.order_id})')
+        self.assertEqual(email.subject, f'PyCon UK 2018 order confirmation ({order.item_id})')
         self.assertTrue(re.search(r'You have purchased 1 ticket for PyCon UK 2018', email.body))
-        self.assertTrue(re.search(fr'http://testserver/tickets/orders/{order.order_id}/receipt/', email.body))
+        self.assertTrue(re.search(fr'http://testserver/payments/payment/{order.payment.id}/', email.body))
         self.assertFalse(re.search('Ticket invitations have been sent to the following', email.body))
         self.assertTrue(re.search('We look forward to seeing you in Cardiff', email.body))
 
@@ -72,9 +72,9 @@ class MailerTests(TestCase):
         email = mail.outbox[0]
         self.assertEqual(email.to, ['alice@example.com'])
         self.assertEqual(email.from_email, 'PyCon UK 2018 <noreply@pyconuk.org>')
-        self.assertEqual(email.subject, f'PyCon UK 2018 order confirmation ({order.order_id})')
+        self.assertEqual(email.subject, f'PyCon UK 2018 order confirmation ({order.item_id})')
         self.assertTrue(re.search(r'You have purchased 2 tickets for PyCon UK 2018', email.body))
-        self.assertTrue(re.search(fr'http://testserver/tickets/orders/{order.order_id}/receipt/', email.body))
+        self.assertTrue(re.search(fr'http://testserver/payments/payment/{order.payment.id}/', email.body))
         self.assertTrue(re.search('Ticket invitations have been sent to the following', email.body))
         self.assertTrue(re.search('bob@example.com', email.body))
         self.assertTrue(re.search('carol@example.com', email.body))
@@ -91,9 +91,9 @@ class MailerTests(TestCase):
         email = mail.outbox[0]
         self.assertEqual(email.to, ['alice@example.com'])
         self.assertEqual(email.from_email, 'PyCon UK 2018 <noreply@pyconuk.org>')
-        self.assertEqual(email.subject, f'PyCon UK 2018 order confirmation ({order.order_id})')
+        self.assertEqual(email.subject, f'PyCon UK 2018 order confirmation ({order.item_id})')
         self.assertTrue(re.search(r'You have purchased 3 tickets for PyCon UK 2018', email.body))
-        self.assertTrue(re.search(fr'http://testserver/tickets/orders/{order.order_id}/receipt/', email.body))
+        self.assertTrue(re.search(fr'http://testserver/payments/payment/{order.payment.id}/', email.body))
         self.assertTrue(re.search('Ticket invitations have been sent to the following', email.body))
         self.assertTrue(re.search('bob@example.com', email.body))
         self.assertTrue(re.search('carol@example.com', email.body))
