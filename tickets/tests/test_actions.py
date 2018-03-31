@@ -305,7 +305,7 @@ class CreateFreeTicketTests(TestCase):
 
         self.assertEqual(ticket.days(), [])
         self.assertEqual(ticket.pot, 'Financial assistance')
-        self.assertEqual(ticket.invitation().email_addr, 'alice@example.com')
+        self.assertEqual(ticket.invitation.email_addr, 'alice@example.com')
         self.assertEqual(len(mail.outbox), 1)
 
 
@@ -374,7 +374,7 @@ class ReassignTicketTests(TestCase):
         self.assertIsNone(self.alice.get_ticket())
 
         ticket.refresh_from_db()
-        self.assertEqual(ticket.invitation().status, 'unclaimed')
+        self.assertEqual(ticket.invitation.status, TicketInvitation.UNCLAIMED)
 
         self.assertEqual(len(mail.outbox), 1)
 
@@ -392,7 +392,7 @@ class ReassignTicketTests(TestCase):
         self.assertIsNone(alice.get_ticket())
 
         ticket.refresh_from_db()
-        self.assertEqual(ticket.invitation().status, 'unclaimed')
+        self.assertEqual(ticket.invitation.status, TicketInvitation.UNCLAIMED)
 
         self.assertEqual(len(mail.outbox), 1)
 
@@ -403,7 +403,7 @@ class ReassignTicketTests(TestCase):
         actions.reassign_ticket(ticket, 'zoe@example.com')
 
         ticket.refresh_from_db()
-        self.assertEqual(ticket.invitation().status, 'unclaimed')
+        self.assertEqual(ticket.invitation.status, TicketInvitation.UNCLAIMED)
 
         self.assertEqual(len(mail.outbox), 1)
 

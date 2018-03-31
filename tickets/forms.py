@@ -3,18 +3,13 @@ from django.core.exceptions import ValidationError
 
 from ironcage.widgets import ButtonsCheckbox, ButtonsRadio, EmailInput
 
+from tickets.models import Ticket
+
 
 WHO_CHOICES = [
     ('self', 'Myself'),
     ('others', 'Other people'),
     ('self and others', 'Myself and other people'),
-]
-
-
-RATE_CHOICES = [
-    ('individual', 'Individual'),
-    ('corporate', 'Corporate'),
-    ('education', 'Education'),
 ]
 
 
@@ -33,7 +28,7 @@ class TicketForm(forms.Form):
         widget=ButtonsRadio
     )
     rate = forms.ChoiceField(
-        choices=RATE_CHOICES,
+        choices=Ticket.RATE_CHOICES,
         widget=ButtonsRadio
     )
 

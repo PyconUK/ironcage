@@ -291,13 +291,27 @@ class Order(models.Model):
             return ', '.join(lines)
         else:
             return None
+    INDIVIDUAL = 'INDI'
+    CORPORATE = 'CORP'
+    EDUCATION = 'EDUC'
+    FREE = 'FREE'
 
+    RATE_CHOICES = (
+        (INDIVIDUAL, 'Individual'),
+        (CORPORATE, 'Corporate'),
+        (EDUCATION, 'Educational'),
+        (FREE, 'Free'),
+    )
 
 class Ticket(models.Model):
     # order = models.ForeignKey(Order, related_name='tickets', null=True, on_delete=models.CASCADE)
     pot = models.CharField(max_length=100, null=True)
     owner = models.OneToOneField(settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE)
     rate = models.CharField(max_length=40)
+    pot = models.CharField(max_length=100, null=True, blank=True)
+    owner = models.OneToOneField(settings.AUTH_USER_MODEL, null=True,
+                                 on_delete=models.DO_NOTHING, related_name='ticket')
+    rate = models.CharField(max_length=4, choices=RATE_CHOICES, blank=False, null=False)
     sat = models.BooleanField()
     sun = models.BooleanField()
     mon = models.BooleanField()
@@ -310,24 +324,40 @@ class Ticket(models.Model):
     id_scrambler = Scrambler(2000)
 
     class Manager(models.Manager):
+        @staticmethod
+        def _check_days(days):
+            return isinstance(days, list) \
+                   and len(days) > 0 \
+                   and all(day in DAYS for day in days)
+
         def get_by_ticket_id_or_404(self, ticket_id):
             id = self.model.id_scrambler.backward(ticket_id)
             return get_object_or_404(self.model, pk=id)
 
         def create_for_user(self, user, rate, days):
+            if not self._check_days(days):
+                raise ValidationError('Please provide at least one day')
+
             day_fields = {day: (day in days) for day in DAYS}
             return self.create(owner=user, rate=rate, **day_fields)
 
         def create_with_invitation(self, email_addr, rate, days):
+            if not self._check_days(days):
+                raise ValidationError('Please provide at least one day')
+
             day_fields = {day: (day in days) for day in DAYS}
-            ticket = self.create(rate=rate, **day_fields)
-            ticket.invitations.create(email_addr=email_addr)
+            ticket = self.create(rate=rate, owner=None, **day_fields)
+            TicketInvitation.objects.create(
+                ticket=ticket, email_addr=email_addr
+            )
             return ticket
 
         def create_free_with_invitation(self, email_addr, pot):
             days = {day: False for day in DAYS}
-            ticket = self.create(pot=pot, **days)
-            ticket.invitations.create(email_addr=email_addr)
+            ticket = self.create(pot=pot, rate=Ticket.FREE, **days)
+            TicketInvitation.objects.create(
+                ticket=ticket, email_addr=email_addr
+            )
             return ticket
 
     objects = Manager()
@@ -395,10 +425,10 @@ class Ticket(models.Model):
 
     def invitation(self):
         # This will raise an exception if a ticket has multiple invitations
-        return self.invitations.get()
+        return self.invitations.get() if self.invitations.count() else None
 
     def is_free_ticket(self):
-        return self.rate == 'free'
+        return self.rate == self.FREE
         # Previously checked for an order being attached
 
     def is_incomplete(self):
@@ -408,6 +438,13 @@ class Ticket(models.Model):
         for day in DAYS:
             setattr(self, day, (day in days))
         self.save()
+
+    @property
+    def valid(self):
+        if self.rate == self.FREE:
+            return True
+        else:
+            return False
 
     @property
     def item_id(self):
@@ -454,10 +491,19 @@ class UnconfirmedTicket:
 
 
 class TicketInvitation(models.Model):
-    ticket = models.ForeignKey(Ticket, related_name='invitations', on_delete=models.CASCADE)  # This should be a OneToOneField
-    email_addr = models.EmailField()  # This should be unique=True
+
+    UNCLAIMED = 'U'
+    CLAIMED = 'C'
+
+    STATUS_CHOICES = (
+        (UNCLAIMED, 'Unclaimed'),
+        (CLAIMED, 'Claimed'),
+    )
+
+    ticket = models.OneToOneField(Ticket, related_name='invitation', on_delete=models.CASCADE)  # This should be a OneToOneField
+    email_addr = models.EmailField(unique=True)
     token = models.CharField(max_length=12, unique=True)  # An index is automatically created since unique=True
-    status = models.CharField(max_length=10, default='unclaimed')
+    status = models.CharField(max_length=1, default=UNCLAIMED, choices=STATUS_CHOICES)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -475,9 +521,9 @@ class TicketInvitation(models.Model):
     def claim_for_owner(self, owner):
         # This would fail if owner already has a ticket, as Ticket.owner is a
         # OneToOneField.
-        assert self.status == 'unclaimed'
+        assert self.status == self.UNCLAIMED
         ticket = self.ticket
         ticket.owner = owner
         ticket.save()
-        self.status = 'claimed'
+        self.status = self.CLAIMED
         self.save()

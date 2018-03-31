@@ -5,10 +5,10 @@ from tickets import actions
 
 def create_pending_order_for_self(user=None, rate=None, num_days=None):
     user = user or create_user()
-    rate = rate or 'individual'
+    rate = rate or Ticket.INDIVIDUAL
     num_days = num_days or 3
 
-    if rate == 'corporate':
+    if rate == Ticket.CORPORATE:
         company_details = {
             'name': 'Sirius Cybernetics Corp.',
             'addr': 'Eadrax, Sirius Tau',
@@ -26,7 +26,7 @@ def create_pending_order_for_self(user=None, rate=None, num_days=None):
 
 def create_pending_order_for_others(user=None, rate=None):
     user = user or create_user()
-    rate = rate or 'individual'
+    rate = rate or Ticket.INDIVIDUAL
     return actions.create_pending_order(
         purchaser=user,
         rate=rate,
@@ -39,7 +39,7 @@ def create_pending_order_for_others(user=None, rate=None):
 
 def create_pending_order_for_self_and_others(user=None, rate=None):
     user = user or create_user()
-    rate = rate or 'individual'
+    rate = rate or Ticket.INDIVIDUAL
     return actions.create_pending_order(
         purchaser=user,
         rate=rate,

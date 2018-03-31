@@ -5,6 +5,7 @@ from django.template.loader import get_template
 from django.urls import reverse
 
 from ironcage.emails import send_mail
+from tickets.models import Ticket
 
 
 INVITATION_TEMPLATE = '''
@@ -38,9 +39,9 @@ We look forward to seeing you in Cardiff!
 
 
 def send_invitation_mail(ticket):
-    invitation = ticket.invitation()
+    invitation = ticket.invitation
     url = settings.DOMAIN + invitation.get_absolute_url()
-    if ticket.order is None:
+    if ticket.rate == Ticket.FREE:
         body = FREE_TICKET_INVITATION_TEMPLATE.format(url=url)
     else:
         purchaser_name = ticket.order.purchaser.name

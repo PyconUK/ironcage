@@ -7,7 +7,7 @@ from ironcage.tests import utils
 from . import factories
 
 from tickets import actions
-from tickets.models import TicketInvitation
+from tickets.models import TicketInvitation, Ticket
 
 
 class NewOrderTests(TestCase):
@@ -67,7 +67,7 @@ class NewOrderTests(TestCase):
         self.client.force_login(self.alice)
         form_data = {
             'who': 'self',
-            'rate': 'individual',
+            'rate': Ticket.INDIVIDUAL,
             'days': ['sat', 'sun', 'mon'],
             # The formset gets POSTed even when order is only for self
             'form-TOTAL_FORMS': '2',
@@ -84,7 +84,7 @@ class NewOrderTests(TestCase):
         self.client.force_login(self.alice)
         form_data = {
             'who': 'self',
-            'rate': 'corporate',
+            'rate': Ticket.CORPORATE,
             'days': ['sat', 'sun', 'mon'],
             'company_name': 'Sirius Cybernetics Corp.',
             'company_addr': 'Eadrax, Sirius Tau',
@@ -103,7 +103,7 @@ class NewOrderTests(TestCase):
         self.client.force_login(self.alice)
         form_data = {
             'who': 'others',
-            'rate': 'individual',
+            'rate': Ticket.INDIVIDUAL,
             'form-TOTAL_FORMS': '2',
             'form-INITIAL_FORMS': '0',
             'form-MIN_NUM_FORMS': '1',
@@ -120,7 +120,7 @@ class NewOrderTests(TestCase):
         self.client.force_login(self.alice)
         form_data = {
             'who': 'self and others',
-            'rate': 'individual',
+            'rate': Ticket.INDIVIDUAL,
             'days': ['sat', 'sun', 'mon'],
             'form-TOTAL_FORMS': '2',
             'form-INITIAL_FORMS': '0',
@@ -175,7 +175,7 @@ class OrderEditTests(TestCase):
         self.client.force_login(self.order.purchaser)
         form_data = {
             'who': 'self',
-            'rate': 'corporate',
+            'rate': Ticket.CORPORATE,
             'company_name': 'Sirius Cybernetics Corp.',
             'company_addr': 'Eadrax, Sirius Tau',
             'days': ['fri', 'sat', 'sun'],
@@ -194,7 +194,7 @@ class OrderEditTests(TestCase):
         self.client.force_login(self.order.purchaser)
         form_data = {
             'who': 'others',
-            'rate': 'corporate',
+            'rate': Ticket.CORPORATE,
             'company_name': 'Sirius Cybernetics Corp.',
             'company_addr': 'Eadrax, Sirius Tau',
             'form-TOTAL_FORMS': '2',
@@ -213,7 +213,7 @@ class OrderEditTests(TestCase):
         self.client.force_login(self.order.purchaser)
         form_data = {
             'who': 'self and others',
-            'rate': 'corporate',
+            'rate': Ticket.CORPORATE,
             'company_name': 'Sirius Cybernetics Corp.',
             'company_addr': 'Eadrax, Sirius Tau',
             'days': ['fri', 'sat', 'sun'],
@@ -492,7 +492,7 @@ class TicketTests(TestCase):
         self.client.force_login(alice)
         rsp = self.client.get(f'/tickets/tickets/{ticket.ticket_id}/', follow=True)
         self.assertNotContains(rsp, 'Cost (incl. VAT)')
-        self.assertContains(rsp, 'Thursday, Friday, Saturday')
+        self.assertContains(rsp, 'Saturday, Sunday, Monday')
         self.assertContains(rsp, 'Update your ticket')
 
     def test_when_not_authenticated(self):
@@ -516,7 +516,7 @@ class TicketEditTests(TestCase):
         self.client.force_login(alice)
         rsp = self.client.get(f'/tickets/tickets/{ticket.ticket_id}/edit/', follow=True)
         self.assertContains(rsp, 'Update my ticket')
-        self.assertContains(rsp, '<input type="checkbox" name="days" value="thu">', html=True)
+        self.assertContains(rsp, '<input type="checkbox" name="days" value="sat">', html=True)
 
     def test_get_completed_free_ticket(self):
         alice = factories.create_user('Alice')
@@ -524,7 +524,7 @@ class TicketEditTests(TestCase):
         self.client.force_login(alice)
         rsp = self.client.get(f'/tickets/tickets/{ticket.ticket_id}/edit/', follow=True)
         self.assertContains(rsp, 'Update my ticket')
-        self.assertContains(rsp, '<input type="checkbox" name="days" value="thu" checked>', html=True)
+        self.assertContains(rsp, '<input type="checkbox" name="days" value="sat" checked>', html=True)
 
     def test_post(self):
         alice = factories.create_user('Alice')
