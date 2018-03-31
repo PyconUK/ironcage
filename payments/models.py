@@ -176,6 +176,9 @@ class SalesRecord(models.Model):
 
         return tickets
 
+    def brief_summary(self):
+        return f'{self.rows.count()} items, £{self.total_inc_vat}'
+
 
 class SalesRecordRow(models.Model):
 
