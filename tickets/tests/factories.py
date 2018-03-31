@@ -52,7 +52,8 @@ def create_pending_order_for_self_and_others(user=None, rate=None):
 
 
 def confirm_order(order):
-    actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvw', 1495355163)
+    with utils.patched_charge_creation_success(order.total_pence_inc_vat):
+        return payment_actions.process_stripe_charge(order, 'ch_abcdefghijklmnopqurstuvw')
 
 
 def mark_order_as_failed(order):

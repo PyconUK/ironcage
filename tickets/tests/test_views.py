@@ -348,7 +348,7 @@ class OrderPaymentTests(TestCase):
 
     def test_stripe_success(self):
         self.client.force_login(self.order.purchaser)
-        with utils.patched_charge_creation_success():
+        with utils.patched_charge_creation_success(self.order.total_pence_inc_vat):
             rsp = self.client.post(
                 f'/payments/orders/{self.order.id}/payment/',
                 {'stripeToken': 'tok_abcdefghijklmnopqurstuvwx'},

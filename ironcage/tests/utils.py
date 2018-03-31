@@ -9,10 +9,12 @@ from django.conf import settings
 
 
 @contextmanager
-def patched_charge_creation_success():
+def patched_charge_creation_success(amount_in_pence):
     path = os.path.join(settings.BASE_DIR, 'tickets', 'tests', 'data', 'stripe_charge_success.json')
     with open(path) as f:
         charge_data = json.load(f)
+        if amount_in_pence:
+            charge_data['amount'] = amount_in_pence
     charge = stripe.Charge.construct_from(charge_data, settings.STRIPE_API_KEY_PUBLISHABLE)
     with patch('stripe.Charge.create') as mock:
         mock.return_value = charge
