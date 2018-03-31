@@ -2,9 +2,10 @@ from django.core.exceptions import ValidationError
 from django.test import TestCase
 
 from payments import actions
-from payments.models import Invoice, CreditNote
+from payments.models import Invoice, CreditNote, Payment
 from payments.tests import factories
 from ironcage.tests import utils
+from tickets.tests import factories as ticket_factories
 
 
 class CreateNewInvoiceTests(TestCase):
@@ -253,29 +254,29 @@ class CreateNewCreditNoteTests(TestCase):
 
 class ProcessStripeChargeTests(TestCase):
     def setUp(self):
-        self.order = factories.create_pending_order_for_self()
+        self.order = ticket_factories.create_pending_order_for_self()
 
     def test_process_stripe_charge_success(self):
         token = 'tok_ abcdefghijklmnopqurstuvwx'
-        with utils.patched_charge_creation_success():
-            actions.process_stripe_charge(self.order, token)
-        self.order.refresh_from_db()
-        self.assertEqual(self.order.status, 'successful')
+        with utils.patched_charge_creation_success(self.order.total_pence_inc_vat):
+            payment = actions.process_stripe_charge(self.order, token)
+
+        self.assertEqual(payment.status, Payment.SUCCESSFUL)
 
     def test_process_stripe_charge_failure(self):
         token = 'tok_ abcdefghijklmnopqurstuvwx'
         with utils.patched_charge_creation_failure():
-            actions.process_stripe_charge(self.order, token)
-        self.order.refresh_from_db()
-        self.assertEqual(self.order.status, 'failed')
+            payment = actions.process_stripe_charge(self.order, token)
+
+        self.assertEqual(payment.status, Payment.FAILED)
 
     def test_process_stripe_charge_error_after_charge(self):
-        factories.create_confirmed_order_for_self(self.order.purchaser)
+        ticket_factories.create_confirmed_order_for_self(self.order.purchaser)
         token = 'tok_ abcdefghijklmnopqurstuvwx'
 
-        with utils.patched_charge_creation_success(), utils.patched_refund_creation_expected():
-            actions.process_stripe_charge(self.order, token)
+        with utils.patched_charge_creation_success(self.order.total_pence_inc_vat), utils.patched_refund_creation_expected():
+            payment = actions.process_stripe_charge(self.order, token)
 
         self.order.refresh_from_db()
-        self.assertEqual(self.order.status, 'errored')
-        self.assertEqual(self.order.stripe_charge_id, 'ch_abcdefghijklmnopqurstuvw')
+        self.assertEqual(payment.status, Payment.ERRORED)
+        self.assertEqual(payment.stripe_charge_id, 'ch_abcdefghijklmnopqurstuvw')

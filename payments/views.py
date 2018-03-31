@@ -129,28 +129,30 @@ def order_edit(request, order_id):
 
 @login_required
 @require_POST
-def invoice_payment(request, order_id):
-    order = get_object_or_404(Invoice, pk=order_id)
+def invoice_payment(request, invoice_id):
+    invoice = get_object_or_404(Invoice, pk=invoice_id)
 
-    if request.user != order.purchaser:
-        messages.warning(request, 'Only the purchaser of an order can pay for the order')
+    if request.user != invoice.purchaser:
+        messages.warning(request, 'Only the purchaser of an invoice can pay for the invoice')
         return redirect('index')
 
-    if not order.payment_required:
-        messages.error(request, 'This order has already been paid')
-        return redirect(order)
+    if not invoice.payment_required:
+        messages.error(request, 'This invoice has already been paid')
+        return redirect(invoice)
 
-    # if request.user.get_ticket() is not None and order.unconfirmed_details['days_for_self']:
-    #     messages.warning(request, 'You already have a ticket.  Please amend your order.  Your card has not been charged.')
-    #     return redirect('tickets:order_edit', order.order_id)
+    # if request.user.get_ticket() is not None and invoice.unconfirmed_details['days_for_self']:
+    #     messages.warning(request, 'You already have a ticket.  Please amend your invoice.  Your card has not been charged.')
+    #     return redirect('tickets:order_edit', invoice.invoice_id)
 
     token = request.POST['stripeToken']
-    payment_actions.process_stripe_charge(order, token)
+    payment = payment_actions.process_stripe_charge(invoice, token)
 
-    if not order.payment_required:
-        messages.success(request, 'Payment for this order has been received.')
+    if not invoice.payment_required and payment.status == Payment.SUCCESSFUL:
+        messages.success(request, 'Payment for this invoice has been received.')
+    else:
+        messages.error(request, f'There was an error with your payment: {payment.charge_failure_reason}')
 
-    return redirect(order)
+    return redirect(invoice)
 
 
 @login_required

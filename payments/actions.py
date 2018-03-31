@@ -56,13 +56,15 @@ def confirm_invoice(invoice, charge_id, charge_created):
     slack_message('tickets/order_created.slack', {'invoice': invoice})
 
 
-def mark_payment_as_failed(invoice, failure_message):
+def mark_payment_as_failed(invoice, failure_message, charge_id):
     with transaction.atomic():
         return Payment.objects.create(
             invoice=invoice,
             method=Payment.STRIPE,
             status=Payment.FAILED,
             charge_failure_reason=failure_message,
+            charge_id=charge_id,
+            amount=0
         )
 
 
@@ -100,7 +102,8 @@ def process_stripe_charge(invoice, token):
         return payment
 
     except stripe.error.CardError as e:
-        return mark_payment_as_failed(invoice, e._message)
+        charge_id = e.json_body['error']['charge']
+        return mark_payment_as_failed(invoice, e._message, charge_id)
 
     except IntegrityError:
         refund_charge(charge.id)

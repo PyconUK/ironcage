@@ -90,7 +90,7 @@ class SalesRecord(models.Model):
 
     def get_payment(self):
         # TODO: BETTER
-        return self.payments.first()
+        return self.payments.first() if self.payments else 0
 
     @property
     def total_pence_inc_vat(self):
@@ -150,7 +150,9 @@ class SalesRecord(models.Model):
 
     @property
     def payment_required(self):
-        return self.payments.count() == 0
+        return self.payments.filter(
+            status=Payment.SUCCESSFUL
+        ).count() < 1
 
     def tickets(self):
         from tickets.models import Ticket

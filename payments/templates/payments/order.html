@@ -9,7 +9,7 @@
 
 {% if invoice.payment_required %}
 <div id="stripe-form">
-  <form action="{% url 'payments:invoice_payment' order_id=invoice.id %}" method="POST">
+  <form action="{% url 'payments:invoice_payment' invoice_id=invoice.id %}" method="POST">
     {% csrf_token %}
     <script
       src="https://checkout.stripe.com/checkout.js" class="stripe-button"
@@ -18,7 +18,7 @@
       data-currency="gbp"
       data-name="PyCon UK Society Ltd"
       data-image="{% static 'ironcage/img/yellow.png' %}"
-      data-description="PyCon UK 2018 invoice {{ invoice.invoice_id }}"
+      data-description="PyCon UK 2018 invoice {{ invoice.item_id }}"
       data-locale="auto"
       data-email="{{ invoice.purchaser.email_addr }}"
     >
@@ -31,10 +31,16 @@
   </form>
 
 </div>
-{% elif not invoice.status == 'errored' %}
+{% elif not invoice.payment_required %}
 <div class="row">
   <div class="col-md-6">
-    <a href="{% url 'payments:payment' invoice.get_payment.id %}" class="btn btn-primary">View receipt</a>
+    {% if invoice.payments.count == 1 %}
+      <a href="{% url 'payments:payment' invoice.payments.first.id %}" class="btn btn-primary">View receipt</a>
+    {% else %}
+      {% for payment in invoice.payments.all %}
+        <a href="{% url 'payments:payment' payment.id %}" class="">Receipt #{{ payment.id }} ({{payment.get_status_display}})</a><br>
+      {% endfor %}
+    {% endif %}
     {% if ticket %}
     <a href="{% url 'tickets:ticket' ticket.ticket_id %}" class="btn btn-primary">View your ticket</a>
     {% endif %}
