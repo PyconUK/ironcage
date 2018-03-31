@@ -7,7 +7,7 @@ from . import factories
 from ironcage.tests import utils
 
 from tickets import actions
-from tickets.models import TicketInvitation
+from tickets.models import TicketInvitation, Ticket
 
 
 class CreatePendingOrderTests(TestCase):
@@ -18,7 +18,7 @@ class CreatePendingOrderTests(TestCase):
     def test_order_for_self_individual(self):
         order = actions.create_pending_order(
             self.alice,
-            'individual',
+            Ticket.INDIVIDUAL,
             days_for_self=['sat', 'sun', 'mon']
         )
 
@@ -27,12 +27,12 @@ class CreatePendingOrderTests(TestCase):
 
         self.assertEqual(order.purchaser, self.alice)
         self.assertEqual(order.status, 'pending')
-        self.assertEqual(order.rate, 'individual')
+        self.assertEqual(order.rate, Ticket.INDIVIDUAL)
 
     def test_order_for_self_corporate(self):
         order = actions.create_pending_order(
             self.alice,
-            'corporate',
+            Ticket.CORPORATE,
             days_for_self=['sat', 'sun', 'mon'],
             company_details={
                 'name': 'Sirius Cybernetics Corp.',
@@ -45,14 +45,14 @@ class CreatePendingOrderTests(TestCase):
 
         self.assertEqual(order.purchaser, self.alice)
         self.assertEqual(order.status, 'pending')
-        self.assertEqual(order.rate, 'corporate')
+        self.assertEqual(order.rate, Ticket.CORPORATE)
         self.assertEqual(order.company_name, 'Sirius Cybernetics Corp.')
         self.assertEqual(order.company_addr, 'Eadrax, Sirius Tau')
 
     def test_order_for_others(self):
         order = actions.create_pending_order(
             self.alice,
-            'individual',
+            Ticket.INDIVIDUAL,
             email_addrs_and_days_for_others=[
                 ('bob@example.com', ['sat', 'sun']),
                 ('carol@example.com', ['sun', 'mon']),
@@ -64,12 +64,12 @@ class CreatePendingOrderTests(TestCase):
 
         self.assertEqual(order.purchaser, self.alice)
         self.assertEqual(order.status, 'pending')
-        self.assertEqual(order.rate, 'individual')
+        self.assertEqual(order.rate, Ticket.INDIVIDUAL)
 
     def test_order_for_self_and_others(self):
         order = actions.create_pending_order(
             self.alice,
-            'individual',
+            Ticket.INDIVIDUAL,
             days_for_self=['sat', 'sun', 'mon'],
             email_addrs_and_days_for_others=[
                 ('bob@example.com', ['sat', 'sun']),
@@ -82,7 +82,7 @@ class CreatePendingOrderTests(TestCase):
 
         self.assertEqual(order.purchaser, self.alice)
         self.assertEqual(order.status, 'pending')
-        self.assertEqual(order.rate, 'individual')
+        self.assertEqual(order.rate, Ticket.INDIVIDUAL)
 
 
 class UpdatePendingOrderTests(TestCase):

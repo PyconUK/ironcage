@@ -48,7 +48,7 @@ def new_order(request):
                 assert False
 
             if valid:
-                if rate == 'corporate':
+                if rate == Ticket.CORPORATE:
                     valid = company_details_form.is_valid()
                     if valid:
                         company_details = {
@@ -189,10 +189,10 @@ def ticket_invitation(request, token):
 
     ticket = invitation.ticket
 
-    if invitation.status == 'unclaimed':
+    if invitation.status == TicketInvitation.UNCLAIMED:
         assert ticket.owner is None
         actions.claim_ticket_invitation(request.user, invitation)
-    elif invitation.status == 'claimed':
+    elif invitation.status == TicketInvitation.CLAIMED:
         assert ticket.owner is not None
         messages.info(request, 'This invitation has already been claimed')
     else:
@@ -210,9 +210,9 @@ def _rates_table_data():
     data.append(['', 'Individual rate', 'Corporate rate', "Education rate"])
     for ix in range(5):
         num_days = ix + 1
-        individual_rate = cost_incl_vat('individual', num_days)
-        corporate_rate = cost_incl_vat('corporate', num_days)
-        education_rate = cost_incl_vat('education', num_days)
+        individual_rate = cost_incl_vat('INDI', num_days)
+        corporate_rate = cost_incl_vat('CORP', num_days)
+        education_rate = cost_incl_vat('EDUC', num_days)
         row = []
         if num_days == 1:
             row.append('1 day')
