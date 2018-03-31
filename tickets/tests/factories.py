@@ -107,7 +107,7 @@ def create_ticket_with_claimed_invitation(owner=None):
     order = create_confirmed_order_for_others()
     ticket = order.all_tickets()[0]
     owner = owner or create_user()
-    actions.claim_ticket_invitation(owner, ticket.invitation())
+    actions.claim_ticket_invitation(owner, ticket.invitation)
     return ticket
 
 
@@ -119,7 +119,7 @@ def create_free_ticket(email_addr=None, pot='Financial assistance'):
 
 def create_claimed_free_ticket(user, pot='Financial assistance'):
     ticket = create_free_ticket(user.email_addr, pot)
-    actions.claim_ticket_invitation(user, ticket.invitation())
+    actions.claim_ticket_invitation(user, ticket.invitation)
     return ticket
 
 
