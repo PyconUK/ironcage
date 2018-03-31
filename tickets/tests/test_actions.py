@@ -19,7 +19,7 @@ class CreatePendingOrderTests(TestCase):
         order = actions.create_pending_order(
             self.alice,
             'individual',
-            days_for_self=['thu', 'fri', 'sat']
+            days_for_self=['sat', 'sun', 'mon']
         )
 
         self.assertEqual(self.alice.orders.count(), 1)
@@ -33,7 +33,7 @@ class CreatePendingOrderTests(TestCase):
         order = actions.create_pending_order(
             self.alice,
             'corporate',
-            days_for_self=['thu', 'fri', 'sat'],
+            days_for_self=['sat', 'sun', 'mon'],
             company_details={
                 'name': 'Sirius Cybernetics Corp.',
                 'addr': 'Eadrax, Sirius Tau',
@@ -54,8 +54,8 @@ class CreatePendingOrderTests(TestCase):
             self.alice,
             'individual',
             email_addrs_and_days_for_others=[
-                ('bob@example.com', ['fri', 'sat']),
-                ('carol@example.com', ['sat', 'sun']),
+                ('bob@example.com', ['sat', 'sun']),
+                ('carol@example.com', ['sun', 'mon']),
             ]
         )
 
@@ -70,10 +70,10 @@ class CreatePendingOrderTests(TestCase):
         order = actions.create_pending_order(
             self.alice,
             'individual',
-            days_for_self=['thu', 'fri', 'sat'],
+            days_for_self=['sat', 'sun', 'mon'],
             email_addrs_and_days_for_others=[
-                ('bob@example.com', ['fri', 'sat']),
-                ('carol@example.com', ['sat', 'sun']),
+                ('bob@example.com', ['sat', 'sun']),
+                ('carol@example.com', ['sun', 'mon']),
             ]
         )
 
@@ -91,14 +91,14 @@ class UpdatePendingOrderTests(TestCase):
         actions.update_pending_order(
             order,
             'individual',
-            days_for_self=['fri'],
+            days_for_self=['sat'],
         )
 
         self.assertEqual(order.status, 'pending')
         self.assertEqual(order.rate, 'individual')
         self.assertEqual(
             order.ticket_details(),
-            [{'name': 'Alice', 'days': 'Friday', 'cost_incl_vat': 54, 'cost_excl_vat': 45}]
+            [{'name': 'Alice', 'days': 'Saturday', 'cost_incl_vat': 54, 'cost_excl_vat': 45}]
         )
 
     def test_order_for_self_to_order_for_others(self):
@@ -107,8 +107,8 @@ class UpdatePendingOrderTests(TestCase):
             order,
             'individual',
             email_addrs_and_days_for_others=[
-                ('bob@example.com', ['fri', 'sat']),
-                ('carol@example.com', ['sat', 'sun']),
+                ('bob@example.com', ['sat', 'sun']),
+                ('carol@example.com', ['sun', 'mon']),
             ]
         )
 
@@ -117,8 +117,8 @@ class UpdatePendingOrderTests(TestCase):
         self.assertEqual(
             order.ticket_details(),
             [
-                {'name': 'bob@example.com', 'days': 'Friday, Saturday', 'cost_incl_vat': 90, 'cost_excl_vat': 75},
-                {'name': 'carol@example.com', 'days': 'Saturday, Sunday', 'cost_incl_vat': 90, 'cost_excl_vat': 75},
+                {'name': 'bob@example.com', 'days': 'Saturday, Sunday', 'cost_incl_vat': 90, 'cost_excl_vat': 75},
+                {'name': 'carol@example.com', 'days': 'Sunday, Monday', 'cost_incl_vat': 90, 'cost_excl_vat': 75},
             ]
         )
 
@@ -127,10 +127,10 @@ class UpdatePendingOrderTests(TestCase):
         actions.update_pending_order(
             order,
             'individual',
-            days_for_self=['fri', 'sat', 'sun'],
+            days_for_self=['sat', 'sun', 'mon'],
             email_addrs_and_days_for_others=[
-                ('bob@example.com', ['fri', 'sat']),
-                ('carol@example.com', ['sat', 'sun']),
+                ('bob@example.com', ['sat', 'sun']),
+                ('carol@example.com', ['sun', 'mon']),
             ]
         )
 
@@ -139,9 +139,9 @@ class UpdatePendingOrderTests(TestCase):
         self.assertEqual(
             order.ticket_details(),
             [
-                {'name': 'Alice', 'days': 'Friday, Saturday, Sunday', 'cost_incl_vat': 126, 'cost_excl_vat': 105},
-                {'name': 'bob@example.com', 'days': 'Friday, Saturday', 'cost_incl_vat': 90, 'cost_excl_vat': 75},
-                {'name': 'carol@example.com', 'days': 'Saturday, Sunday', 'cost_incl_vat': 90, 'cost_excl_vat': 75},
+                {'name': 'Alice', 'days': 'Saturday, Sunday, Monday', 'cost_incl_vat': 126, 'cost_excl_vat': 105},
+                {'name': 'bob@example.com', 'days': 'Saturday, Sunday', 'cost_incl_vat': 90, 'cost_excl_vat': 75},
+                {'name': 'carol@example.com', 'days': 'Sunday, Monday', 'cost_incl_vat': 90, 'cost_excl_vat': 75},
             ]
         )
 
@@ -150,7 +150,7 @@ class UpdatePendingOrderTests(TestCase):
         actions.update_pending_order(
             order,
             'corporate',
-            days_for_self=['fri', 'sat', 'sun'],
+            days_for_self=['sat', 'sun', 'mon'],
             company_details={
                 'name': 'Sirius Cybernetics Corp.',
                 'addr': 'Eadrax, Sirius Tau',
@@ -164,7 +164,7 @@ class UpdatePendingOrderTests(TestCase):
         self.assertEqual(
             order.ticket_details(),
             [
-                {'name': 'Alice', 'days': 'Friday, Saturday, Sunday', 'cost_incl_vat': 252, 'cost_excl_vat': 210},
+                {'name': 'Alice', 'days': 'Saturday, Sunday, Monday', 'cost_incl_vat': 252, 'cost_excl_vat': 210},
             ]
         )
 
@@ -173,7 +173,7 @@ class UpdatePendingOrderTests(TestCase):
         actions.update_pending_order(
             order,
             'individual',
-            days_for_self=['fri', 'sat', 'sun'],
+            days_for_self=['sat', 'sun', 'mon'],
         )
 
         self.assertEqual(order.status, 'pending')
@@ -183,7 +183,7 @@ class UpdatePendingOrderTests(TestCase):
         self.assertEqual(
             order.ticket_details(),
             [
-                {'name': 'Alice', 'days': 'Friday, Saturday, Sunday', 'cost_incl_vat': 126, 'cost_excl_vat': 105},
+                {'name': 'Alice', 'days': 'Saturday, Sunday, Monday', 'cost_incl_vat': 126, 'cost_excl_vat': 105},
             ]
         )
 
@@ -202,7 +202,7 @@ class ConfirmOrderTests(TestCase):
         self.assertIsNotNone(order.purchaser.get_ticket())
 
         ticket = order.purchaser.get_ticket()
-        self.assertEqual(ticket.days(), ['Thursday', 'Friday', 'Saturday'])
+        self.assertEqual(ticket.days(), ['Saturday', 'Sunday', 'Monday'])
 
         self.assertEqual(len(mail.outbox), 1)
 
@@ -219,10 +219,10 @@ class ConfirmOrderTests(TestCase):
         self.assertIsNone(order.purchaser.get_ticket())
 
         ticket = TicketInvitation.objects.get(email_addr='bob@example.com').ticket
-        self.assertEqual(ticket.days(), ['Friday', 'Saturday'])
+        self.assertEqual(ticket.days(), ['Saturday', 'Sunday'])
 
         ticket = TicketInvitation.objects.get(email_addr='carol@example.com').ticket
-        self.assertEqual(ticket.days(), ['Saturday', 'Sunday'])
+        self.assertEqual(ticket.days(), ['Sunday', 'Monday'])
 
         self.assertEqual(len(mail.outbox), 3)
 
@@ -239,13 +239,13 @@ class ConfirmOrderTests(TestCase):
         self.assertIsNotNone(order.purchaser.get_ticket())
 
         ticket = order.purchaser.get_ticket()
-        self.assertEqual(ticket.days(), ['Thursday', 'Friday', 'Saturday'])
+        self.assertEqual(ticket.days(), ['Saturday', 'Sunday', 'Monday'])
 
         ticket = TicketInvitation.objects.get(email_addr='bob@example.com').ticket
-        self.assertEqual(ticket.days(), ['Friday', 'Saturday'])
+        self.assertEqual(ticket.days(), ['Saturday', 'Sunday'])
 
         ticket = TicketInvitation.objects.get(email_addr='carol@example.com').ticket
-        self.assertEqual(ticket.days(), ['Saturday', 'Sunday'])
+        self.assertEqual(ticket.days(), ['Sunday', 'Monday'])
 
         self.assertEqual(len(mail.outbox), 3)
 
@@ -264,7 +264,7 @@ class ConfirmOrderTests(TestCase):
         self.assertIsNotNone(order.purchaser.get_ticket())
 
         ticket = order.purchaser.get_ticket()
-        self.assertEqual(ticket.days(), ['Thursday', 'Friday', 'Saturday'])
+        self.assertEqual(ticket.days(), ['Saturday', 'Sunday', 'Monday'])
 
     def test_sends_slack_message(self):
         backend = get_slack_backend()
@@ -313,10 +313,10 @@ class UpdateFreeTicketTests(TestCase):
     def test_update_free_ticket(self):
         ticket = factories.create_free_ticket()
 
-        actions.update_free_ticket(ticket, ['thu', 'fri', 'sat'])
+        actions.update_free_ticket(ticket, ['sat', 'sun', 'mon'])
         ticket.refresh_from_db()
 
-        self.assertEqual(ticket.days(), ['Thursday', 'Friday', 'Saturday'])
+        self.assertEqual(ticket.days(), ['Saturday', 'Sunday', 'Monday'])
 
 
 class ProcessStripeChargeTests(TestCase):

@@ -68,7 +68,7 @@ class NewOrderTests(TestCase):
         form_data = {
             'who': 'self',
             'rate': 'individual',
-            'days': ['thu', 'fri', 'sat'],
+            'days': ['sat', 'sun', 'mon'],
             # The formset gets POSTed even when order is only for self
             'form-TOTAL_FORMS': '2',
             'form-INITIAL_FORMS': '0',
@@ -85,7 +85,7 @@ class NewOrderTests(TestCase):
         form_data = {
             'who': 'self',
             'rate': 'corporate',
-            'days': ['thu', 'fri', 'sat'],
+            'days': ['sat', 'sun', 'mon'],
             'company_name': 'Sirius Cybernetics Corp.',
             'company_addr': 'Eadrax, Sirius Tau',
             # The formset gets POSTed even when order is only for self
@@ -109,7 +109,7 @@ class NewOrderTests(TestCase):
             'form-MIN_NUM_FORMS': '1',
             'form-MAX_NUM_FORMS': '1000',
             'form-0-email_addr': 'test1@example.com',
-            'form-0-days': ['thu', 'fri'],
+            'form-0-days': ['mon', 'tue'],
             'form-1-email_addr': 'test2@example.com',
             'form-1-days': ['sat', 'sun', 'mon'],
         }
@@ -121,13 +121,13 @@ class NewOrderTests(TestCase):
         form_data = {
             'who': 'self and others',
             'rate': 'individual',
-            'days': ['thu', 'fri', 'sat'],
+            'days': ['sat', 'sun', 'mon'],
             'form-TOTAL_FORMS': '2',
             'form-INITIAL_FORMS': '0',
             'form-MIN_NUM_FORMS': '1',
             'form-MAX_NUM_FORMS': '1000',
             'form-0-email_addr': 'test1@example.com',
-            'form-0-days': ['thu', 'fri'],
+            'form-0-days': ['mon', 'tue'],
             'form-1-email_addr': 'test2@example.com',
             'form-1-days': ['sat', 'sun', 'mon'],
         }
@@ -202,7 +202,7 @@ class OrderEditTests(TestCase):
             'form-MIN_NUM_FORMS': '1',
             'form-MAX_NUM_FORMS': '1000',
             'form-0-email_addr': 'test1@example.com',
-            'form-0-days': ['thu', 'fri'],
+            'form-0-days': ['mon', 'tue'],
             'form-1-email_addr': 'test2@example.com',
             'form-1-days': ['sat', 'sun', 'mon'],
         }
@@ -222,7 +222,7 @@ class OrderEditTests(TestCase):
             'form-MIN_NUM_FORMS': '1',
             'form-MAX_NUM_FORMS': '1000',
             'form-0-email_addr': 'test1@example.com',
-            'form-0-days': ['thu', 'fri'],
+            'form-0-days': ['mon', 'tue'],
             'form-1-email_addr': 'test2@example.com',
             'form-1-days': ['sat', 'sun', 'mon'],
         }
@@ -530,8 +530,8 @@ class TicketEditTests(TestCase):
         alice = factories.create_user('Alice')
         ticket = factories.create_completed_free_ticket(alice)
         self.client.force_login(alice)
-        rsp = self.client.post(f'/tickets/tickets/{ticket.ticket_id}/edit/', {'days': ['thu', 'fri', 'sat', 'sun']}, follow=True)
-        self.assertContains(rsp, 'Thursday, Friday, Saturday, Sunday')
+        rsp = self.client.post(f'/tickets/tickets/{ticket.ticket_id}/edit/', {'days': ['sat', 'sun', 'mon', 'tue']}, follow=True)
+        self.assertContains(rsp, 'Saturday, Sunday, Monday, Tuesday')
         self.assertContains(rsp, 'Update your ticket')
 
     def test_get_when_not_authenticated(self):

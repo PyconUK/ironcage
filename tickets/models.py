@@ -298,11 +298,11 @@ class Ticket(models.Model):
     pot = models.CharField(max_length=100, null=True)
     owner = models.OneToOneField(settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE)
     rate = models.CharField(max_length=40)
-    thu = models.BooleanField()
-    fri = models.BooleanField()
     sat = models.BooleanField()
     sun = models.BooleanField()
     mon = models.BooleanField()
+    tue = models.BooleanField()
+    wed = models.BooleanField()
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

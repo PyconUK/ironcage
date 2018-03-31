@@ -19,7 +19,7 @@ def create_pending_order_for_self(user=None, rate=None, num_days=None):
     return actions.create_pending_order(
         purchaser=user,
         rate=rate,
-        days_for_self=['thu', 'fri', 'sat', 'sun', 'mon'][:num_days],
+        days_for_self=['sat', 'sun', 'mon', 'tue', 'wed'][:num_days],
         company_details=company_details,
     )
 
@@ -31,8 +31,8 @@ def create_pending_order_for_others(user=None, rate=None):
         purchaser=user,
         rate=rate,
         email_addrs_and_days_for_others=[
-            ('bob@example.com', ['fri', 'sat']),
-            ('carol@example.com', ['sat', 'sun']),
+            ('bob@example.com', ['sat', 'sun']),
+            ('carol@example.com', ['sun', 'mon']),
         ]
     )
 
@@ -43,10 +43,10 @@ def create_pending_order_for_self_and_others(user=None, rate=None):
     return actions.create_pending_order(
         purchaser=user,
         rate=rate,
-        days_for_self=['thu', 'fri', 'sat'],
+        days_for_self=['sat', 'sun', 'mon'],
         email_addrs_and_days_for_others=[
-            ('bob@example.com', ['fri', 'sat']),
-            ('carol@example.com', ['sat', 'sun']),
+            ('bob@example.com', ['sat', 'sun']),
+            ('carol@example.com', ['sun', 'mon']),
         ]
     )
 
@@ -125,5 +125,5 @@ def create_claimed_free_ticket(user, pot='Financial assistance'):
 
 def create_completed_free_ticket(user, pot='Financial assistance'):
     ticket = create_claimed_free_ticket(user, pot)
-    actions.update_free_ticket(ticket, ['thu', 'fri', 'sat'])
+    actions.update_free_ticket(ticket, ['sat', 'sun', 'mon'])
     return ticket

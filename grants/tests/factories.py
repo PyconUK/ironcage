@@ -11,10 +11,10 @@ def create_application(user=None):
         applicant=user,
         amount_requested=1000,
         would_like_ticket_set_aside=False,
-        thu=False,
-        fri=False,
         sat=True,
         sun=True,
         mon=True,
+        tue=False,
+        wed=False,
         about_you='I have two thumbs',
     )

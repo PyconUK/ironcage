@@ -28,7 +28,7 @@ class IndexTests(TestCase):
         ticket = ticket_factories.create_ticket(self.alice)
 
         rsp = self.client.get('/')
-        self.assertContains(rsp, 'You have a ticket for Thursday, Friday, Saturday')
+        self.assertContains(rsp, 'You have a ticket for Saturday, Sunday, Monday')
         self.assertContains(rsp, f'<a href="/tickets/tickets/{ticket.ticket_id}/">View your conference ticket</a>', html=True)
         self.assertContains(rsp, '<a href="/profile/">Update your profile</a>', html=True)
         self.assertContains(rsp, 'Your profile is incomplete')
