@@ -398,7 +398,8 @@ class Ticket(models.Model):
         return self.invitations.get()
 
     def is_free_ticket(self):
-        return not self.order
+        return self.rate == 'free'
+        # Previously checked for an order being attached
 
     def is_incomplete(self):
         return self.days() == []

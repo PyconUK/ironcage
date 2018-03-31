@@ -17,7 +17,7 @@ from dinners.models import Booking as DinnerBooking
 from dinners.menus import MENUS
 from grants.models import Application
 from tickets.constants import DAYS
-from tickets.models import Order, Ticket
+from tickets.models import Ticket #, Order
 from tickets.prices import PRICES_EXCL_VAT, cost_incl_vat
 from ukpa.models import Nomination
 
