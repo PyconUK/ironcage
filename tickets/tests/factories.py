@@ -1,6 +1,33 @@
 from accounts.tests.factories import create_user
 
 from tickets import actions
+from tickets.models import Ticket
+from payments import actions as payment_actions
+from ironcage.tests import utils
+
+
+def create_ticket_for_self(user=None, rate=None, num_days=None):
+    user = user or create_user()
+    rate = rate or Ticket.INDIVIDUAL
+    num_days = num_days or 3
+
+    return actions.create_ticket(
+        purchaser=user,
+        rate=rate,
+        days=['sat', 'sun', 'mon', 'tue', 'wed'][:num_days],
+    )
+
+
+def create_ticket_with_unclaimed_invitation_ticket(email=None, rate=None, num_days=None):
+    email = email or 'example@example.com'
+    rate = rate or Ticket.INDIVIDUAL
+    num_days = num_days or 3
+
+    return actions.create_ticket_with_invitation(
+        email=email,
+        rate=rate,
+        days=['sat', 'sun', 'mon', 'tue', 'wed'][:num_days],
+    )
 
 
 def create_pending_order_for_self(user=None, rate=None, num_days=None):
@@ -57,29 +84,29 @@ def confirm_order(order):
 
 
 def mark_order_as_failed(order):
-    actions.mark_order_as_failed(order, 'Your card was declined.')
+    payment_actions.mark_payment_as_failed(order, 'Your card was declined.')
 
 
 def mark_order_as_errored_after_charge(order):
-    actions.mark_order_as_errored_after_charge(order, 'ch_abcdefghijklmnopqurstuvw')
+    payment_actions.mark_payment_as_errored_after_charge(order, 'ch_abcdefghijklmnopqurstuvw', order.total_inc_vat)
 
 
 def create_confirmed_order_for_self(user=None, rate=None, num_days=None):
-    order = create_pending_order_for_self(user, rate, num_days)
-    confirm_order(order)
-    return order
+    invoice = create_pending_order_for_self(user, rate, num_days)
+    payment = confirm_order(invoice)
+    return invoice
 
 
 def create_confirmed_order_for_others(user=None, rate=None):
-    order = create_pending_order_for_others(user, rate)
-    confirm_order(order)
-    return order
+    invoice = create_pending_order_for_others(user, rate)
+    payment = confirm_order(invoice)
+    return invoice
 
 
 def create_confirmed_order_for_self_and_others(user=None, rate=None):
-    order = create_pending_order_for_self_and_others(user, rate)
-    confirm_order(order)
-    return order
+    invoice = create_pending_order_for_self_and_others(user, rate)
+    payment = confirm_order(invoice)
+    return invoice
 
 
 def create_failed_order(user=None, rate=None):
@@ -95,13 +122,13 @@ def create_errored_order(user=None, rate=None):
 
 
 def create_ticket(user=None, rate=None, num_days=None):
-    order = create_confirmed_order_for_self(user, rate, num_days)
-    return order.all_tickets()[0]
+    invoice = create_confirmed_order_for_self(user, rate, num_days)
+    return invoice.tickets()[0]
 
 
 def create_ticket_with_unclaimed_invitation():
-    order = create_confirmed_order_for_others()
-    return order.all_tickets()[0]
+    invoice = create_confirmed_order_for_others()
+    return invoice.tickets()[0]
 
 
 def create_ticket_with_claimed_invitation(owner=None):

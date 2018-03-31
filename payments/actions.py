@@ -1,78 +1,119 @@
+import structlog
+
 import stripe
 
 from django.db import transaction
-
-from payments.models import Invoice, Payment
-
 from django.db.utils import IntegrityError
 
+from payments.models import (
+    CreditNote,
+    Invoice,
+    Payment,
+)
 from payments.stripe_integration import create_charge_for_invoice
 
-import structlog
+from tickets.mailer import send_order_confirmation_mail, send_invitation_mail
+from django_slack import slack_message
+
 logger = structlog.get_logger()
 
 
-def _create_invoice(purchaser, invoice_to, is_credit):
-    logger.info('_create_invoice', purchaser=purchaser.id,
-                invoice_to=invoice_to)
+def create_new_invoice(purchaser, company_name=None, company_addr=None):
+    logger.info('create_new_invoice', purchaser=purchaser.id,
+                company_name=company_name, company_addr=company_addr)
+
     with transaction.atomic():
         return Invoice.objects.create(
             purchaser=purchaser,
-            invoice_to=invoice_to,
-            is_credit=is_credit
+            company_name=company_name,
+            company_addr=company_addr,
         )
 
 
-def create_new_invoice(purchaser, invoice_to=None):
-    logger.info('create_new_invoice', purchaser=purchaser.id,
-                invoice_to=invoice_to)
-    invoice_to = invoice_to or purchaser.name
-    return _create_invoice(purchaser, invoice_to, is_credit=False)
-
-
-def create_new_credit_note(purchaser, invoice_to=None):
+def create_new_credit_note(purchaser, invoice, reason,
+                           company_name=None, company_addr=None):
     logger.info('create_new_credit_note', purchaser=purchaser.id,
-                invoice_to=invoice_to)
-    invoice_to = invoice_to or purchaser.name
-    return _create_invoice(purchaser, invoice_to, is_credit=True)
+                invoice=invoice.item_id, reason=reason,
+                company_name=company_name, company_addr=company_addr)
 
-
-def confirm_order(order, charge_id, charge_created):
-    logger.info('confirm_order', invoice=invoice.id, charge_id=charge_id)
     with transaction.atomic():
-        invoice.confirm(charge_id, charge_created)
+        return CreditNote.objects.create(
+            purchaser=purchaser,
+            invoice=invoice,
+            reason=reason,
+            company_name=company_name,
+            company_addr=company_addr,
+        )
+
+
+def confirm_invoice(invoice, charge_id, charge_created):
+    logger.info('confirm_invoice', invoice=invoice.id, charge_id=charge_id)
+    # with transaction.atomic():
+    # This used to actually register the stripe charge in the DB and create tickets
+    #     invoice.confirm(charge_id, charge_created)
     send_receipt(invoice)
     send_ticket_invitations(invoice)
     slack_message('tickets/order_created.slack', {'invoice': invoice})
 
 
-def process_stripe_charge(invoice, token):
-    logger.info('process_stripe_charge', invoice=invoice.invoice_id, token=token)
-    assert invoice.payment_required
-    try:
-        charge = create_charge_for_invoice(invoice, token)
-        Payment.objects.create(
+def mark_payment_as_failed(invoice, failure_message):
+    with transaction.atomic():
+        return Payment.objects.create(
             invoice=invoice,
             method=Payment.STRIPE,
-            status=Payment.SUCCESSFUL,
-            charge_id=charge.id,
-            amount=charge.amount/100
+            status=Payment.FAILED,
+            charge_failure_reason=failure_message,
         )
 
-        confirm_order(invoice, charge.id, charge.created)
+
+def mark_payment_as_errored_after_charge(invoice, charge_id, charge_amount):
+    with transaction.atomic():
+        return Payment.objects.create(
+            invoice=invoice,
+            method=Payment.STRIPE,
+            status=Payment.ERRORED,
+            charge_id=charge_id,
+            amount=charge_amount/100
+        )
+
+
+def process_stripe_charge(invoice, token):
+    logger.info('process_stripe_charge', invoice=invoice.item_id, token=token)
+    assert invoice.payment_required
+    try:
+        # This registers the payment we just got with stripe
+        charge = create_charge_for_invoice(invoice, token)
+
+        # Then we record it locally
+        with transaction.atomic():
+            payment = Payment.objects.create(
+                invoice=invoice,
+                method=Payment.STRIPE,
+                status=Payment.SUCCESSFUL,
+                charge_id=charge.id,
+                amount=charge.amount/100
+            )
+
+        # Then we run any additional tasks
+        confirm_invoice(invoice, charge.id, charge.created)
+
+        return payment
+
     except stripe.error.CardError as e:
-        mark_order_as_failed(invoice, e._message)
+        return mark_payment_as_failed(invoice, e._message)
+
     except IntegrityError:
         refund_charge(charge.id)
-        mark_order_as_errored_after_charge(invoice, charge.id)
+
+        mark_payment_as_errored_after_charge(invoice, charge.id. charge.amount)
 
 
 def send_receipt(order):
-    logger.info('send_receipt', order=order.order_id)
+    logger.info('send_receipt', order=order.item_id)
     send_order_confirmation_mail(order)
 
 
 def send_ticket_invitations(order):
-    logger.info('send_ticket_invitations', order=order.order_id)
+    logger.info('send_ticket_invitations', order=order.item_id)
     for ticket in order.unclaimed_tickets():
         send_invitation_mail(ticket)

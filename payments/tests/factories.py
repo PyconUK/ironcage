@@ -11,23 +11,23 @@ from tickets.tests.factories import (
 )
 
 
-def create_invoice(user=None, invoice_to=None):
+def create_invoice(user=None, company_name=None, company_addr=None):
     user = user or create_user()
-    invoice_to = invoice_to or user.name
 
     return actions.create_new_invoice(
         purchaser=user,
-        invoice_to=invoice_to
+        company_name=company_name,
+        company_addr=company_addr,
     )
 
 
-def create_credit_note(user=None, invoice_to=None):
+def create_credit_note(user=None, company_name=None, company_addr=None):
     user = user or create_user()
-    invoice_to = invoice_to or user.name
 
     return actions.create_new_credit_note(
         purchaser=user,
-        invoice_to=invoice_to
+        company_name=company_name,
+        company_addr=company_addr,
     )
 
 

@@ -59,18 +59,13 @@ def new_order(request):
                     company_details = None
 
             if valid:
-                invoice_to = company_details.get('name') if company_details else None
-
-                invoice = payment_actions.create_new_invoice(request.user, invoice_to)
-
-                if days_for_self:
-                    ticket = Ticket.objects.create_for_user(request.user, rate, days_for_self)
-                    invoice.add_item(ticket)
-
-                if email_addrs_and_days_for_others is not None:
-                    for email_addr, days in email_addrs_and_days_for_others:
-                        ticket = Ticket.objects.create_with_invitation(email_addr, rate, days)
-                        invoice.add_item(ticket)
+                invoice = actions.create_invoice_with_tickets(
+                    request.user,
+                    rate,
+                    days_for_self,
+                    email_addrs_and_days_for_others,
+                    company_details,
+                )
 
                 # self.save()
 

@@ -8,6 +8,8 @@ from ironcage.tests import utils
 
 from tickets import actions
 from tickets.models import TicketInvitation, Ticket
+from payments import actions as payment_actions
+from payments.models import Payment
 
 
 class CreatePendingOrderTests(TestCase):
@@ -191,14 +193,16 @@ class UpdatePendingOrderTests(TestCase):
 class ConfirmOrderTests(TestCase):
     def test_order_for_self(self):
         order = factories.create_pending_order_for_self()
-        actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvw', 1495355163)
 
-        self.assertEqual(order.stripe_charge_id, 'ch_abcdefghijklmnopqurstuvw')
-        self.assertEqual(order.stripe_charge_created.timestamp(), 1495355163)
-        self.assertEqual(order.stripe_charge_failure_reason, '')
-        self.assertEqual(order.status, 'successful')
+        with utils.patched_charge_creation_success():
+            payment = payment_actions.process_stripe_charge(order, 'ch_abcdefghijklmnopqurstuvw')
 
-        self.assertEqual(order.purchaser.orders.count(), 1)
+        self.assertEqual(payment.charge_id, 'ch_abcdefghijklmnopqurstuvw')
+        self.assertEqual(payment.charge_failure_reason, '')
+        self.assertEqual(payment.method, Payment.STRIPE)
+        self.assertEqual(payment.status, Payment.SUCCESSFUL)
+
+        self.assertEqual(order.purchaser.invoices[0].payments.count(), 1)
         self.assertIsNotNone(order.purchaser.get_ticket())
 
         ticket = order.purchaser.get_ticket()
@@ -208,14 +212,16 @@ class ConfirmOrderTests(TestCase):
 
     def test_order_for_others(self):
         order = factories.create_pending_order_for_others()
-        actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvw', 1495355163)
 
-        self.assertEqual(order.stripe_charge_id, 'ch_abcdefghijklmnopqurstuvw')
-        self.assertEqual(order.stripe_charge_created.timestamp(), 1495355163)
-        self.assertEqual(order.stripe_charge_failure_reason, '')
-        self.assertEqual(order.status, 'successful')
+        with utils.patched_charge_creation_success():
+            payment = payment_actions.process_stripe_charge(order, 'ch_abcdefghijklmnopqurstuvw')
 
-        self.assertEqual(order.purchaser.orders.count(), 1)
+        self.assertEqual(payment.charge_id, 'ch_abcdefghijklmnopqurstuvw')
+        self.assertEqual(payment.charge_failure_reason, '')
+        self.assertEqual(payment.method, Payment.STRIPE)
+        self.assertEqual(payment.status, Payment.SUCCESSFUL)
+
+        self.assertEqual(order.purchaser.invoices[0].payments.count(), 1)
         self.assertIsNone(order.purchaser.get_ticket())
 
         ticket = TicketInvitation.objects.get(email_addr='bob@example.com').ticket
@@ -228,14 +234,16 @@ class ConfirmOrderTests(TestCase):
 
     def test_order_for_self_and_others(self):
         order = factories.create_pending_order_for_self_and_others()
-        actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvw', 1495355163)
 
-        self.assertEqual(order.stripe_charge_id, 'ch_abcdefghijklmnopqurstuvw')
-        self.assertEqual(order.stripe_charge_created.timestamp(), 1495355163)
-        self.assertEqual(order.stripe_charge_failure_reason, '')
-        self.assertEqual(order.status, 'successful')
+        with utils.patched_charge_creation_success():
+            payment = payment_actions.process_stripe_charge(order, 'ch_abcdefghijklmnopqurstuvw')
 
-        self.assertEqual(order.purchaser.orders.count(), 1)
+        self.assertEqual(payment.charge_id, 'ch_abcdefghijklmnopqurstuvw')
+        self.assertEqual(payment.charge_failure_reason, '')
+        self.assertEqual(payment.method, Payment.STRIPE)
+        self.assertEqual(payment.status, Payment.SUCCESSFUL)
+
+        self.assertEqual(order.purchaser.invoices[0].payments.count(), 1)
         self.assertIsNotNone(order.purchaser.get_ticket())
 
         ticket = order.purchaser.get_ticket()
@@ -253,14 +261,15 @@ class ConfirmOrderTests(TestCase):
         order = factories.create_pending_order_for_self()
         actions.mark_order_as_failed(order, 'There was a problem')
 
-        actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvw', 1495355163)
+        with utils.patched_charge_creation_success():
+            payment = payment_actions.process_stripe_charge(order, 'ch_abcdefghijklmnopqurstuvw')
 
-        self.assertEqual(order.stripe_charge_id, 'ch_abcdefghijklmnopqurstuvw')
-        self.assertEqual(order.stripe_charge_created.timestamp(), 1495355163)
-        self.assertEqual(order.stripe_charge_failure_reason, '')
-        self.assertEqual(order.status, 'successful')
+        self.assertEqual(payment.charge_id, 'ch_abcdefghijklmnopqurstuvw')
+        self.assertEqual(payment.charge_failure_reason, '')
+        self.assertEqual(payment.method, Payment.STRIPE)
+        self.assertEqual(payment.status, Payment.SUCCESSFUL)
 
-        self.assertEqual(order.purchaser.orders.count(), 1)
+        self.assertEqual(order.purchaser.invoices[0].payments.count(), 1)
         self.assertIsNotNone(order.purchaser.get_ticket())
 
         ticket = order.purchaser.get_ticket()
@@ -271,7 +280,8 @@ class ConfirmOrderTests(TestCase):
         order = factories.create_pending_order_for_self()
         backend.reset_messages()
 
-        actions.confirm_order(order, 'ch_abcdefghijklmnopqurstuvw', 1495355163)
+        with utils.patched_charge_creation_success():
+            payment_actions.process_stripe_charge(order, 'ch_abcdefghijklmnopqurstuvw')
 
         messages = backend.retrieve_messages()
         self.assertEqual(len(messages), 1)
@@ -317,36 +327,6 @@ class UpdateFreeTicketTests(TestCase):
         ticket.refresh_from_db()
 
         self.assertEqual(ticket.days(), ['Saturday', 'Sunday', 'Monday'])
-
-
-class ProcessStripeChargeTests(TestCase):
-    def setUp(self):
-        self.order = factories.create_pending_order_for_self()
-
-    def test_process_stripe_charge_success(self):
-        token = 'tok_ abcdefghijklmnopqurstuvwx'
-        with utils.patched_charge_creation_success():
-            actions.process_stripe_charge(self.order, token)
-        self.order.refresh_from_db()
-        self.assertEqual(self.order.status, 'successful')
-
-    def test_process_stripe_charge_failure(self):
-        token = 'tok_ abcdefghijklmnopqurstuvwx'
-        with utils.patched_charge_creation_failure():
-            actions.process_stripe_charge(self.order, token)
-        self.order.refresh_from_db()
-        self.assertEqual(self.order.status, 'failed')
-
-    def test_process_stripe_charge_error_after_charge(self):
-        factories.create_confirmed_order_for_self(self.order.purchaser)
-        token = 'tok_ abcdefghijklmnopqurstuvwx'
-
-        with utils.patched_charge_creation_success(), utils.patched_refund_creation_expected():
-            actions.process_stripe_charge(self.order, token)
-
-        self.order.refresh_from_db()
-        self.assertEqual(self.order.status, 'errored')
-        self.assertEqual(self.order.stripe_charge_id, 'ch_abcdefghijklmnopqurstuvw')
 
 
 class TicketInvitationTests(TestCase):

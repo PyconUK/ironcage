@@ -1,75 +1,10 @@
-from unittest.mock import patch
-
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 
 from payments import actions
+from payments.models import Invoice, CreditNote
 from payments.tests import factories
-
-
-class CreateInvoiceTests(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.alice = factories.create_user()
-
-    def test_create_invoice(self):
-        invoice = actions._create_invoice(
-            self.alice,
-            'Alice',
-            False
-        )
-
-        self.assertEqual(self.alice.invoices.count(), 1)
-
-        self.assertEqual(invoice.purchaser, self.alice)
-        self.assertEqual(invoice.invoice_to, 'Alice')
-        self.assertEqual(invoice.is_credit, False)
-        self.assertEqual(invoice.total, 0)
-
-    def test_create_invoice_as_credit(self):
-        invoice = actions._create_invoice(
-            self.alice,
-            'Alice',
-            True
-        )
-
-        self.assertEqual(self.alice.invoices.count(), 1)
-
-        self.assertEqual(invoice.purchaser, self.alice)
-        self.assertEqual(invoice.invoice_to, 'Alice')
-        self.assertEqual(invoice.is_credit, True)
-        self.assertEqual(invoice.total, 0)
-
-    def test_create_invoice_invoiced_to_company(self):
-        invoice = actions._create_invoice(
-            self.alice,
-            'My Company Limited',
-            False
-        )
-
-        self.assertEqual(self.alice.invoices.count(), 1)
-
-        self.assertEqual(invoice.purchaser, self.alice)
-        self.assertEqual(invoice.invoice_to, 'My Company Limited')
-        self.assertEqual(invoice.is_credit, False)
-        self.assertEqual(invoice.total, 0)
-
-    def test_create_invoice_change_purchaser_name_does_not_change_invoice_to(self):
-        invoice = actions._create_invoice(
-            self.alice,
-            'Alice',
-            False
-        )
-
-        self.alice.name = 'Bob'
-        self.alice.save()
-
-        self.assertEqual(self.alice.invoices.count(), 1)
-
-        self.assertEqual(invoice.purchaser, self.alice)
-        self.assertEqual(invoice.purchaser.name, 'Bob')
-        self.assertEqual(invoice.invoice_to, 'Alice')
-        self.assertEqual(invoice.is_credit, False)
-        self.assertEqual(invoice.total, 0)
+from ironcage.tests import utils
 
 
 class CreateNewInvoiceTests(TestCase):
@@ -77,50 +12,270 @@ class CreateNewInvoiceTests(TestCase):
     def setUpTestData(cls):
         cls.alice = factories.create_user()
 
-    @patch('payments.actions._create_invoice')
-    def test_create_new_invoice(self, _create_invoice):
-        actions.create_new_invoice(
+    def test_create_new_invoice(self):
+        # arrange
+
+        # act
+        invoice = actions.create_new_invoice(
             self.alice
         )
 
-        _create_invoice.assert_called_once_with(
-            self.alice, 'Alice', is_credit=False
-        )
+        # assert
+        self.assertEqual(self.alice.invoices.count(), 1)
 
-    @patch('payments.actions._create_invoice')
-    def test_create_new_invoice_invoiced_to_company(self, _create_invoice):
-        actions.create_new_invoice(
+        self.assertEqual(invoice.purchaser, self.alice)
+        self.assertEqual(invoice.company_name, None)
+        self.assertEqual(invoice.company_addr, None)
+
+        self.assertEqual(invoice.total_ex_vat, 0)
+        self.assertEqual(invoice.total_vat, 0)
+        self.assertEqual(invoice.total_inc_vat, 0)
+
+        self.assertTrue(isinstance(invoice, Invoice))
+
+    def test_create_new_invoice_invoiced_to_company(self):
+        # arrange
+
+        # act
+        invoice = actions.create_new_invoice(
             self.alice,
-            'My Company Limited'
+            'My Company Limited',
+            'My Company House, My Company Lane, Companyland, MY1 1CO',
         )
 
-        _create_invoice.assert_called_once_with(
-            self.alice, 'My Company Limited', is_credit=False
+        # assert
+        self.assertEqual(self.alice.invoices.count(), 1)
+
+        self.assertEqual(invoice.purchaser, self.alice)
+        self.assertEqual(invoice.company_name, 'My Company Limited')
+        self.assertEqual(invoice.company_addr, 'My Company House, My Company Lane, Companyland, MY1 1CO')
+
+        self.assertEqual(invoice.total_ex_vat, 0)
+        self.assertEqual(invoice.total_vat, 0)
+        self.assertEqual(invoice.total_inc_vat, 0)
+
+        self.assertTrue(isinstance(invoice, Invoice))
+
+    def test_create_new_invoice_invoiced_to_company_but_only_name_provided(self):
+        # arrange
+
+        # assert
+        with self.assertRaises(ValidationError):
+            # act
+            actions.create_new_invoice(
+                self.alice,
+                'My Company Limited',
+            )
+
+        # assert
+        self.assertEqual(self.alice.invoices.count(), 0)
+
+    def test_create_new_invoice_invoiced_to_company_but_only_address_provided(self):
+        # arrange
+
+        # assert
+        with self.assertRaises(ValidationError):
+            # act
+            actions.create_new_invoice(
+                self.alice,
+                company_addr='My Company House, My Company Lane, Companyland, MY1 1CO',
+            )
+
+        # assert
+        self.assertEqual(self.alice.invoices.count(), 0)
+
+    def test_create_invoice_change_purchaser_name_does_not_change_invoice(self):
+        # arrange
+        invoice = actions.create_new_invoice(
+            self.alice,
+            'My Company Limited',
+            'My Company House, My Company Lane, Companyland, MY1 1CO',
         )
+
+        # act
+        self.alice.name = 'Bob'
+        self.alice.save()
+
+        # assert
+        self.assertEqual(self.alice.invoices.count(), 1)
+
+        self.assertEqual(invoice.purchaser, self.alice)
+        self.assertEqual(invoice.purchaser.name, 'Bob')
+        self.assertEqual(invoice.company_name, 'My Company Limited')
+        self.assertEqual(invoice.company_addr, 'My Company House, My Company Lane, Companyland, MY1 1CO')
 
 
 class CreateNewCreditNoteTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.alice = factories.create_user()
-
-    @patch('payments.actions._create_invoice')
-    def test_create_new_credit_note(self, _create_invoice):
-        actions.create_new_credit_note(
-            self.alice
+        cls.invoice = factories.create_invoice()
+        cls.invoice_with_company = factories.create_invoice(
+            cls.alice,
+            'My Company Limited',
+            'My Company House, My Company Lane, Companyland, MY1 1CO',
         )
 
-        _create_invoice.assert_called_once_with(
-            self.alice, 'Alice', is_credit=True
-        )
+    def test_create_new_credit_note_requires_invoice_and_reason(self):
+        # arrange
 
-    @patch('payments.actions._create_invoice')
-    def test_create_new_credit_note_invoiced_to_company(self, _create_invoice):
-        actions.create_new_credit_note(
+        # assert
+        with self.assertRaises(TypeError):
+            # act
+            actions.create_new_credit_note(
+                self.alice,
+            )
+
+        # assert
+        self.assertEqual(self.alice.creditnotes.count(), 0)
+
+    def test_create_new_credit_note_must_have_valid_reason(self):
+        # arrange
+
+        # assert
+        with self.assertRaises(ValidationError):
+            # act
+            actions.create_new_credit_note(
+                self.alice,
+                self.invoice,
+                'Not a valid reason'
+            )
+
+        # assert
+        self.assertEqual(self.alice.creditnotes.count(), 0)
+
+    def test_create_new_credit_note(self):
+        # arrange
+
+        # act
+        credit_note = actions.create_new_credit_note(
             self.alice,
-            'My Company Limited'
+            self.invoice,
+            CreditNote.CREATED_BY_MISTAKE,
         )
 
-        _create_invoice.assert_called_once_with(
-            self.alice, 'My Company Limited', is_credit=True
+        # assert
+        self.assertEqual(self.alice.creditnotes.count(), 1)
+
+        self.assertEqual(credit_note.purchaser, self.alice)
+        self.assertEqual(credit_note.invoice, self.invoice)
+        self.assertEqual(credit_note.reason, CreditNote.CREATED_BY_MISTAKE)
+        self.assertEqual(credit_note.company_name, None)
+        self.assertEqual(credit_note.company_addr, None)
+
+        self.assertEqual(credit_note.total_ex_vat, 0)
+        self.assertEqual(credit_note.total_vat, 0)
+        self.assertEqual(credit_note.total_inc_vat, 0)
+
+        self.assertTrue(isinstance(credit_note, CreditNote))
+
+    def test_create_new_credit_note_invoiced_to_company(self):
+        # arrange
+
+        # act
+        credit_note = actions.create_new_credit_note(
+            self.alice,
+            self.invoice,
+            CreditNote.CREATED_BY_MISTAKE,
+            'My Company Limited',
+            'My Company House, My Company Lane, Companyland, MY1 1CO',
         )
+
+        # assert
+        self.assertEqual(self.alice.creditnotes.count(), 1)
+
+        self.assertEqual(credit_note.purchaser, self.alice)
+        self.assertEqual(credit_note.invoice, self.invoice)
+        self.assertEqual(credit_note.reason, CreditNote.CREATED_BY_MISTAKE)
+        self.assertEqual(credit_note.company_name, 'My Company Limited')
+        self.assertEqual(credit_note.company_addr, 'My Company House, My Company Lane, Companyland, MY1 1CO')
+
+        self.assertEqual(credit_note.total_ex_vat, 0)
+        self.assertEqual(credit_note.total_vat, 0)
+        self.assertEqual(credit_note.total_inc_vat, 0)
+
+        self.assertTrue(isinstance(credit_note, CreditNote))
+
+    def test_create_new_credit_note_invoiced_to_company_but_only_name_provided(self):
+        # arrange
+
+        # assert
+        with self.assertRaises(ValidationError):
+            # act
+            actions.create_new_credit_note(
+                self.alice,
+                self.invoice,
+                CreditNote.CREATED_BY_MISTAKE,
+                'My Company Limited',
+            )
+
+        # assert
+        self.assertEqual(self.alice.creditnotes.count(), 0)
+
+    def test_create_new_credit_note_invoiced_to_company_but_only_address_provided(self):
+        # arrange
+
+        # assert
+        with self.assertRaises(ValidationError):
+            # act
+            actions.create_new_credit_note(
+                self.alice,
+                self.invoice,
+                CreditNote.CREATED_BY_MISTAKE,
+                company_addr='My Company House, My Company Lane, Companyland, MY1 1CO',
+            )
+
+        # assert
+        self.assertEqual(self.alice.creditnotes.count(), 0)
+
+    def test_create_invoice_change_purchaser_name_does_not_change_invoice(self):
+        # arrange
+        credit_note = actions.create_new_credit_note(
+            self.alice,
+            self.invoice,
+            CreditNote.CREATED_BY_MISTAKE,
+            'My Company Limited',
+            'My Company House, My Company Lane, Companyland, MY1 1CO',
+        )
+
+        # act
+        self.alice.name = 'Bob'
+        self.alice.save()
+
+        # assert
+        self.assertEqual(self.alice.creditnotes.count(), 1)
+
+        self.assertEqual(credit_note.purchaser, self.alice)
+        self.assertEqual(credit_note.purchaser.name, 'Bob')
+        self.assertEqual(credit_note.company_name, 'My Company Limited')
+        self.assertEqual(credit_note.company_addr, 'My Company House, My Company Lane, Companyland, MY1 1CO')
+
+
+class ProcessStripeChargeTests(TestCase):
+    def setUp(self):
+        self.order = factories.create_pending_order_for_self()
+
+    def test_process_stripe_charge_success(self):
+        token = 'tok_ abcdefghijklmnopqurstuvwx'
+        with utils.patched_charge_creation_success():
+            actions.process_stripe_charge(self.order, token)
+        self.order.refresh_from_db()
+        self.assertEqual(self.order.status, 'successful')
+
+    def test_process_stripe_charge_failure(self):
+        token = 'tok_ abcdefghijklmnopqurstuvwx'
+        with utils.patched_charge_creation_failure():
+            actions.process_stripe_charge(self.order, token)
+        self.order.refresh_from_db()
+        self.assertEqual(self.order.status, 'failed')
+
+    def test_process_stripe_charge_error_after_charge(self):
+        factories.create_confirmed_order_for_self(self.order.purchaser)
+        token = 'tok_ abcdefghijklmnopqurstuvwx'
+
+        with utils.patched_charge_creation_success(), utils.patched_refund_creation_expected():
+            actions.process_stripe_charge(self.order, token)
+
+        self.order.refresh_from_db()
+        self.assertEqual(self.order.status, 'errored')
+        self.assertEqual(self.order.stripe_charge_id, 'ch_abcdefghijklmnopqurstuvw')
