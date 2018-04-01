@@ -315,35 +315,35 @@ class CreditNote(SalesRecord):
 
 class InvoiceRow(SalesRecordRow):
 
-    invoice = models.ForeignKey(Invoice, related_name='rows',
-                                on_delete=models.DO_NOTHING)
+    parent = models.ForeignKey(Invoice, related_name='rows',
+                               on_delete=models.DO_NOTHING)
 
     class Meta:
-        unique_together = ("invoice", "content_type", "object_id")
+        unique_together = ("parent", "content_type", "object_id")
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        self.invoice._recalculate_total()
+        self.parent._recalculate_total()
 
     def delete(self, *args, **kwargs):
-        invoice = self.invoice
+        parent = self.parent
         super().delete(*args, **kwargs)
-        invoice._recalculate_total()
+        parent._recalculate_total()
 
 
 class CreditNoteRow(SalesRecordRow):
 
-    credit_note = models.ForeignKey(CreditNote, related_name='rows',
-                                    on_delete=models.DO_NOTHING)
+    parent = models.ForeignKey(CreditNote, related_name='rows',
+                               on_delete=models.DO_NOTHING)
 
     class Meta:
-        unique_together = ("credit_note", "content_type", "object_id")
+        unique_together = ("parent", "content_type", "object_id")
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        self.credit_note._recalculate_total()
+        self.parent._recalculate_total()
 
     def delete(self, *args, **kwargs):
-        credit_note = self.credit_note
+        parent = self.parent
         super().delete(*args, **kwargs)
-        credit_note._recalculate_total()
+        parent._recalculate_total()
