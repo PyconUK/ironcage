@@ -1,5 +1,4 @@
 from django.test import TestCase
-
 from django.core.exceptions import ValidationError
 
 from payments.models import (
@@ -11,6 +10,22 @@ from payments.models import (
 from payments.tests import factories
 from tickets.tests import factories as ticket_factories
 
+# from the old order tests
+    # def test_cost_incl_vat_for_confirmed_order(self):
+    #     order = factories.create_confirmed_order_for_self_and_others()
+    #     self.assertEqual(order.cost_incl_vat(), 306)  # 306 == 3 * 18 + 7 * 36
+
+    # def test_cost_incl_vat_for_unconfirmed_order(self):
+    #     order = factories.create_pending_order_for_self_and_others()
+    #     self.assertEqual(order.cost_incl_vat(), 306)  # 306 == 3 * 18 + 7 * 36
+
+    # def test_cost_excl_vat_for_confirmed_order(self):
+    #     order = factories.create_confirmed_order_for_self_and_others()
+    #     self.assertEqual(order.cost_excl_vat(), 255)  # 255 == 3 * 15 + 7 * 30
+
+    # def test_cost_excl_vat_for_unconfirmed_order(self):
+    #     order = factories.create_pending_order_for_self_and_others()
+    #     self.assertEqual(order.cost_excl_vat(), 255)  # 255 == 3 * 15 + 7 * 30
 
 
 class InvoiceVatCalculationTests(TestCase):
