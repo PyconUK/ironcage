@@ -52,7 +52,7 @@ class IndexTests(TestCase):
         self.assertContains(rsp, 'We hope to see you in Cardiff')
 
     def test_when_has_order(self):
-        order = ticket_factories.create_confirmed_order_for_others(self.alice)
+        order = ticket_factories.create_paid_order_for_others(self.alice)
 
         rsp = self.client.get('/')
         self.assertContains(rsp, f'<a href="/tickets/orders/{order.order_id}/">View your order</a>', html=True)
@@ -64,8 +64,8 @@ class IndexTests(TestCase):
         self.assertNotContains(rsp, 'Order more conference tickets')
 
     def test_when_has_multiple_orders(self):
-        order1 = ticket_factories.create_confirmed_order_for_self(self.alice)
-        order2 = ticket_factories.create_confirmed_order_for_others(self.alice)
+        order1 = ticket_factories.create_paid_order_for_self(self.alice)
+        order2 = ticket_factories.create_paid_order_for_others(self.alice)
 
         rsp = self.client.get('/')
         self.assertContains(rsp, f'<a href="/tickets/orders/{order1.order_id}/">Order {order1.order_id}</a> (1 individual-rate ticket)', html=True)

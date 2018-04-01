@@ -123,7 +123,7 @@ class TestOrdersReport(ReportsTestCase):
     def setUpTestData(cls):
         super().setUpTestData()
         cls.order1 = tickets_factories.create_unpaid_order_for_self(cls.alice, num_days=1)
-        cls.order2 = tickets_factories.create_confirmed_order_for_self(cls.bob, num_days=2)
+        cls.order2 = tickets_factories.create_paid_order_for_self(cls.bob, num_days=2)
 
     def test_get_context_data(self):
         report = reports.OrdersReport()
@@ -151,7 +151,7 @@ class TestUnpaidOrdersReport(ReportsTestCase):
     def setUpTestData(cls):
         super().setUpTestData()
         cls.order1 = tickets_factories.create_unpaid_order_for_self(cls.alice, num_days=1)
-        tickets_factories.create_confirmed_order_for_self(cls.bob, num_days=2)
+        tickets_factories.create_paid_order_for_self(cls.bob, num_days=2)
 
     def test_get_context_data(self):
         report = reports.UnpaidOrdersReport()
@@ -178,7 +178,7 @@ class TestTicketsReport(ReportsTestCase):
     def setUpTestData(cls):
         super().setUpTestData()
         cls.ticket1 = tickets_factories.create_ticket(cls.alice)
-        order = tickets_factories.create_confirmed_order_for_others(cls.alice)
+        order = tickets_factories.create_paid_order_for_others(cls.alice)
         cls.ticket2, cls.ticket3 = order.all_tickets()
 
     def test_get_context_data(self):
@@ -208,7 +208,7 @@ class TestUnclaimedTicketsReport(ReportsTestCase):
     def setUpTestData(cls):
         super().setUpTestData()
         tickets_factories.create_ticket(cls.alice)
-        order = tickets_factories.create_confirmed_order_for_others(cls.alice)
+        order = tickets_factories.create_paid_order_for_others(cls.alice)
         cls.ticket2, cls.ticket3 = order.all_tickets()
 
     def test_get_context_data(self):

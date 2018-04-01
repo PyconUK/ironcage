@@ -15,7 +15,7 @@ class MailerTests(TestCase):
         cls.alice = factories.create_user(email_addr='alice@example.com')
 
     def test_send_invitation_mail(self):
-        factories.create_confirmed_order_for_others(self.alice)
+        factories.create_paid_order_for_others(self.alice)
         mail.outbox = []
 
         invitation = TicketInvitation.objects.get(email_addr='bob@example.com')
@@ -45,7 +45,7 @@ class MailerTests(TestCase):
         self.assertTrue(re.search(r'http://testserver/tickets/invitations/\w{12}/', email.body))
 
     def test_send_order_confirmation_mail_for_order_for_self(self):
-        order = factories.create_confirmed_order_for_self(self.alice)
+        order = factories.create_paid_order_for_self(self.alice)
 
         mail.outbox = []
 
@@ -62,7 +62,7 @@ class MailerTests(TestCase):
         self.assertTrue(re.search('We look forward to seeing you in Cardiff', email.body))
 
     def test_send_order_confirmation_mail_for_order_for_others(self):
-        order = factories.create_confirmed_order_for_others(self.alice)
+        order = factories.create_paid_order_for_others(self.alice)
 
         mail.outbox = []
 
@@ -81,7 +81,7 @@ class MailerTests(TestCase):
         self.assertFalse(re.search('We look forward to seeing you in Cardiff', email.body))
 
     def test_send_order_confirmation_mail_for_order_for_self_and_others(self):
-        order = factories.create_confirmed_order_for_self_and_others(self.alice)
+        order = factories.create_paid_order_for_self_and_others(self.alice)
 
         mail.outbox = []
 

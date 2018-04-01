@@ -57,14 +57,14 @@ class NewOrderTests(TestCase):
 
     def test_get_when_user_has_order_for_self(self):
         self.client.force_login(self.alice)
-        factories.create_confirmed_order_for_self(self.alice)
+        factories.create_paid_order_for_self(self.alice)
         rsp = self.client.get('/tickets/orders/new/')
         self.assertNotContains(rsp, '<input type="radio" name="who" value="self">')
         self.assertContains(rsp, '<input type="hidden" name="who" value="others">')
 
     def test_get_when_user_has_order_but_not_for_self(self):
         self.client.force_login(self.alice)
-        factories.create_confirmed_order_for_others(self.alice)
+        factories.create_paid_order_for_others(self.alice)
         rsp = self.client.get('/tickets/orders/new/')
         self.assertContains(rsp, '<input type="radio" name="who" value="self">')
         self.assertNotContains(rsp, '<input type="hidden" name="who" value="others">')
@@ -261,7 +261,7 @@ class TicketEditTests(TestCase):
 class TicketInvitationTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        factories.create_confirmed_order_for_others()
+        factories.create_paid_order_for_others()
         cls.invitation = TicketInvitation.objects.get(email_addr='bob@example.com')
         cls.bob = factories.create_user('Bob')
         cls.url = f'/tickets/invitations/{cls.invitation.token}/'

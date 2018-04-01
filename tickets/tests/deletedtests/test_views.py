@@ -30,14 +30,14 @@ from tickets.models import TicketInvitation, Ticket
 
 #     def test_get_when_user_has_order_for_self(self):
 #         self.client.force_login(self.order.purchaser)
-#         factories.create_confirmed_order_for_self(self.order.purchaser)
+#         factories.create_paid_order_for_self(self.order.purchaser)
 #         rsp = self.client.get(f'/tickets/orders/{self.order.id}/edit/')
 #         self.assertNotContains(rsp, '<input type="radio" name="who" value="self">')
 #         self.assertContains(rsp, '<input type="hidden" name="who" value="others">')
 
 #     def test_get_when_user_has_order_but_not_for_self(self):
 #         self.client.force_login(self.order.purchaser)
-#         factories.create_confirmed_order_for_others(self.order.purchaser)
+#         factories.create_paid_order_for_others(self.order.purchaser)
 #         rsp = self.client.get(f'/tickets/orders/{self.order.id}/edit/')
 #         self.assertContains(rsp, '<input type="radio" name="who" value="self" checked>')
 #         self.assertNotContains(rsp, '<input type="hidden" name="who" value="others">')

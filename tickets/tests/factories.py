@@ -91,19 +91,19 @@ def mark_order_as_errored_after_charge(order):
     payment_actions.mark_payment_as_errored_after_charge(order, 'ch_abcdefghijklmnopqurstuvw', order.total_inc_vat)
 
 
-def create_confirmed_order_for_self(user=None, rate=None, num_days=None):
+def create_paid_order_for_self(user=None, rate=None, num_days=None):
     invoice = create_unpaid_order_for_self(user, rate, num_days)
     payment = confirm_order(invoice)
     return invoice
 
 
-def create_confirmed_order_for_others(user=None, rate=None):
+def create_paid_order_for_others(user=None, rate=None):
     invoice = create_unpaid_order_for_others(user, rate)
     payment = confirm_order(invoice)
     return invoice
 
 
-def create_confirmed_order_for_self_and_others(user=None, rate=None):
+def create_paid_order_for_self_and_others(user=None, rate=None):
     invoice = create_unpaid_order_for_self_and_others(user, rate)
     payment = confirm_order(invoice)
     return invoice
@@ -122,17 +122,17 @@ def create_errored_order(user=None, rate=None):
 
 
 def create_ticket(user=None, rate=None, num_days=None):
-    invoice = create_confirmed_order_for_self(user, rate, num_days)
+    invoice = create_paid_order_for_self(user, rate, num_days)
     return invoice.tickets()[0]
 
 
 def create_ticket_with_unclaimed_invitation():
-    invoice = create_confirmed_order_for_others()
+    invoice = create_paid_order_for_others()
     return invoice.tickets()[0]
 
 
 def create_ticket_with_claimed_invitation(owner=None):
-    order = create_confirmed_order_for_others()
+    order = create_paid_order_for_others()
     ticket = order.all_tickets()[0]
     owner = owner or create_user()
     actions.claim_ticket_invitation(owner, ticket.invitation)

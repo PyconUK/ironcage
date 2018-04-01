@@ -287,7 +287,7 @@ class ProcessStripeChargeTests(TestCase):
     @skip
     def test_process_stripe_charge_error_after_charge(self):
         # arrange
-        ticket_factories.create_confirmed_order_for_self(self.invoice.purchaser)
+        ticket_factories.create_paid_order_for_self(self.invoice.purchaser)
         token = 'tok_ abcdefghijklmnopqurstuvwx'
 
         # act

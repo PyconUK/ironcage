@@ -228,7 +228,7 @@ class UpdateFreeTicketTests(TestCase):
 
 class TicketInvitationTests(TestCase):
     def test_claim_ticket_invitation(self):
-        factories.create_confirmed_order_for_others()
+        factories.create_paid_order_for_others()
         bob = factories.create_user('Bob')
 
         invitation = TicketInvitation.objects.get(email_addr='bob@example.com')
@@ -287,7 +287,7 @@ class ReassignTicketTests(TestCase):
 
 class OrderRefundTests(TestCase):
     def test_refund_order(self):
-        order = factories.create_confirmed_order_for_self()
+        order = factories.create_paid_order_for_self()
         mail.outbox = []
 
         with utils.patched_refund_creation_expected():
