@@ -267,15 +267,69 @@ class ConfirmInvoiceTests(TestCase):
 
 
 class MarkPaymentAsFailedTests(TestCase):
-    pass
+
+    def setUp(self):
+        self.invoice = ticket_factories.create_unpaid_order_for_self()
+
+    def test_mark_payment_as_failed(self):
+        # arrange
+
+        # act
+        payment = actions.mark_payment_as_failed(self.invoice, 'Uh oh', 'ch_qwerty')
+
+        # assert
+        self.assertEqual(payment.invoice, self.invoice)
+        self.assertEqual(payment.method, Payment.STRIPE)
+        self.assertEqual(payment.status, Payment.FAILED)
+        self.assertEqual(payment.charge_failure_reason, 'Uh oh')
+        self.assertEqual(payment.charge_id, 'ch_qwerty')
+        self.assertEqual(payment.amount, 0)
+
+        self.assertIsNone(self.invoice.successful_payment)
 
 
 class MarkPaymentAsErroredAfterChargeTests(TestCase):
-    pass
+
+    def setUp(self):
+        self.invoice = ticket_factories.create_unpaid_order_for_self()
+
+    def test_mark_payment_as_errored_after_charge(self):
+        # arrange
+
+        # act
+        payment = actions.mark_payment_as_errored_after_charge(self.invoice, 'ch_qwerty', self.invoice.total_pence_inc_vat)
+
+        # assert
+        self.assertEqual(payment.invoice, self.invoice)
+        self.assertEqual(payment.method, Payment.STRIPE)
+        self.assertEqual(payment.status, Payment.ERRORED)
+        self.assertEqual(payment.charge_failure_reason, '')
+        self.assertEqual(payment.charge_id, 'ch_qwerty')
+        self.assertEqual(payment.amount, self.invoice.total_inc_vat)
+
+        self.assertIsNone(self.invoice.successful_payment)
 
 
 class MarkPaymentAsSuccessfulTests(TestCase):
-    pass
+
+    def setUp(self):
+        self.invoice = ticket_factories.create_unpaid_order_for_self()
+
+    def test_mark_payment_as_successful(self):
+        # arrange
+
+        # act
+        payment = actions.mark_payment_as_successful(self.invoice, 'ch_qwerty', self.invoice.total_pence_inc_vat)
+
+        # assert
+        self.assertEqual(payment.invoice, self.invoice)
+        self.assertEqual(payment.method, Payment.STRIPE)
+        self.assertEqual(payment.status, Payment.SUCCESSFUL)
+        self.assertEqual(payment.charge_failure_reason, '')
+        self.assertEqual(payment.charge_id, 'ch_qwerty')
+        self.assertEqual(payment.amount, self.invoice.total_inc_vat)
+
+        self.assertIsNotNone(self.invoice.successful_payment)
 
 
 class PayInvoiceByStripeTests(TestCase):
@@ -359,6 +413,7 @@ class PayInvoiceByStripeTests(TestCase):
 
 
 class ProcessStripeChargeTests(TestCase):
+
     def setUp(self):
         self.invoice = ticket_factories.create_unpaid_order_for_self()
 
