@@ -112,7 +112,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_ticket(self):
         try:
-            return self.ticket
+            if self.ticket and (self.ticket.rate == Ticket.FREE or self.ticket.invoice.successful_payment):
+                return self.ticket
+            return None
         except Ticket.DoesNotExist:
             return None
 

@@ -23,6 +23,7 @@ def order(request, invoice_id):
         messages.warning(request, 'Only the purchaser of an invoice can view the invoice')
         return redirect('index')
 
+    # TODO
     # if not invoice.successful_payment:
     #     if request.user.get_ticket() is not None and invoice.unconfirmed_details['days_for_self']:
     #         messages.warning(request, 'You already have a ticket.  Please amend your invoice.')
@@ -33,13 +34,13 @@ def order(request, invoice_id):
     elif invoice.payment_status == Payment.ERRORED:
         messages.error(request, 'There was an error creating your invoice. Your card may have been charged, but if so the charge will have been refunded.  Please make a new invoice.')
 
-    # ticket = request.user.get_ticket()
-    # if ticket is not None and ticket.invoice != invoice:
-    #     ticket = None
+    ticket = request.user.get_ticket()
+    if ticket is not None and ticket.invoice != invoice:
+        ticket = None
 
     context = {
         'invoice': invoice,
-        'ticket': invoice.ticket_for_self,
+        'ticket': ticket,
         'stripe_api_key': settings.STRIPE_API_KEY_PUBLISHABLE,
     }
     return render(request, 'payments/order.html', context)

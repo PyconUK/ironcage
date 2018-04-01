@@ -201,23 +201,6 @@ class SalesRecord(models.Model):
 
         return tickets
 
-    @property
-    def ticket_for_self(self):
-        if self.successful_payment:
-
-            from tickets.models import Ticket
-            try:
-                ticket = Ticket.objects.get(
-                    owner=self.purchaser
-                )
-            except Ticket.DoesNotExist:
-                return None
-
-            if ticket.invoice == self:
-                return ticket
-
-        return None
-
     def unclaimed_tickets(self):
         from tickets.models import Ticket, TicketInvitation
         tickets = []
