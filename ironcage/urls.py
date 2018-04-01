@@ -28,6 +28,7 @@ else:
         url(r'^500/$', ironcage.views.error, name='error'),
         url(r'^log/$', ironcage.views.log, name='log'),
         url(r'^avatar/', include('avatar.urls')),
+        url(r'^payments/', include('payments.urls')),
     ]
 
 if settings.DEBUG:

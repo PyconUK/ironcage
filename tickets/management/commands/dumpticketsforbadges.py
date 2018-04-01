@@ -14,7 +14,7 @@ class Command(BaseCommand):
             user = ticket.owner
             if user is None:
                 name = None
-                email_addr = ticket.invitation().email_addr
+                email_addr = ticket.invitation.email_addr
                 is_staff = False
                 is_contributor = False
             else:

@@ -274,4 +274,4 @@ class ConferenceDinnerReciptTests(TestCase):
     def test_get_when_booked(self):
         factories.create_paid_booking(self.alice)
         rsp = self.client.get(self.url, follow=True)
-        self.assertContains(rsp, 'Receipt for PyCon UK 2017 conference dinner')
+        self.assertContains(rsp, 'Receipt for PyCon UK 2018 conference dinner')

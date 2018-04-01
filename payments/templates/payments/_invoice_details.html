@@ -1,0 +1,68 @@
+<div class="row">
+  <div class="col-md-4">
+    <table class="table table-condensed">
+      <tr>
+        <th>Invoice Number</th>
+        <td>{{ invoice.item_id }}</td>
+      </tr>
+      <tr>
+        <th>Date</th>
+        <td>{{ invoice.created_at|date }}</td>
+      </tr>
+      <tr>
+        <th>Status</th>
+        <td>{% if invoice.payment_required %}Unpaid{% else %}Paid{% endif %}</td>
+      </tr>
+      {% if invoice.rate == 'corporate' %}
+      <tr>
+        <th>Company</th>
+        <td>{{ invoice.company_name }}</td>
+      </tr>
+      <tr>
+        <th>Address</th>
+        <td>{{ invoice.company_addr_formatted }}</td>
+      </tr>
+      {% endif %}
+      <tr>
+        <th>Total (excl. VAT)</th>
+        <td>&pound;{{ invoice.total_ex_vat|floatformat:2 }}</td>
+      </tr>
+      <tr>
+        <th>VAT</th>
+        <td>&pound;{{ invoice.total_vat|floatformat:2 }}</td>
+      </tr>
+      <tr>
+        <th>Total (incl. VAT)</th>
+        <td>&pound;{{ invoice.total_inc_vat|floatformat:2 }}</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <h3>Invoice details</h3>
+
+    <table class="table table-condensed">
+      <tr>
+        <th>Item ID</th>
+        <th>Item</th>
+        <th>Quantity</th>
+        <th>Total ex VAT</th>
+        <th>VAT Rate</th>
+        <th>Total inc VAT</th>
+      </tr>
+      {% for row in invoice.rows.all %}
+      <tr>
+        <td>{{ row.item.item_id }}</td>
+        <td>{{ row.item.invoice_description }}</td>
+        <td>1</td>
+        <td>&pound;{{ row.total_ex_vat|floatformat:2 }}</td>
+        <td>{{ row.vat_rate|floatformat:0 }}%</td>
+        <td>&pound;{{ row.total_inc_vat|floatformat:2 }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+

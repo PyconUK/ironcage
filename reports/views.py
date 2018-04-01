@@ -6,7 +6,7 @@ from cfp.forms import ProposalForm
 from cfp.models import Proposal
 from grants.forms import ApplicationForm
 from grants.models import Application
-from tickets.models import Order, Ticket
+from tickets.models import Ticket #Order,
 
 from .reports import reports
 

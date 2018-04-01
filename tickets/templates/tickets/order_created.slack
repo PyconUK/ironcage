@@ -1,7 +1,7 @@
 {% extends django_slack %}
 
 {% block text %}
-New order {{ order.order_id }}
+New invoice {{ invoice.id }}
 
-{{ order.purchaser.name }} has just placed an order for {{ order.num_tickets }} ticket{{ order.num_tickets.pluralize }} at the {{ order.rate }} rate.
+{{ invoice.purchaser.name }} has just placed an invoice for  invoice.num_tickets ticket invoice.num_tickets.pluralize at the invoice.rate rate.
 {% endblock %}

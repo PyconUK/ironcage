@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'reports',
     'tickets',
     'ukpa',
+    'payments',
 
     'bootstrap3',
     'debug_toolbar',
@@ -252,10 +253,10 @@ TICKET_DEADLINE_BYPASS_TOKEN = os.environ.get('TICKET_DEADLINE_BYPASS_TOKEN')
 
 # Email address to send mail from
 
-DEFAULT_FROM_EMAIL = 'PyCon UK 2017 <noreply@pyconuk.org>'
-SERVER_EMAIL = 'PyCon UK 2017 <noreply@pyconuk.org>'
-EMAIL_FROM_ADDR = f'PyCon UK 2017 <noreply@pyconuk.org>'
-EMAIL_REPLY_TO_ADDR = 'PyCon UK 2017 <pyconuk-committee@uk.python.org>'
+DEFAULT_FROM_EMAIL = 'PyCon UK 2018 <noreply@pyconuk.org>'
+SERVER_EMAIL = 'PyCon UK 2018 <noreply@pyconuk.org>'
+EMAIL_FROM_ADDR = f'PyCon UK 2018 <noreply@pyconuk.org>'
+EMAIL_REPLY_TO_ADDR = 'PyCon UK 2018 <pyconuk-committee@uk.python.org>'
 
 # Maintenance mode
 

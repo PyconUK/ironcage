@@ -1,17 +1,17 @@
 PRICES_EXCL_VAT = {
-    'free': {
+    'FREE': {
         'ticket_price': 0,
         'day_price': 0,
     },
-    'individual': {
+    'INDI': {
         'ticket_price': 15,
         'day_price': 30,
     },
-    'corporate': {
+    'CORP': {
         'ticket_price': 30,
         'day_price': 60,
     },
-    'education': {
+    'EDUC': {
         'ticket_price': 5,
         'day_price': 10,
     },

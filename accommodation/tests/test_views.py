@@ -129,8 +129,8 @@ class BookingPaymentTests(TestCase):
         self.assertEqual(len(mail.outbox), 1)
         email = mail.outbox[0]
         self.assertEqual(email.to, [self.alice.email_addr])
-        self.assertEqual(email.from_email, 'PyCon UK 2017 <noreply@pyconuk.org>')
-        self.assertEqual(email.subject, 'PyCon UK 2017 accommodation confirmation')
+        self.assertEqual(email.from_email, 'PyCon UK 2018 <noreply@pyconuk.org>')
+        self.assertEqual(email.subject, 'PyCon UK 2018 accommodation confirmation')
         self.assertIn(ROOMS[1].description, email.body)
 
         backend = get_slack_backend()

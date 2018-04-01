@@ -1,6 +1,6 @@
 Hi {{ purchaser_name }},
 
-You have purchased {{ num_tickets }} ticket{{ num_tickets|pluralize }} for the children's day at PyCon UK 2017.
+You have purchased {{ num_tickets }} ticket{{ num_tickets|pluralize }} for the children's day at PyCon UK 2018.
 
 You can view your order at:
 
@@ -8,4 +8,4 @@ You can view your order at:
 
 Best wishes,
 
-~ The PyCon UK 2017 team
+~ The PyCon UK 2018 team

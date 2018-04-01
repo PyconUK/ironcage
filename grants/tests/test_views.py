@@ -87,7 +87,7 @@ class ApplicationEditTests(TestCase):
         self.client.force_login(self.alice)
         form_data = {
             'amount_requested': '2000',
-            'days': ['fri', 'sat', 'sun', 'mon'],
+            'days': ['sat', 'sun', 'mon', 'tue'],
             'about_you': 'I have two thumbs',
         }
         rsp = self.client.post(f'/grants/applications/{self.application.application_id}/edit/', form_data, follow=True)
@@ -96,7 +96,7 @@ class ApplicationEditTests(TestCase):
         application = self.alice.get_grant_application()
         application.refresh_from_db()
         self.assertEqual(application.amount_requested, 2000)
-        self.assertEqual(application.days(), ['Friday', 'Saturday', 'Sunday', 'Monday'])
+        self.assertEqual(application.days(), ['Saturday', 'Sunday', 'Monday', 'Tuesday'])
 
     def test_get_when_not_authenticated(self):
         rsp = self.client.get(f'/grants/applications/{self.application.application_id}/edit/')
@@ -242,7 +242,7 @@ class ApplicationsClosedTests(TestCase):
     def test_post_application_edit(self):
         form_data = {
             'amount_requested': '2000',
-            'days': ['fri', 'sat', 'sun', 'mon'],
+            'days': ['sat', 'sun', 'mon', 'tue'],
             'about_you': 'I have two thumbs',
         }
         rsp = self.client.post(f'/grants/applications/{self.application.application_id}/edit/', form_data, follow=True)
@@ -252,7 +252,7 @@ class ApplicationsClosedTests(TestCase):
     def test_post_application_edit_with_token(self):
         form_data = {
             'amount_requested': '2000',
-            'days': ['fri', 'sat', 'sun', 'mon'],
+            'days': ['sat', 'sun', 'mon', 'tue'],
             'about_you': 'I have two thumbs',
         }
         rsp = self.client.post(f'/grants/applications/{self.application.application_id}/edit/?deadline-bypass-token=abc123', form_data, follow=True)

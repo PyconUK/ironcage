@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import redirect, render
 
-from ironcage.stripe_integration import create_charge
+from payments.stripe_integration import create_charge
 
 from .mailer import send_booking_confirmation_mail
 from .models import Booking, available_rooms, get_room_by_key, has_availability
@@ -49,7 +49,7 @@ def booking_payment(request):
             token = request.POST['stripeToken']
             charge = create_charge(
                 room.cost_incl_vat * 100,
-                'PyCon UK 2017 accommodation',
+                'PyCon UK 2018 accommodation',
                 'PyCon UK accommodation',
                 token
             )

@@ -3,6 +3,8 @@ from django.core.exceptions import ValidationError
 
 from ironcage.widgets import ButtonsCheckbox, ButtonsRadio, EmailInput
 
+from tickets.models import Ticket
+
 
 WHO_CHOICES = [
     ('self', 'Myself'),
@@ -11,19 +13,18 @@ WHO_CHOICES = [
 ]
 
 
-RATE_CHOICES = [
-    ('individual', 'Individual'),
-    ('corporate', 'Corporate'),
-    ('education', 'Education'),
-]
-
-
 DAY_CHOICES = [
-    ('thu', 'Thursday'),
-    ('fri', 'Friday'),
     ('sat', 'Saturday'),
     ('sun', 'Sunday'),
     ('mon', 'Monday'),
+    ('tue', 'Tuesday'),
+    ('wed', 'Wednesday'),
+]
+
+RATE_CHOICES = [
+    (Ticket.INDIVIDUAL, 'Individual'),
+    (Ticket.CORPORATE, 'Corporate'),
+    (Ticket.EDUCATION, 'Education'),
 ]
 
 

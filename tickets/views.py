@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from datetime import datetime, timezone
 
 from django.conf import settings
@@ -6,11 +8,14 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_POST
+from django.utils.safestring import mark_safe
 
+from payments import actions as payment_actions
 from . import actions
 from .forms import CompanyDetailsForm, TicketForm, TicketForSelfForm, TicketForOthersFormSet
-from .models import Order, Ticket, TicketInvitation
+from .models import Ticket, TicketInvitation
 from .prices import PRICES_INCL_VAT, cost_incl_vat
+from .constants import DAYS
 
 
 def new_order(request):
@@ -46,7 +51,7 @@ def new_order(request):
                 assert False
 
             if valid:
-                if rate == 'corporate':
+                if rate == Ticket.CORPORATE:
                     valid = company_details_form.is_valid()
                     if valid:
                         company_details = {
@@ -57,15 +62,19 @@ def new_order(request):
                     company_details = None
 
             if valid:
-                order = actions.create_pending_order(
-                    purchaser=request.user,
-                    rate=rate,
-                    days_for_self=days_for_self,
-                    email_addrs_and_days_for_others=email_addrs_and_days_for_others,
-                    company_details=company_details,
-                )
 
-                return redirect(order)
+                request.session['ticket_details'] = {
+                    'rate': rate,
+                    'days_for_self': days_for_self,
+                    'email_addrs_and_days_for_others': email_addrs_and_days_for_others,
+                    'company_details': company_details,
+                    'form': form.data,
+                    'self_form': self_form.data,
+                    'others_formset': others_formset.data,
+                    'company_details_form': company_details_form.data,
+                }
+
+                return redirect('tickets:order_confirm')
 
     else:
         if datetime.now(timezone.utc) > settings.TICKET_SALES_CLOSE_AT:
@@ -83,7 +92,7 @@ def new_order(request):
         'self_form': self_form,
         'others_formset': others_formset,
         'company_details_form': company_details_form,
-        'user_can_buy_for_self': request.user.is_authenticated() and not request.user.get_ticket(),
+        'user_can_buy_for_self': request.user.is_authenticated and not request.user.get_ticket(),
         'rates_table_data': _rates_table_data(),
         'rates_data': _rates_data(),
         'js_paths': ['tickets/order_form.js'],
@@ -93,16 +102,73 @@ def new_order(request):
 
 
 @login_required
-def order_edit(request, order_id):
-    order = Order.objects.get_by_order_id_or_404(order_id)
+def order_confirm(request):
 
-    if request.user != order.purchaser:
-        messages.warning(request, 'Only the purchaser of an order can update the order')
-        return redirect('index')
+    details = request.session['ticket_details']
 
-    if not order.payment_required():
-        messages.error(request, 'This order has already been paid')
-        return redirect(order)
+    if request.method == 'POST':
+
+        print(details)
+
+        invoice = actions.create_invoice_with_tickets(
+            request.user,
+            details['rate'],
+            details['days_for_self'],
+            details['email_addrs_and_days_for_others'],
+            details['company_details'],
+        )
+
+        return redirect(invoice)
+
+    else:
+
+        RATES = {
+            'INDI': 'Individual',
+            'CORP': 'Corporate',
+            'EDUC': 'Education',
+        }
+
+        order_total = Decimal()
+
+        number_of_tickets = 0
+        if details['email_addrs_and_days_for_others']:
+            number_of_tickets += len(details['email_addrs_and_days_for_others'])
+        if details['days_for_self']:
+            number_of_tickets += 1
+
+        rate = RATES[details['rate']]
+
+        details_for_self = {}
+
+        if details['days_for_self']:
+            details_for_self['days'] = [DAYS[day] for day in details['days_for_self']]
+            details_for_self['amount'] = cost_incl_vat(details['rate'], len(details['days_for_self']))
+            order_total += details_for_self['amount']
+
+        details_for_others = []
+        if details['email_addrs_and_days_for_others']:
+            for email, days in details['email_addrs_and_days_for_others']:
+                details_for_others.append((
+                    email,
+                    [DAYS[day] for day in days],
+                    cost_incl_vat(details['rate'], len(days))
+                ))
+                order_total += cost_incl_vat(details['rate'], len(days))
+
+        context = {
+            'rate': rate,
+            'number_of_tickets': number_of_tickets,
+            'details_for_self': details_for_self,
+            'details_for_others': details_for_others,
+            'order_total': order_total,
+            'company_details': details['company_details'],
+        }
+
+        return render(request, 'tickets/order_confirm.html', context)
+
+
+@login_required
+def order_edit(request):
 
     if request.method == 'POST':
         form = TicketForm(request.POST)
@@ -144,21 +210,24 @@ def order_edit(request, order_id):
                     company_details = None
 
             if valid:
-                actions.update_pending_order(
-                    order,
-                    rate=rate,
-                    days_for_self=days_for_self,
-                    email_addrs_and_days_for_others=email_addrs_and_days_for_others,
-                    company_details=company_details,
-                )
+                request.session['ticket_details'] = {
+                    'rate': rate,
+                    'days_for_self': days_for_self,
+                    'email_addrs_and_days_for_others': email_addrs_and_days_for_others,
+                    'company_details': company_details,
+                    'form': form.data,
+                    'self_form': self_form.data,
+                    'others_formset': others_formset.data,
+                    'company_details_form': company_details_form.data,
+                }
 
-                return redirect(order)
+                return redirect('tickets:order_confirm')
 
     else:
-        form = TicketForm(order.form_data())
-        self_form = TicketForSelfForm(order.self_form_data())
-        others_formset = TicketForOthersFormSet(order.others_formset_data())
-        company_details_form = CompanyDetailsForm(order.company_details_form_data())
+        form = TicketForm(request.session['ticket_details']['form'])
+        self_form = TicketForSelfForm(request.session['ticket_details']['self_form'])
+        others_formset = TicketForOthersFormSet(request.session['ticket_details']['others_formset'])
+        company_details_form = CompanyDetailsForm(request.session['ticket_details']['company_details_form'])
 
     context = {
         'form': form,
@@ -175,82 +244,6 @@ def order_edit(request, order_id):
 
 
 @login_required
-def order(request, order_id):
-    order = Order.objects.get_by_order_id_or_404(order_id)
-
-    if request.user != order.purchaser:
-        messages.warning(request, 'Only the purchaser of an order can view the order')
-        return redirect('index')
-
-    if order.payment_required():
-        if request.user.get_ticket() is not None and order.unconfirmed_details['days_for_self']:
-            messages.warning(request, 'You already have a ticket.  Please amend your order.')
-            return redirect('tickets:order_edit', order.order_id)
-
-    if order.status == 'failed':
-        messages.error(request, f'Payment for this order failed ({order.stripe_charge_failure_reason})')
-    elif order.status == 'errored':
-        messages.error(request, 'There was an error creating your order.  You card may have been charged, but if so the charge will have been refunded.  Please make a new order.')
-
-    ticket = request.user.get_ticket()
-    if ticket is not None and ticket.order != order:
-        ticket = None
-
-    context = {
-        'order': order,
-        'ticket': ticket,
-        'stripe_api_key': settings.STRIPE_API_KEY_PUBLISHABLE,
-    }
-    return render(request, 'tickets/order.html', context)
-
-
-@login_required
-@require_POST
-def order_payment(request, order_id):
-    order = Order.objects.get_by_order_id_or_404(order_id)
-
-    if request.user != order.purchaser:
-        messages.warning(request, 'Only the purchaser of an order can pay for the order')
-        return redirect('index')
-
-    if not order.payment_required():
-        messages.error(request, 'This order has already been paid')
-        return redirect(order)
-
-    if request.user.get_ticket() is not None and order.unconfirmed_details['days_for_self']:
-        messages.warning(request, 'You already have a ticket.  Please amend your order.  Your card has not been charged.')
-        return redirect('tickets:order_edit', order.order_id)
-
-    token = request.POST['stripeToken']
-    actions.process_stripe_charge(order, token)
-
-    if not order.payment_required():
-        messages.success(request, 'Payment for this order has been received.')
-
-    return redirect(order)
-
-
-@login_required
-def order_receipt(request, order_id):
-    order = Order.objects.get_by_order_id_or_404(order_id)
-
-    if request.user != order.purchaser:
-        messages.warning(request, 'Only the purchaser of an order can view the receipt')
-        return redirect('index')
-
-    if order.payment_required():
-        messages.error(request, 'This order has not been paid')
-        return redirect(order)
-
-    context = {
-        'order': order,
-        'title': f'PyCon UK 2017 receipt for order {order.order_id}',
-        'no_navbar': True,
-    }
-    return render(request, 'tickets/order_receipt.html', context)
-
-
-@login_required
 def ticket(request, ticket_id):
     ticket = Ticket.objects.get_by_ticket_id_or_404(ticket_id)
 
@@ -262,7 +255,7 @@ def ticket(request, ticket_id):
         return redirect('tickets:ticket_edit', ticket.ticket_id)
 
     if not request.user.profile_complete():
-        messages.warning(request, 'Your profile is incomplete')
+        messages.warning(request, mark_safe('Your profile is incomplete. <a href="{}">Update your profile</a>'.format(reverse('accounts:profile'))))
 
     context = {
         'ticket': ticket,
@@ -310,10 +303,10 @@ def ticket_invitation(request, token):
 
     ticket = invitation.ticket
 
-    if invitation.status == 'unclaimed':
+    if invitation.status == TicketInvitation.UNCLAIMED:
         assert ticket.owner is None
         actions.claim_ticket_invitation(request.user, invitation)
-    elif invitation.status == 'claimed':
+    elif invitation.status == TicketInvitation.CLAIMED:
         assert ticket.owner is not None
         messages.info(request, 'This invitation has already been claimed')
     else:
@@ -331,9 +324,9 @@ def _rates_table_data():
     data.append(['', 'Individual rate', 'Corporate rate', "Education rate"])
     for ix in range(5):
         num_days = ix + 1
-        individual_rate = cost_incl_vat('individual', num_days)
-        corporate_rate = cost_incl_vat('corporate', num_days)
-        education_rate = cost_incl_vat('education', num_days)
+        individual_rate = cost_incl_vat('INDI', num_days)
+        corporate_rate = cost_incl_vat('CORP', num_days)
+        education_rate = cost_incl_vat('EDUC', num_days)
         row = []
         if num_days == 1:
             row.append('1 day')

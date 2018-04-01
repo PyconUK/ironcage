@@ -1,6 +1,6 @@
 Hi {{ purchaser_name }},
 
-You have purchased {{ num_tickets }} ticket{{ num_tickets|pluralize }} for PyCon UK 2017.
+You have purchased {{ num_tickets }} ticket{{ num_tickets|pluralize }} for PyCon UK 2018.
 
 {% if tickets_for_others %}
 Ticket invitations have been sent to the following:
@@ -18,4 +18,4 @@ We look forward to seeing you in Cardiff!
 Best wishes,
 {% endif %}
 
-~ The PyCon UK 2017 team
+~ The PyCon UK 2018 team

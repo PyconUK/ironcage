@@ -7,71 +7,64 @@
 #    functions in this module.  This means that test data should always be
 #    in a consistent state.
 
-from django_slack import slack_message
-import stripe
 
 from django.db import transaction
-from django.db.utils import IntegrityError
 
-from ironcage.stripe_integration import create_charge_for_order, refund_charge
+from payments.stripe_integration import refund_charge
 
-from .mailer import send_invitation_mail, send_order_confirmation_mail, send_order_refund_mail
-from .models import Order, Ticket
+from .mailer import send_invitation_mail, send_order_refund_mail
+from .models import Ticket
+from payments import actions as payment_actions
 
 import structlog
 logger = structlog.get_logger()
 
 
-def create_pending_order(purchaser, rate, days_for_self=None, email_addrs_and_days_for_others=None, company_details=None):
-    logger.info('create_pending_order', purchaser=purchaser.id, rate=rate)
+def create_ticket(purchaser, rate, days=None):
+    logger.info('create_ticket', purchaser=purchaser.id, rate=rate, days=days)
     with transaction.atomic():
-        return Order.objects.create_pending(
+        return Ticket.objects.create_for_user(
             purchaser,
             rate,
-            days_for_self,
-            email_addrs_and_days_for_others,
-            company_details=company_details,
+            days,
         )
 
 
-def update_pending_order(order, rate, days_for_self=None, email_addrs_and_days_for_others=None, company_details=None):
-    logger.info('update_pending_order', order=order.order_id, rate=rate)
+def create_ticket_with_invitation(email, rate, days=None):
+    logger.info('create_ticket_with_invitation', email=email, rate=rate, days=days)
+    with transaction.atomic():
+        return Ticket.objects.create_with_invitation(
+            email,
+            rate,
+            days,
+        )
+
+
+def create_invoice_with_tickets(purchaser, rate, days_for_self=None, email_addrs_and_days_for_others=None,
+                                company_details=None):
+    logger.info('create_invoice_with_tickets', purchaser=purchaser.id, rate=rate)
+
+    company_name = company_details['name'] if isinstance(company_details, dict) else None
+    company_addr = company_details['addr'] if isinstance(company_details, dict) else None
+
+    invoice = payment_actions.create_new_invoice(purchaser, company_name, company_addr)
+
+    if days_for_self:
+        ticket = create_ticket(purchaser, rate, days_for_self)
+        invoice.add_item(ticket)
+
+    if email_addrs_and_days_for_others is not None:
+        for email_addr, days in email_addrs_and_days_for_others:
+            ticket = create_ticket_with_invitation(email_addr, rate, days)
+            invoice.add_item(ticket)
+
+    return invoice
+
+
+def update_unpaid_order(order, rate, days_for_self=None, email_addrs_and_days_for_others=None, company_details=None):
+    logger.info('update_unpaid_order', order=order.id, rate=rate)
     with transaction.atomic():
         order.update(rate, days_for_self, email_addrs_and_days_for_others, company_details)
-
-
-def process_stripe_charge(order, token):
-    logger.info('process_stripe_charge', order=order.order_id, token=token)
-    assert order.payment_required()
-    try:
-        charge = create_charge_for_order(order, token)
-        confirm_order(order, charge.id, charge.created)
-    except stripe.error.CardError as e:
-        mark_order_as_failed(order, e._message)
-    except IntegrityError:
-        refund_charge(charge.id)
-        mark_order_as_errored_after_charge(order, charge.id)
-
-
-def confirm_order(order, charge_id, charge_created):
-    logger.info('confirm_order', order=order.order_id, charge_id=charge_id)
-    with transaction.atomic():
-        order.confirm(charge_id, charge_created)
-    send_receipt(order)
-    send_ticket_invitations(order)
-    slack_message('tickets/order_created.slack', {'order': order})
-
-
-def mark_order_as_failed(order, charge_failure_reason):
-    logger.info('mark_order_as_failed', order=order.order_id, charge_failure_reason=charge_failure_reason)
-    with transaction.atomic():
-        order.mark_as_failed(charge_failure_reason)
-
-
-def mark_order_as_errored_after_charge(order, charge_id):
-    logger.warn('mark_order_as_errored_after_charge', order=order.order_id, charge_id=charge_id)
-    with transaction.atomic():
-        order.march_as_errored_after_charge(charge_id)
 
 
 def create_free_ticket(email_addr, pot):
@@ -89,17 +82,6 @@ def update_free_ticket(ticket, days):
     logger.info('update_free_ticket', ticket=ticket.ticket_id, days=days)
     with transaction.atomic():
         ticket.update_days(days)
-
-
-def send_receipt(order):
-    logger.info('send_receipt', order=order.order_id)
-    send_order_confirmation_mail(order)
-
-
-def send_ticket_invitations(order):
-    logger.info('send_ticket_invitations', order=order.order_id)
-    for ticket in order.unclaimed_tickets():
-        send_invitation_mail(ticket)
 
 
 def claim_ticket_invitation(owner, invitation):
@@ -122,3 +104,9 @@ def refund_order(order):
         order.delete_tickets_and_mark_as_refunded()
     refund_charge(order.stripe_charge_id)
     send_order_refund_mail(order)
+
+
+def send_ticket_invitations(ticket):
+    logger.info('send_ticket_invitation', ticket=ticket.item_id)
+    # for ticket in order.unclaimed_tickets():
+    send_invitation_mail(ticket)

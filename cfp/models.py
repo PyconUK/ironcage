@@ -125,8 +125,8 @@ class Proposal(models.Model):
 
 
 class Vote(models.Model):
-    proposal = models.ForeignKey('Proposal')
-    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    proposal = models.ForeignKey('Proposal', on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     is_interested = models.BooleanField(default=True)
 
     created_at = models.DateTimeField(auto_now_add=True)

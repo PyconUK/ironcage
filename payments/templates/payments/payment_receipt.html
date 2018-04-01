@@ -1,0 +1,54 @@
+{% extends 'ironcage/base.html' %}
+
+{% block content %}
+<h1>Receipt for PyCon UK 2018</h1>
+
+<p>Issued by the PyCon UK Society Ltd, c/o Acconomy, Arena Business Centre, Holyrood Close, Poole, BH17 7FJ, United Kingdom (VAT Number GB 249 2449 82)</p>
+
+{% if payment.rate == 'corporate' %}
+<p>Issued to {{ payment.company_name }}, {{ payment.company_addr_formatted }}</p>
+{% else %}
+<p>Issued to {{ invoice.purchaser.name }}, {{ invoice.purchaser.email_addr }}</p>
+{% endif %}
+
+<div class="row">
+  <div class="col-md-4">
+    <table class="table table-condensed">
+      <tr>
+        <th>Date</th>
+        <td>{{ payment.created_at|date }}</td>
+      </tr>
+
+      <tr>
+        <th>Invoice number</th>
+        <td>{{ invoice.item_id }}</td>
+      </tr>
+
+      <tr>
+        <th>Payment number</th>
+        <td>{{ payment.id }}</td>
+      </tr>
+
+      <tr>
+        <th>Total received</th>
+        <td>&pound;{{ payment.amount }}</td>
+      </tr>
+
+      <tr>
+        <th>Paid by</th>
+        <td>{{ payment.get_method_display }}</td>
+      </tr>
+
+      <tr>
+        <th>Payment status</th>
+        <td>{{ payment.get_status_display }}{% if payment.status != payment.SUCCESSFUL %} ({{ payment.charge_failure_reason }}){% endif %}</td>
+      </tr>
+
+    </table>
+  </div>
+</div>
+
+<h2>Invoice {{ invoice.item_id }} Detail</h2>
+
+{% include './_invoice_details.html' %}
+{% endblock %}

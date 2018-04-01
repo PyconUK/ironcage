@@ -23,7 +23,7 @@ class MailerTests(TestCase):
         self.assertEqual(len(mail.outbox), 1)
         email = mail.outbox[0]
         self.assertEqual(email.to, ['alice@example.com'])
-        self.assertEqual(email.from_email, 'PyCon UK 2017 <noreply@pyconuk.org>')
-        self.assertEqual(email.subject, f"PyCon UK 2017 children's day order confirmation ({order.order_id})")
-        self.assertTrue(re.search(r"You have purchased 1 ticket for the children's day at PyCon UK 2017", email.body))
+        self.assertEqual(email.from_email, 'PyCon UK 2018 <noreply@pyconuk.org>')
+        self.assertEqual(email.subject, f"PyCon UK 2018 children's day order confirmation ({order.order_id})")
+        self.assertTrue(re.search(r"You have purchased 1 ticket for the children's day at PyCon UK 2018", email.body))
         self.assertTrue(re.search(fr'http://testserver/children/orders/{order.order_id}/', email.body))

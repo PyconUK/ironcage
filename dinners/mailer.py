@@ -9,7 +9,7 @@ from ironcage.emails import send_mail
 
 def send_booking_confirmation_mail(booking):
     user = booking.guest
-    subject = f'PyCon UK 2017 dinner confirmation | {user.user_id}'
+    subject = f'PyCon UK 2018 dinner confirmation | {user.user_id}'
 
     template = get_template('dinners/emails/order-confirmation.txt')
     context = {

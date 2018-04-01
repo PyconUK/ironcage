@@ -17,9 +17,9 @@ SECURE_BROWSER_XSS_FILTER = True
 X_FRAME_OPTIONS = 'DENY'
 
 # Email address to send mail from
-SERVER_EMAIL = f'PyCon UK 2017 <noreply@{ALLOWED_HOSTS[0]}>'
-EMAIL_FROM_ADDR = f'PyCon UK 2017 <noreply@{ALLOWED_HOSTS[0]}>'
-EMAIL_REPLY_TO_ADDR = 'PyCon UK 2017 <pyconuk-committee@uk.python.org>'
+SERVER_EMAIL = f'PyCon UK 2018 <noreply@{ALLOWED_HOSTS[0]}>'
+EMAIL_FROM_ADDR = f'PyCon UK 2018 <noreply@{ALLOWED_HOSTS[0]}>'
+EMAIL_REPLY_TO_ADDR = 'PyCon UK 2018 <pyconuk-committee@uk.python.org>'
 
 # Last orders...
 bst = timezone(timedelta(hours=1))

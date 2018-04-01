@@ -20,7 +20,7 @@ def send_order_confirmation_mail(order):
     body = re.sub('\n\n\n+', '\n\n', body_raw)
 
     send_mail(
-        f"PyCon UK 2017 children's day order confirmation ({order.order_id})",
+        f"PyCon UK 2018 children's day order confirmation ({order.order_id})",
         body,
         order.purchaser.email_addr,
     )

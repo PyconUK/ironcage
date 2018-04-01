@@ -19,12 +19,13 @@ def create_charge(amount_pence, description, statement_descriptor, token):
     )
 
 
-def create_charge_for_order(order, token):
-    assert order.payment_required()
+def create_charge_for_invoice(invoice, token):
+    assert invoice.payment_required
+
     return create_charge(
-        order.cost_pence_incl_vat(),
-        f'PyCon UK order {order.order_id}',
-        f'PyCon UK {order.order_id}',
+        invoice.total_pence_inc_vat,
+        f'PyCon UK invoice {invoice.item_id}',
+        f'PyCon UK {invoice.item_id}',
         token,
     )
 

@@ -50,6 +50,6 @@ class SendBulkEmailTests(TestCase):
         self.assertEqual(len(mail.outbox), 2)
         email = mail.outbox[0]
         self.assertEqual(email.to, ['alice@example.com'])
-        self.assertEqual(email.from_email, 'PyCon UK 2017 <noreply@pyconuk.org>')
+        self.assertEqual(email.from_email, 'PyCon UK 2018 <noreply@pyconuk.org>')
         self.assertEqual(email.subject, f'This is a test | {self.alice.user_id}')
         self.assertIn('Hi Alice', email.body)

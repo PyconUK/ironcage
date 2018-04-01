@@ -18,5 +18,5 @@ You can download a receipt at :
 
 Best wishes,
 
-~ The PyCon UK 2017 team
+~ The PyCon UK 2018 team
 {% endautoescape %}

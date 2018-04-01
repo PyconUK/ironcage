@@ -3,7 +3,7 @@ import stripe
 
 from django.db import transaction
 
-from ironcage.stripe_integration import create_charge_for_order
+from payments.stripe_integration import create_charge_for_invoice
 
 from .mailer import send_order_confirmation_mail
 from .models import Order
@@ -36,7 +36,7 @@ def process_stripe_charge(order, token):
     logger.info('children:process_stripe_charge', order=order.order_id, token=token)
     assert order.payment_required()
     try:
-        charge = create_charge_for_order(order, token)
+        charge = create_charge_for_invoice(order, token)
         confirm_order(order, charge.id, charge.created)
     except stripe.error.CardError as e:
         mark_order_as_failed(order, e._message)

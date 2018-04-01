@@ -19,4 +19,4 @@ SLACK_BACKEND = 'django_slack.backends.ConsoleBackend'
 LOGGING['loggers']['django']['handlers'].remove('slack_admins')
 
 # Email address to send mail from
-SERVER_EMAIL = 'PyCon UK 2017 <noreply@localhost:8000>'
+SERVER_EMAIL = 'PyCon UK 2018 <noreply@localhost:8000>'

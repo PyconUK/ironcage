@@ -1,7 +1,7 @@
 DAYS = {
-    'thu': 'Thursday',
-    'fri': 'Friday',
     'sat': 'Saturday',
     'sun': 'Sunday',
     'mon': 'Monday',
+    'tue': 'Tuesday',
+    'wed': 'Wednesday',
 }

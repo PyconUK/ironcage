@@ -5,6 +5,7 @@
   <div class="col-md-6">
     {% if not request.user.is_authenticated %}
     <p>Please <a href="{% url 'register' %}?next={{ request.path }}">sign up</a> or <a href="{% url 'login' %}?next={{ request.path }}">sign in</a> to buy a ticket.</p>
+    <p>If you bought a ticket for last years conference, you can sign in with the same account.</p>
     {% endif %}
 
     {% include './_ticket_info.html' %}
