@@ -43,7 +43,7 @@ def create_unpaid_order_for_self(user=None, rate=None, num_days=None):
     else:
         company_details = None
 
-    return actions.create_unpaid_order(
+    return actions.create_invoice_with_tickets(
         purchaser=user,
         rate=rate,
         days_for_self=['sat', 'sun', 'mon', 'tue', 'wed'][:num_days],
@@ -54,7 +54,7 @@ def create_unpaid_order_for_self(user=None, rate=None, num_days=None):
 def create_unpaid_order_for_others(user=None, rate=None):
     user = user or create_user()
     rate = rate or Ticket.INDIVIDUAL
-    return actions.create_unpaid_order(
+    return actions.create_invoice_with_tickets(
         purchaser=user,
         rate=rate,
         email_addrs_and_days_for_others=[
@@ -67,7 +67,7 @@ def create_unpaid_order_for_others(user=None, rate=None):
 def create_unpaid_order_for_self_and_others(user=None, rate=None):
     user = user or create_user()
     rate = rate or Ticket.INDIVIDUAL
-    return actions.create_unpaid_order(
+    return actions.create_invoice_with_tickets(
         purchaser=user,
         rate=rate,
         days_for_self=['sat', 'sun', 'mon'],

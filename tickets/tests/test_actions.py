@@ -18,7 +18,7 @@ class CreatePendingOrderTests(TestCase):
         cls.alice = factories.create_user()
 
     def test_order_for_self_individual(self):
-        order = actions.create_unpaid_order(
+        order = actions.create_invoice_with_tickets(
             self.alice,
             Ticket.INDIVIDUAL,
             days_for_self=['sat', 'sun', 'mon']
@@ -32,7 +32,7 @@ class CreatePendingOrderTests(TestCase):
         self.assertEqual(order.rate, Ticket.INDIVIDUAL)
 
     def test_order_for_self_corporate(self):
-        order = actions.create_unpaid_order(
+        order = actions.create_invoice_with_tickets(
             self.alice,
             Ticket.CORPORATE,
             days_for_self=['sat', 'sun', 'mon'],
@@ -52,7 +52,7 @@ class CreatePendingOrderTests(TestCase):
         self.assertEqual(order.company_addr, 'Eadrax, Sirius Tau')
 
     def test_order_for_others(self):
-        order = actions.create_unpaid_order(
+        order = actions.create_invoice_with_tickets(
             self.alice,
             Ticket.INDIVIDUAL,
             email_addrs_and_days_for_others=[
@@ -69,7 +69,7 @@ class CreatePendingOrderTests(TestCase):
         self.assertEqual(order.rate, Ticket.INDIVIDUAL)
 
     def test_order_for_self_and_others(self):
-        order = actions.create_unpaid_order(
+        order = actions.create_invoice_with_tickets(
             self.alice,
             Ticket.INDIVIDUAL,
             days_for_self=['sat', 'sun', 'mon'],

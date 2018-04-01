@@ -61,20 +61,6 @@ def create_invoice_with_tickets(user, rate, days_for_self, email_addrs_and_days_
     return invoice
 
 
-
-def create_unpaid_order(purchaser, rate, days_for_self=None, email_addrs_and_days_for_others=None, company_details=None):
-    return create_invoice_with_tickets(purchaser, rate, days_for_self, email_addrs_and_days_for_others, company_details)
-    # logger.info('create_unpaid_order', purchaser=purchaser.id, rate=rate)
-    # with transaction.atomic():
-    #     return Order.objects.create_pending(
-    #         purchaser,
-    #         rate,
-    #         days_for_self,
-    #         email_addrs_and_days_for_others,
-    #         company_details=company_details,
-    #     )
-
-
 def update_unpaid_order(order, rate, days_for_self=None, email_addrs_and_days_for_others=None, company_details=None):
     logger.info('update_unpaid_order', order=order.id, rate=rate)
     with transaction.atomic():
