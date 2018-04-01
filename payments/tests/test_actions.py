@@ -271,11 +271,11 @@ class MarkPaymentAsFailedTests(TestCase):
     def setUp(self):
         self.invoice = ticket_factories.create_unpaid_order_for_self()
 
-    def test_mark_payment_as_failed(self):
+    def test_create_failed_payment(self):
         # arrange
 
         # act
-        payment = actions.mark_payment_as_failed(self.invoice, 'Uh oh', 'ch_qwerty')
+        payment = actions.create_failed_payment(self.invoice, 'Uh oh', 'ch_qwerty')
 
         # assert
         self.assertEqual(payment.invoice, self.invoice)
@@ -293,11 +293,11 @@ class MarkPaymentAsErroredAfterChargeTests(TestCase):
     def setUp(self):
         self.invoice = ticket_factories.create_unpaid_order_for_self()
 
-    def test_mark_payment_as_errored_after_charge(self):
+    def test_create_errored_after_charge_payment(self):
         # arrange
 
         # act
-        payment = actions.mark_payment_as_errored_after_charge(self.invoice, 'ch_qwerty', self.invoice.total_pence_inc_vat)
+        payment = actions.create_errored_after_charge_payment(self.invoice, 'ch_qwerty', self.invoice.total_pence_inc_vat)
 
         # assert
         self.assertEqual(payment.invoice, self.invoice)
@@ -315,11 +315,11 @@ class MarkPaymentAsSuccessfulTests(TestCase):
     def setUp(self):
         self.invoice = ticket_factories.create_unpaid_order_for_self()
 
-    def test_mark_payment_as_successful(self):
+    def test_create_successful_payment(self):
         # arrange
 
         # act
-        payment = actions.mark_payment_as_successful(self.invoice, 'ch_qwerty', self.invoice.total_pence_inc_vat)
+        payment = actions.create_successful_payment(self.invoice, 'ch_qwerty', self.invoice.total_pence_inc_vat)
 
         # assert
         self.assertEqual(payment.invoice, self.invoice)
@@ -337,7 +337,7 @@ class PayInvoiceByStripeTests(TestCase):
     def setUp(self):
         self.invoice = ticket_factories.create_unpaid_order_for_self()
 
-    @patch('payments.actions.mark_payment_as_successful')
+    @patch('payments.actions.create_successful_payment')
     @patch('payments.actions.confirm_invoice')
     def test_pay_invoice(self, confirm, successful):
         # arrange
@@ -360,8 +360,8 @@ class PayInvoiceByStripeTests(TestCase):
             # act
             actions.pay_invoice_by_stripe(self.invoice, 'tok_ abcdefghijklmnopqurstuvwx')
 
-    @patch('payments.actions.mark_payment_as_successful')
-    @patch('payments.actions.mark_payment_as_failed')
+    @patch('payments.actions.create_successful_payment')
+    @patch('payments.actions.create_failed_payment')
     def test_pay_invoice_with_unsuccessful_payment_does_not_mark_as_successful(self, failed, successful):
         # arrange
 
@@ -373,14 +373,14 @@ class PayInvoiceByStripeTests(TestCase):
         failed.assert_called_once_with(self.invoice, 'Your card was declined.', 'ch_qwerty')
         successful.assert_not_called()
 
-    @patch('payments.actions.mark_payment_as_successful')
+    @patch('payments.actions.create_successful_payment')
     @patch('payments.actions.confirm_invoice')
     def test_pay_invoice_with_previous_unsuccessful_payment_passes(self, confirm, successful):
         # arrange
         with utils.patched_charge_creation_failure():
             actions.pay_invoice_by_stripe(self.invoice, 'tok_ abcdefghijklmnopqurstuvwx')
 
-        failed_patch = patch('payments.actions.mark_payment_as_failed')
+        failed_patch = patch('payments.actions.create_failed_payment')
         failed = failed_patch.start()
 
         # act
@@ -394,8 +394,8 @@ class PayInvoiceByStripeTests(TestCase):
 
         failed_patch.stop()
 
-    @patch('payments.actions.mark_payment_as_successful', side_effect=IntegrityError)
-    @patch('payments.actions.mark_payment_as_errored_after_charge')
+    @patch('payments.actions.create_successful_payment', side_effect=IntegrityError)
+    @patch('payments.actions.create_errored_after_charge_payment')
     @patch('payments.actions.confirm_invoice')
     @patch('payments.actions.refund_charge')
     def test_pay_invoice_errors_starts_refund_and_marks_as_errored(self, refund, confirm, errored, successful):

@@ -62,7 +62,7 @@ def confirm_invoice(invoice, charge_id, charge_created):
     slack_message('tickets/order_created.slack', {'invoice': invoice})
 
 
-def mark_payment_as_failed(invoice, failure_message, charge_id):
+def create_failed_payment(invoice, failure_message, charge_id):
     with transaction.atomic():
         return Payment.objects.create(
             invoice=invoice,
@@ -74,7 +74,7 @@ def mark_payment_as_failed(invoice, failure_message, charge_id):
         )
 
 
-def mark_payment_as_errored_after_charge(invoice, charge_id, charge_amount, method=Payment.STRIPE):
+def create_errored_after_charge_payment(invoice, charge_id, charge_amount, method=Payment.STRIPE):
     with transaction.atomic():
         return Payment.objects.create(
             invoice=invoice,
@@ -85,7 +85,7 @@ def mark_payment_as_errored_after_charge(invoice, charge_id, charge_amount, meth
         )
 
 
-def mark_payment_as_successful(invoice, charge_id, charge_amount, method=Payment.STRIPE):
+def create_successful_payment(invoice, charge_id, charge_amount, method=Payment.STRIPE):
     with transaction.atomic():
         return Payment.objects.create(
             invoice=invoice,
@@ -106,7 +106,7 @@ def pay_invoice_by_stripe(invoice, stripe_token):
             charge = create_charge_for_invoice(invoice, stripe_token)
 
             # Then we record it locally
-            payment = mark_payment_as_successful(invoice, charge.id, charge.amount)
+            payment = create_successful_payment(invoice, charge.id, charge.amount)
 
             # Then we run any additional tasks
             confirm_invoice(invoice, charge.id, charge.created)
@@ -116,7 +116,7 @@ def pay_invoice_by_stripe(invoice, stripe_token):
         except stripe.error.CardError as e:
             # This is where stripe errors - a FAILED transaction
             charge_id = e.json_body['error']['charge']
-            return mark_payment_as_failed(invoice, e._message, charge_id)
+            return create_failed_payment(invoice, e._message, charge_id)
 
         except IntegrityError:
             # This is where we errors - an ERRORED transaction
@@ -124,7 +124,7 @@ def pay_invoice_by_stripe(invoice, stripe_token):
             # customer and should refund the charge
             refund_charge(charge.id)
 
-            return mark_payment_as_errored_after_charge(invoice, charge.id, charge.amount)
+            return create_errored_after_charge_payment(invoice, charge.id, charge.amount)
 
 
 def send_receipt(order):

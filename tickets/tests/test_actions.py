@@ -156,7 +156,7 @@ class ConfirmOrderTests(TestCase):
 
     def test_after_order_marked_as_failed(self):
         order = factories.create_unpaid_order_for_self()
-        payment_actions.mark_payment_as_failed(order, 'There was a problem', 'ch_abcdefghijklmnopqurstuvw')
+        payment_actions.create_failed_payment(order, 'There was a problem', 'ch_abcdefghijklmnopqurstuvw')
 
         with utils.patched_charge_creation_success(order.total_pence_inc_vat):
             payment = payment_actions.pay_invoice_by_stripe(order, 'ch_abcdefghijklmnopqurstuvw')
@@ -190,7 +190,7 @@ class MarkOrderAsFailed(TestCase):
     def test_mark_order_as_failed(self):
         order = factories.create_unpaid_order_for_self()
 
-        payment_actions.mark_payment_as_failed(order, 'There was a problem', 'ch_abcdefghijklmnopqurstuvw')
+        payment_actions.create_failed_payment(order, 'There was a problem', 'ch_abcdefghijklmnopqurstuvw')
 
         self.assertEqual(order.payments.first().charge_failure_reason, 'There was a problem')
         self.assertEqual(order.payments.first().status, Payment.FAILED)
@@ -200,7 +200,7 @@ class MarkOrderAsErroredAfterCharge(TestCase):
     def test_mark_order_as_errored_after_charge(self):
         order = factories.create_unpaid_order_for_self()
 
-        payment_actions.mark_payment_as_errored_after_charge(order, 'ch_abcdefghijklmnopqurstuvw', order.total_pence_inc_vat)
+        payment_actions.create_errored_after_charge_payment(order, 'ch_abcdefghijklmnopqurstuvw', order.total_pence_inc_vat)
 
         self.assertEqual(order.payments.first().charge_id, 'ch_abcdefghijklmnopqurstuvw')
         self.assertEqual(order.payments.first().status, Payment.ERRORED)

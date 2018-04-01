@@ -84,11 +84,11 @@ def confirm_order(order):
 
 
 def mark_order_as_failed(order):
-    payment_actions.mark_payment_as_failed(order, 'Your card was declined.', 'ch_abcdefghijklmnopqurstuvw')
+    payment_actions.create_failed_payment(order, 'Your card was declined.', 'ch_abcdefghijklmnopqurstuvw')
 
 
 def mark_order_as_errored_after_charge(order):
-    payment_actions.mark_payment_as_errored_after_charge(order, 'ch_abcdefghijklmnopqurstuvw', order.total_inc_vat)
+    payment_actions.create_errored_after_charge_payment(order, 'ch_abcdefghijklmnopqurstuvw', order.total_inc_vat)
 
 
 def create_paid_order_for_self(user=None, rate=None, num_days=None):
