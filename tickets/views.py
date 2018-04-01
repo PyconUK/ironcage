@@ -130,7 +130,9 @@ def order_confirm(request):
 
         order_total = Decimal()
 
-        number_of_tickets = len(details['email_addrs_and_days_for_others'])
+        number_of_tickets = 0
+        if details['email_addrs_and_days_for_others']:
+            number_of_tickets += len(details['email_addrs_and_days_for_others'])
         if details['days_for_self']:
             number_of_tickets += 1
 
@@ -144,13 +146,14 @@ def order_confirm(request):
             order_total += details_for_self['amount']
 
         details_for_others = []
-        for email, days in details['email_addrs_and_days_for_others']:
-            details_for_others.append((
-                email,
-                [DAYS[day] for day in days],
-                cost_incl_vat(details['rate'], len(days))
-            ))
-            order_total += cost_incl_vat(details['rate'], len(days))
+        if details['email_addrs_and_days_for_others']:
+            for email, days in details['email_addrs_and_days_for_others']:
+                details_for_others.append((
+                    email,
+                    [DAYS[day] for day in days],
+                    cost_incl_vat(details['rate'], len(days))
+                ))
+                order_total += cost_incl_vat(details['rate'], len(days))
 
         context = {
             'rate': rate,
