@@ -5,7 +5,7 @@ import string
 from accounts.tests.factories import create_user
 
 from payments import actions
-from payments.models import STANDARD_RATE_VAT, Payment
+from payments.models import STANDARD_RATE_VAT, Payment, CreditNote
 from tickets.tests.factories import (
     create_ticket
 )

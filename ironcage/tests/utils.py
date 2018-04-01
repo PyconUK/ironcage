@@ -23,7 +23,14 @@ def patched_charge_creation_success(amount_in_pence):
 
 @contextmanager
 def patched_charge_creation_failure():
-    card_error = stripe.error.CardError('Your card was declined.', None, 'card_declined')
+    json_body = {
+        'error': {
+            'charge': 'ch_qwerty'
+        }
+    }
+
+    card_error = stripe.error.CardError('Your card was declined.', None, 'card_declined',
+                                        json_body=json_body)
     with patch('stripe.Charge.create') as mock:
         mock.side_effect = card_error
         yield
