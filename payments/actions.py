@@ -68,35 +68,39 @@ def mark_payment_as_failed(invoice, failure_message, charge_id):
         )
 
 
-def mark_payment_as_errored_after_charge(invoice, charge_id, charge_amount):
+def mark_payment_as_errored_after_charge(invoice, charge_id, charge_amount, method=Payment.STRIPE):
     with transaction.atomic():
         return Payment.objects.create(
             invoice=invoice,
-            method=Payment.STRIPE,
+            method=method,
             status=Payment.ERRORED,
             charge_id=charge_id,
             amount=charge_amount/100
         )
 
 
+def mark_payment_as_successful(invoice, charge_id, charge_amount, method=Payment.STRIPE):
+    with transaction.atomic():
+        return Payment.objects.create(
+            invoice=invoice,
+            method=method,
+            status=Payment.SUCCESSFUL,
+            charge_id=charge_id,
+            amount=charge_amount/100
+        )
+
+
 def pay_invoice_by_stripe(invoice, stripe_token):
-    logger.info('pay_invoice_by_stripe', invoice=invoice.item_id, token=token)
+    logger.info('pay_invoice_by_stripe', invoice=invoice.item_id, token=stripe_token)
     if invoice.successful_payment:
         raise Exception('Payment already made against this invoice')
     else:
         try:
             # This registers the payment we just got with stripe
-            charge = create_charge_for_invoice(invoice, token)
+            charge = create_charge_for_invoice(invoice, stripe_token)
 
             # Then we record it locally
-            with transaction.atomic():
-                payment = Payment.objects.create(
-                    invoice=invoice,
-                    method=Payment.STRIPE,
-                    status=Payment.SUCCESSFUL,
-                    charge_id=charge.id,
-                    amount=charge.amount/100
-                )
+            payment = mark_payment_as_successful(invoice, charge.id, charge.amount)
 
             # Then we run any additional tasks
             confirm_invoice(invoice, charge.id, charge.created)

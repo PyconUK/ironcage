@@ -165,9 +165,12 @@ class SalesRecord(models.Model):
 
     @property
     def successful_payment(self):
-        return self.payments.get(
-            status=Payment.SUCCESSFUL
-        )
+        try:
+            return self.payments.get(
+                status=Payment.SUCCESSFUL
+            )
+        except Payment.DoesNotExist:
+            return None
 
     def tickets(self):
         from tickets.models import Ticket

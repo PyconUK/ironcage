@@ -21,11 +21,13 @@ def create_invoice(user=None, company_name=None, company_addr=None):
     )
 
 
-def create_credit_note(user=None, company_name=None, company_addr=None):
+def create_credit_note(user=None, invoice=None, company_name=None, company_addr=None):
     user = user or create_user()
 
     return actions.create_new_credit_note(
         purchaser=user,
+        reason=CreditNote.CREATED_BY_MISTAKE,
+        invoice=invoice,
         company_name=company_name,
         company_addr=company_addr,
     )
@@ -56,7 +58,7 @@ def delete_invoice_item(item=None, user=None, invoice=None):
 def make_payment(invoice=None, status=None, amount=None):
     invoice = invoice or create_invoice(create_user())
     status = status or Payment.SUCCESSFUL
-    amount = amount or invoice.total
+    amount = amount or invoice.total_inc_vat
 
     return Payment.objects.create(
         invoice=invoice,
