@@ -260,15 +260,15 @@ class CreateNewCreditNoteTests(TestCase):
 
 class ProcessStripeChargeTests(TestCase):
     def setUp(self):
-        self.order = ticket_factories.create_pending_order_for_self()
+        self.invoice = ticket_factories.create_pending_order_for_self()
 
     def test_process_stripe_charge_success(self):
         # arrange
         token = 'tok_ abcdefghijklmnopqurstuvwx'
 
         # act
-        with utils.patched_charge_creation_success(self.order.total_pence_inc_vat):
-            payment = actions.process_stripe_charge(self.order, token)
+        with utils.patched_charge_creation_success(self.invoice.total_pence_inc_vat):
+            payment = actions.pay_invoice_by_stripe(self.invoice, token)
 
         # assert
         self.assertEqual(payment.status, Payment.SUCCESSFUL)
@@ -279,7 +279,7 @@ class ProcessStripeChargeTests(TestCase):
 
         # act
         with utils.patched_charge_creation_failure():
-            payment = actions.process_stripe_charge(self.order, token)
+            payment = actions.pay_invoice_by_stripe(self.invoice, token)
 
         # assert
         self.assertEqual(payment.status, Payment.FAILED)
@@ -287,14 +287,14 @@ class ProcessStripeChargeTests(TestCase):
     @skip
     def test_process_stripe_charge_error_after_charge(self):
         # arrange
-        ticket_factories.create_confirmed_order_for_self(self.order.purchaser)
+        ticket_factories.create_confirmed_order_for_self(self.invoice.purchaser)
         token = 'tok_ abcdefghijklmnopqurstuvwx'
 
         # act
-        with utils.patched_charge_creation_success(self.order.total_pence_inc_vat), utils.patched_refund_creation_expected():
-            payment = actions.process_stripe_charge(self.order, token)
+        with utils.patched_charge_creation_success(self.invoice.total_pence_inc_vat), utils.patched_refund_creation_expected():
+            payment = actions.pay_invoice_by_stripe(self.invoice, token)
 
-        self.order.refresh_from_db()
+        self.invoice.refresh_from_db()
 
         # assert
         self.assertEqual(payment.status, Payment.ERRORED)

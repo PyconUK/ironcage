@@ -194,15 +194,15 @@ class ConfirmOrderTests(TestCase):
     def test_order_for_self(self):
         order = factories.create_pending_order_for_self()
 
-        with utils.patched_charge_creation_success():
-            payment = payment_actions.process_stripe_charge(order, 'ch_abcdefghijklmnopqurstuvw')
+        with utils.patched_charge_creation_success(order.total_pence_inc_vat):
+            payment = payment_actions.pay_invoice_by_stripe(order, 'ch_abcdefghijklmnopqurstuvw')
 
         self.assertEqual(payment.charge_id, 'ch_abcdefghijklmnopqurstuvw')
         self.assertEqual(payment.charge_failure_reason, '')
         self.assertEqual(payment.method, Payment.STRIPE)
         self.assertEqual(payment.status, Payment.SUCCESSFUL)
 
-        self.assertEqual(order.purchaser.invoices[0].payments.count(), 1)
+        self.assertEqual(order.purchaser.invoices.all()[0].payments.count(), 1)
         self.assertIsNotNone(order.purchaser.get_ticket())
 
         ticket = order.purchaser.get_ticket()
@@ -213,15 +213,15 @@ class ConfirmOrderTests(TestCase):
     def test_order_for_others(self):
         order = factories.create_pending_order_for_others()
 
-        with utils.patched_charge_creation_success():
-            payment = payment_actions.process_stripe_charge(order, 'ch_abcdefghijklmnopqurstuvw')
+        with utils.patched_charge_creation_success(order.total_pence_inc_vat):
+            payment = payment_actions.pay_invoice_by_stripe(order, 'ch_abcdefghijklmnopqurstuvw')
 
         self.assertEqual(payment.charge_id, 'ch_abcdefghijklmnopqurstuvw')
         self.assertEqual(payment.charge_failure_reason, '')
         self.assertEqual(payment.method, Payment.STRIPE)
         self.assertEqual(payment.status, Payment.SUCCESSFUL)
 
-        self.assertEqual(order.purchaser.invoices[0].payments.count(), 1)
+        self.assertEqual(order.purchaser.invoices.all()[0].payments.count(), 1)
         self.assertIsNone(order.purchaser.get_ticket())
 
         ticket = TicketInvitation.objects.get(email_addr='bob@example.com').ticket
@@ -235,15 +235,15 @@ class ConfirmOrderTests(TestCase):
     def test_order_for_self_and_others(self):
         order = factories.create_pending_order_for_self_and_others()
 
-        with utils.patched_charge_creation_success():
-            payment = payment_actions.process_stripe_charge(order, 'ch_abcdefghijklmnopqurstuvw')
+        with utils.patched_charge_creation_success(order.total_pence_inc_vat):
+            payment = payment_actions.pay_invoice_by_stripe(order, 'ch_abcdefghijklmnopqurstuvw')
 
         self.assertEqual(payment.charge_id, 'ch_abcdefghijklmnopqurstuvw')
         self.assertEqual(payment.charge_failure_reason, '')
         self.assertEqual(payment.method, Payment.STRIPE)
         self.assertEqual(payment.status, Payment.SUCCESSFUL)
 
-        self.assertEqual(order.purchaser.invoices[0].payments.count(), 1)
+        self.assertEqual(order.purchaser.invoices.all()[0].payments.count(), 1)
         self.assertIsNotNone(order.purchaser.get_ticket())
 
         ticket = order.purchaser.get_ticket()
@@ -259,17 +259,17 @@ class ConfirmOrderTests(TestCase):
 
     def test_after_order_marked_as_failed(self):
         order = factories.create_pending_order_for_self()
-        actions.mark_order_as_failed(order, 'There was a problem')
+        payment_actions.mark_payment_as_failed(order, 'There was a problem', 'ch_abcdefghijklmnopqurstuvw')
 
-        with utils.patched_charge_creation_success():
-            payment = payment_actions.process_stripe_charge(order, 'ch_abcdefghijklmnopqurstuvw')
+        with utils.patched_charge_creation_success(order.total_pence_inc_vat):
+            payment = payment_actions.pay_invoice_by_stripe(order, 'ch_abcdefghijklmnopqurstuvw')
 
         self.assertEqual(payment.charge_id, 'ch_abcdefghijklmnopqurstuvw')
         self.assertEqual(payment.charge_failure_reason, '')
         self.assertEqual(payment.method, Payment.STRIPE)
         self.assertEqual(payment.status, Payment.SUCCESSFUL)
 
-        self.assertEqual(order.purchaser.invoices[0].payments.count(), 1)
+        self.assertEqual(order.purchaser.invoices.all()[0].payments.count(), 1)
         self.assertIsNotNone(order.purchaser.get_ticket())
 
         ticket = order.purchaser.get_ticket()
@@ -280,8 +280,8 @@ class ConfirmOrderTests(TestCase):
         order = factories.create_pending_order_for_self()
         backend.reset_messages()
 
-        with utils.patched_charge_creation_success():
-            payment_actions.process_stripe_charge(order, 'ch_abcdefghijklmnopqurstuvw')
+        with utils.patched_charge_creation_success(order.total_pence_inc_vat):
+            payment_actions.pay_invoice_by_stripe(order, 'ch_abcdefghijklmnopqurstuvw')
 
         messages = backend.retrieve_messages()
         self.assertEqual(len(messages), 1)
@@ -293,20 +293,20 @@ class MarkOrderAsFailed(TestCase):
     def test_mark_order_as_failed(self):
         order = factories.create_pending_order_for_self()
 
-        actions.mark_order_as_failed(order, 'There was a problem')
+        payment_actions.mark_payment_as_failed(order, 'There was a problem', 'ch_abcdefghijklmnopqurstuvw')
 
-        self.assertEqual(order.stripe_charge_failure_reason, 'There was a problem')
-        self.assertEqual(order.status, 'failed')
+        self.assertEqual(order.payments.first().charge_failure_reason, 'There was a problem')
+        self.assertEqual(order.payments.first().status, Payment.FAILED)
 
 
 class MarkOrderAsErroredAfterCharge(TestCase):
     def test_mark_order_as_errored_after_charge(self):
         order = factories.create_pending_order_for_self()
 
-        actions.mark_order_as_errored_after_charge(order, 'ch_abcdefghijklmnopqurstuvw')
+        payment_actions.mark_payment_as_errored_after_charge(order, 'ch_abcdefghijklmnopqurstuvw', order.total_pence_inc_vat)
 
-        self.assertEqual(order.stripe_charge_id, 'ch_abcdefghijklmnopqurstuvw')
-        self.assertEqual(order.status, 'errored')
+        self.assertEqual(order.payments.first().charge_id, 'ch_abcdefghijklmnopqurstuvw')
+        self.assertEqual(order.payments.first().status, Payment.ERRORED)
 
 
 class CreateFreeTicketTests(TestCase):

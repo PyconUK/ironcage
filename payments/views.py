@@ -145,7 +145,7 @@ def invoice_payment(request, invoice_id):
     #     return redirect('tickets:order_edit', invoice.invoice_id)
 
     token = request.POST['stripeToken']
-    payment = payment_actions.process_stripe_charge(invoice, token)
+    payment = payment_actions.pay_invoice_by_stripe(invoice, token)
 
     if not invoice.payment_required and payment.status == Payment.SUCCESSFUL:
         messages.success(request, 'Payment for this invoice has been received.')

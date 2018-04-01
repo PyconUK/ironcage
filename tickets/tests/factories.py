@@ -80,11 +80,11 @@ def create_pending_order_for_self_and_others(user=None, rate=None):
 
 def confirm_order(order):
     with utils.patched_charge_creation_success(order.total_pence_inc_vat):
-        return payment_actions.process_stripe_charge(order, 'ch_abcdefghijklmnopqurstuvw')
+        return payment_actions.pay_invoice_by_stripe(order, 'ch_abcdefghijklmnopqurstuvw')
 
 
 def mark_order_as_failed(order):
-    payment_actions.mark_payment_as_failed(order, 'Your card was declined.')
+    payment_actions.mark_payment_as_failed(order, 'Your card was declined.', 'ch_abcdefghijklmnopqurstuvw')
 
 
 def mark_order_as_errored_after_charge(order):

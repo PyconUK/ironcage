@@ -88,10 +88,6 @@ class SalesRecord(models.Model):
     def get_absolute_url(self):
         return reverse('payments:order', args=[self.id])
 
-    def get_payment(self):
-        # TODO: BETTER
-        return self.payments.first() if self.payments else 0
-
     @property
     def total_pence_inc_vat(self):
         return int(100 * self.total_inc_vat)
@@ -166,6 +162,12 @@ class SalesRecord(models.Model):
         return self.payments.filter(
             status=Payment.SUCCESSFUL
         ).count() < 1
+
+    @property
+    def successful_payment(self):
+        return self.payments.get(
+            status=Payment.SUCCESSFUL
+        )
 
     def tickets(self):
         from tickets.models import Ticket

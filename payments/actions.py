@@ -79,36 +79,42 @@ def mark_payment_as_errored_after_charge(invoice, charge_id, charge_amount):
         )
 
 
-def process_stripe_charge(invoice, token):
-    logger.info('process_stripe_charge', invoice=invoice.item_id, token=token)
-    assert invoice.payment_required
-    try:
-        # This registers the payment we just got with stripe
-        charge = create_charge_for_invoice(invoice, token)
+def pay_invoice_by_stripe(invoice, stripe_token):
+    logger.info('pay_invoice_by_stripe', invoice=invoice.item_id, token=token)
+    if invoice.successful_payment:
+        raise Exception('Payment already made against this invoice')
+    else:
+        try:
+            # This registers the payment we just got with stripe
+            charge = create_charge_for_invoice(invoice, token)
 
-        # Then we record it locally
-        with transaction.atomic():
-            payment = Payment.objects.create(
-                invoice=invoice,
-                method=Payment.STRIPE,
-                status=Payment.SUCCESSFUL,
-                charge_id=charge.id,
-                amount=charge.amount/100
-            )
+            # Then we record it locally
+            with transaction.atomic():
+                payment = Payment.objects.create(
+                    invoice=invoice,
+                    method=Payment.STRIPE,
+                    status=Payment.SUCCESSFUL,
+                    charge_id=charge.id,
+                    amount=charge.amount/100
+                )
 
-        # Then we run any additional tasks
-        confirm_invoice(invoice, charge.id, charge.created)
+            # Then we run any additional tasks
+            confirm_invoice(invoice, charge.id, charge.created)
 
-        return payment
+            return payment
 
-    except stripe.error.CardError as e:
-        charge_id = e.json_body['error']['charge']
-        return mark_payment_as_failed(invoice, e._message, charge_id)
+        except stripe.error.CardError as e:
+            # This is where stripe errors - a FAILED transaction
+            charge_id = e.json_body['error']['charge']
+            return mark_payment_as_failed(invoice, e._message, charge_id)
 
-    except IntegrityError:
-        refund_charge(charge.id)
+        except IntegrityError:
+            # This is where we errors - an ERRORED transaction
+            # As this is our fault, we've already taken the payment from the
+            # customer and should refund the charge
+            refund_charge(charge.id)
 
-        mark_payment_as_errored_after_charge(invoice, charge.id. charge.amount)
+            return mark_payment_as_errored_after_charge(invoice, charge.id. charge.amount)
 
 
 def send_receipt(order):
