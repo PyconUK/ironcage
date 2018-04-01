@@ -133,7 +133,7 @@ def create_ticket_with_unclaimed_invitation():
 
 def create_ticket_with_claimed_invitation(owner=None):
     order = create_paid_order_for_others()
-    ticket = order.all_tickets()[0]
+    ticket = order.tickets()[0]
     owner = owner or create_user()
     actions.claim_ticket_invitation(owner, ticket.invitation)
     return ticket
