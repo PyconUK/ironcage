@@ -1,10 +1,14 @@
+from datetime import datetime
+from unittest.mock import patch, MagicMock
 from unittest import skip
 
 from django.core.exceptions import ValidationError
 from django.test import TestCase
+from django.db.utils import IntegrityError
 
 from ironcage.tests import utils
 from payments import actions
+from payments.exceptions import InvoiceAlreadyPaidException
 from payments.models import (
     CreditNote,
     Invoice,
@@ -258,9 +262,105 @@ class CreateNewCreditNoteTests(TestCase):
         self.assertEqual(credit_note.company_addr, 'My Company House, My Company Lane, Companyland, MY1 1CO')
 
 
+class ConfirmInvoiceTests(TestCase):
+    pass
+
+
+class MarkPaymentAsFailedTests(TestCase):
+    pass
+
+
+class MarkPaymentAsErroredAfterChargeTests(TestCase):
+    pass
+
+
+class MarkPaymentAsSuccessfulTests(TestCase):
+    pass
+
+
+class PayInvoiceByStripeTests(TestCase):
+
+    def setUp(self):
+        self.invoice = ticket_factories.create_unpaid_order_for_self()
+
+    @patch('payments.actions.mark_payment_as_successful')
+    @patch('payments.actions.confirm_invoice')
+    def test_pay_invoice(self, confirm, successful):
+        # arrange
+
+        # act
+        with utils.patched_charge_creation_success(self.invoice.total_pence_inc_vat):
+            actions.pay_invoice_by_stripe(self.invoice, 'tok_ abcdefghijklmnopqurstuvwx')
+
+        # assert
+        successful.assert_called_once_with(self.invoice, 'ch_abcdefghijklmnopqurstuvw', self.invoice.total_pence_inc_vat)
+        confirm.assert_called_once_with(self.invoice, 'ch_abcdefghijklmnopqurstuvw', utils.STRIPE_CHARGE_CREATE_TIME)
+
+    def test_pay_invoice_already_paid_fails(self):
+        # arrange
+        with utils.patched_charge_creation_success(self.invoice.total_pence_inc_vat):
+            actions.pay_invoice_by_stripe(self.invoice, 'tok_ abcdefghijklmnopqurstuvwx')
+
+        # assert
+        with self.assertRaises(InvoiceAlreadyPaidException):
+            # act
+            actions.pay_invoice_by_stripe(self.invoice, 'tok_ abcdefghijklmnopqurstuvwx')
+
+    @patch('payments.actions.mark_payment_as_successful')
+    @patch('payments.actions.mark_payment_as_failed')
+    def test_pay_invoice_with_unsuccessful_payment_does_not_mark_as_successful(self, failed, successful):
+        # arrange
+
+        # act
+        with utils.patched_charge_creation_failure():
+            actions.pay_invoice_by_stripe(self.invoice, 'tok_ abcdefghijklmnopqurstuvwx')
+
+        # assert
+        failed.assert_called_once_with(self.invoice, 'Your card was declined.', 'ch_qwerty')
+        successful.assert_not_called()
+
+    @patch('payments.actions.mark_payment_as_successful')
+    @patch('payments.actions.confirm_invoice')
+    def test_pay_invoice_with_previous_unsuccessful_payment_passes(self, confirm, successful):
+        # arrange
+        with utils.patched_charge_creation_failure():
+            actions.pay_invoice_by_stripe(self.invoice, 'tok_ abcdefghijklmnopqurstuvwx')
+
+        failed_patch = patch('payments.actions.mark_payment_as_failed')
+        failed = failed_patch.start()
+
+        # act
+        with utils.patched_charge_creation_success(self.invoice.total_pence_inc_vat):
+            actions.pay_invoice_by_stripe(self.invoice, 'tok_ abcdefghijklmnopqurstuvwx')
+
+        # assert
+        successful.assert_called_once_with(self.invoice, 'ch_abcdefghijklmnopqurstuvw', self.invoice.total_pence_inc_vat)
+        confirm.assert_called_once_with(self.invoice, 'ch_abcdefghijklmnopqurstuvw', utils.STRIPE_CHARGE_CREATE_TIME)
+        failed.assert_not_called()
+
+        failed_patch.stop()
+
+    @patch('payments.actions.mark_payment_as_successful', side_effect=IntegrityError)
+    @patch('payments.actions.mark_payment_as_errored_after_charge')
+    @patch('payments.actions.confirm_invoice')
+    @patch('payments.actions.refund_charge')
+    def test_pay_invoice_errors_starts_refund_and_marks_as_errored(self, refund, confirm, errored, successful):
+        # arrange
+
+        # act
+        with utils.patched_charge_creation_success(self.invoice.total_pence_inc_vat):
+            actions.pay_invoice_by_stripe(self.invoice, 'tok_ abcdefghijklmnopqurstuvwx')
+
+        # assert
+        successful.assert_called_once_with(self.invoice, 'ch_abcdefghijklmnopqurstuvw', self.invoice.total_pence_inc_vat)
+        errored.assert_called_once_with(self.invoice, 'ch_abcdefghijklmnopqurstuvw', self.invoice.total_pence_inc_vat)
+        refund.assert_called_once_with('ch_abcdefghijklmnopqurstuvw')
+        confirm.assert_not_called()
+
+
 class ProcessStripeChargeTests(TestCase):
     def setUp(self):
-        self.invoice = ticket_factories.create_pending_order_for_self()
+        self.invoice = ticket_factories.create_unpaid_order_for_self()
 
     def test_process_stripe_charge_success(self):
         # arrange
@@ -299,3 +399,5 @@ class ProcessStripeChargeTests(TestCase):
         # assert
         self.assertEqual(payment.status, Payment.ERRORED)
         self.assertEqual(payment.stripe_charge_id, 'ch_abcdefghijklmnopqurstuvw')
+
+

@@ -9,6 +9,11 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.core.exceptions import ValidationError
 
+from payments.exceptions import (
+    InvoiceHasPaymentsException,
+    ItemNotOnInvoiceException,
+)
+
 import structlog
 
 logger = structlog.get_logger()
@@ -16,14 +21,6 @@ logger = structlog.get_logger()
 
 STANDARD_RATE_VAT = Decimal(20.0)
 ZERO_RATE_VAT = Decimal(0.0)
-
-
-class InvoiceHasPaymentsException(Exception):
-    pass
-
-
-class ItemNotOnInvoiceException(Exception):
-    pass
 
 
 class SalesRecord(models.Model):

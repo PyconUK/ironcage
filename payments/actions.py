@@ -4,16 +4,22 @@ import stripe
 
 from django.db import transaction
 from django.db.utils import IntegrityError
+from django_slack import slack_message
 
+from payments.exceptions import InvoiceAlreadyPaidException
 from payments.models import (
     CreditNote,
     Invoice,
     Payment,
 )
-from payments.stripe_integration import create_charge_for_invoice
-
-from tickets.mailer import send_order_confirmation_mail, send_invitation_mail
-from django_slack import slack_message
+from payments.stripe_integration import (
+    create_charge_for_invoice,
+    refund_charge,
+)
+from tickets.mailer import (
+    send_invitation_mail,
+    send_order_confirmation_mail,
+)
 
 logger = structlog.get_logger()
 
@@ -93,7 +99,7 @@ def mark_payment_as_successful(invoice, charge_id, charge_amount, method=Payment
 def pay_invoice_by_stripe(invoice, stripe_token):
     logger.info('pay_invoice_by_stripe', invoice=invoice.item_id, token=stripe_token)
     if invoice.successful_payment:
-        raise Exception('Payment already made against this invoice')
+        raise InvoiceAlreadyPaidException
     else:
         try:
             # This registers the payment we just got with stripe
@@ -118,7 +124,7 @@ def pay_invoice_by_stripe(invoice, stripe_token):
             # customer and should refund the charge
             refund_charge(charge.id)
 
-            return mark_payment_as_errored_after_charge(invoice, charge.id. charge.amount)
+            return mark_payment_as_errored_after_charge(invoice, charge.id, charge.amount)
 
 
 def send_receipt(order):

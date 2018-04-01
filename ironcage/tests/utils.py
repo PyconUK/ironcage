@@ -8,6 +8,8 @@ import stripe
 from django.conf import settings
 
 
+STRIPE_CHARGE_CREATE_TIME = 1495355163
+
 @contextmanager
 def patched_charge_creation_success(amount_in_pence):
     path = os.path.join(settings.BASE_DIR, 'tickets', 'tests', 'data', 'stripe_charge_success.json')
