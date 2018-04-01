@@ -111,9 +111,14 @@ class SalesRecord(models.Model):
         #   credit notes
         # i.e. ensure each item can be paid for zero or one times
 
+        if type(self) == Invoice:
+            row_model = InvoiceRow
+        elif type(self) == CreditNote:
+            row_model = CreditNoteRow
+
         with transaction.atomic():
-            return InvoiceRow.objects.create(
-                invoice=self,
+            return row_model.objects.create(
+                parent=self,
                 item=item,
                 total_ex_vat=item.cost_excl_vat(),
                 vat_rate=vat_rate
@@ -128,7 +133,7 @@ class SalesRecord(models.Model):
         content_type = ContentType.objects.get_for_model(item)
 
         rows_with_item = self.rows.filter(
-            object_type=content_type,
+            content_type=content_type,
             object_id=item.id
         ).count()
 
@@ -141,15 +146,23 @@ class SalesRecord(models.Model):
             logger.error('invoice has payments', invoice=self.id)
             raise InvoiceHasPaymentsException
 
+        if type(self) == Invoice:
+            row_model = InvoiceRow
+        elif type(self) == CreditNote:
+            row_model = CreditNoteRow
+
         with transaction.atomic():
-            return InvoiceRow.objects.filter(
-                invoice=self,
-                object_type=content_type,
+            deleted_row = row_model.objects.get(
+                parent=self,
+                content_type=content_type,
                 object_id=item.id
-            ).delete()
+            )
+
+            deleted_row.delete()
 
     @property
     def payment_required(self):
+        # TODO: but is it the right amount?
         return self.payments.filter(
             status=Payment.SUCCESSFUL
         ).count() < 1
@@ -275,6 +288,10 @@ class Invoice(SalesRecord):
 
 class CreditNote(SalesRecord):
 
+    CREDIT_RECORD = True
+
+    SEQUENCE_PREFIX = 'CI-2018'
+
     CREATED_BY_MISTAKE = 'Mistake'
     REFUNDED_ORDER = 'Refunded'
     ENTITLED_TO_FREE = 'Entitled to Free'
@@ -301,10 +318,6 @@ class CreditNote(SalesRecord):
         (ACCOMMODATION_ISSUES, 'Attendee could not attend conference due lack of available accommodation'),
     )
 
-    CREDIT_RECORD = True
-
-    SEQUENCE_PREFIX = 'CI-2018'
-
     invoice = models.ForeignKey(Invoice, on_delete=models.DO_NOTHING,
                                 related_name='credit_note')
 
@@ -315,35 +328,35 @@ class CreditNote(SalesRecord):
 
 class InvoiceRow(SalesRecordRow):
 
-    invoice = models.ForeignKey(Invoice, related_name='rows',
-                                on_delete=models.DO_NOTHING)
+    parent = models.ForeignKey(Invoice, related_name='rows',
+                               on_delete=models.DO_NOTHING)
 
     class Meta:
-        unique_together = ("invoice", "content_type", "object_id")
+        unique_together = ("parent", "content_type", "object_id")
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        self.invoice._recalculate_total()
+        self.parent._recalculate_total()
 
     def delete(self, *args, **kwargs):
-        invoice = self.invoice
+        parent = self.parent
         super().delete(*args, **kwargs)
-        invoice._recalculate_total()
+        parent._recalculate_total()
 
 
 class CreditNoteRow(SalesRecordRow):
 
-    credit_note = models.ForeignKey(CreditNote, related_name='rows',
-                                    on_delete=models.DO_NOTHING)
+    parent = models.ForeignKey(CreditNote, related_name='rows',
+                               on_delete=models.DO_NOTHING)
 
     class Meta:
-        unique_together = ("credit_note", "content_type", "object_id")
+        unique_together = ("parent", "content_type", "object_id")
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        self.credit_note._recalculate_total()
+        self.parent._recalculate_total()
 
     def delete(self, *args, **kwargs):
-        credit_note = self.credit_note
+        parent = self.parent
         super().delete(*args, **kwargs)
-        credit_note._recalculate_total()
+        parent._recalculate_total()
