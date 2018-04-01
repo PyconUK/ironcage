@@ -11,7 +11,7 @@ from django.utils.safestring import mark_safe
 from payments import actions as payment_actions
 from . import actions
 from .forms import CompanyDetailsForm, TicketForm, TicketForSelfForm, TicketForOthersFormSet
-from .models import Ticket, TicketInvitation #Order,
+from .models import Ticket, TicketInvitation
 from .prices import PRICES_INCL_VAT, cost_incl_vat
 
 
@@ -67,16 +67,6 @@ def new_order(request):
                     company_details,
                 )
 
-                # self.save()
-
-                # order = actions.create_pending_order(
-                #     purchaser=request.user,
-                #     rate=rate,
-                #     days_for_self=days_for_self,
-                #     email_addrs_and_days_for_others=email_addrs_and_days_for_others,
-                #     company_details=company_details,
-                # )
-
                 return redirect(invoice)
 
     else:
@@ -102,26 +92,6 @@ def new_order(request):
     }
 
     return render(request, 'tickets/new_order.html', context)
-
-
-@login_required
-def order_receipt(request, order_id):
-    order = Order.objects.get_by_order_id_or_404(order_id)
-
-    if request.user != order.purchaser:
-        messages.warning(request, 'Only the purchaser of an order can view the receipt')
-        return redirect('index')
-
-    if order.payment_required():
-        messages.error(request, 'This order has not been paid')
-        return redirect(order)
-
-    context = {
-        'order': order,
-        'title': f'PyCon UK 2018 receipt for order {order.order_id}',
-        'no_navbar': True,
-    }
-    return render(request, 'tickets/order_receipt.html', context)
 
 
 @login_required
