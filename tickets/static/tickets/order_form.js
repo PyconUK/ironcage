@@ -11,6 +11,12 @@
     $('input[type=checkbox]').change(recalculateTotal);
   });
 
+  var rateNames = {
+    "INDI": "Individual",
+    "CORP": "Corporate",
+    "EDUC": "Education"
+  };
+
   function maybeSubmitform(e) {
     var who = $('#order-form')[0].elements.who.value;
     var valid = true;
@@ -78,7 +84,7 @@
       $('input[type=email]').removeAttr('required');
     };
 
-    if (rate == 'corporate') {
+    if (rate == 'CORP') {
       $('#form-panel-company-details').show();
       $('input[name=company_name]').attr('required', '');
       $('textarea[name=company_addr]').attr('required', '');
@@ -126,7 +132,7 @@
 
     var totalCost = numTickets * rates[rate]['ticket_price'] + numDays * rates[rate]['day_price']
 
-    $('#rate').text(rate);
+    $('#rate').text(rateNames[rate]);
     $('#num-tickets').text(numTickets);
     $('#total-cost').text(totalCost);
   };

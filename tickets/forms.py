@@ -21,6 +21,12 @@ DAY_CHOICES = [
     ('wed', 'Wednesday'),
 ]
 
+RATE_CHOICES = [
+    (Ticket.INDIVIDUAL, 'Individual'),
+    (Ticket.CORPORATE, 'Corporate'),
+    (Ticket.EDUCATION, 'Education'),
+]
+
 
 class TicketForm(forms.Form):
     who = forms.ChoiceField(
@@ -28,7 +34,7 @@ class TicketForm(forms.Form):
         widget=ButtonsRadio
     )
     rate = forms.ChoiceField(
-        choices=Ticket.RATE_CHOICES,
+        choices=RATE_CHOICES,
         widget=ButtonsRadio
     )
 

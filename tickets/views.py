@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from datetime import datetime, timezone
 
 from django.conf import settings
@@ -13,6 +15,7 @@ from . import actions
 from .forms import CompanyDetailsForm, TicketForm, TicketForSelfForm, TicketForOthersFormSet
 from .models import Ticket, TicketInvitation
 from .prices import PRICES_INCL_VAT, cost_incl_vat
+from .constants import DAYS
 
 
 def new_order(request):
@@ -59,15 +62,19 @@ def new_order(request):
                     company_details = None
 
             if valid:
-                invoice = actions.create_invoice_with_tickets(
-                    request.user,
-                    rate,
-                    days_for_self,
-                    email_addrs_and_days_for_others,
-                    company_details,
-                )
 
-                return redirect(invoice)
+                request.session['ticket_details'] = {
+                    'rate': rate,
+                    'days_for_self': days_for_self,
+                    'email_addrs_and_days_for_others': email_addrs_and_days_for_others,
+                    'company_details': company_details,
+                    'form': form.data,
+                    'self_form': self_form.data,
+                    'others_formset': others_formset.data,
+                    'company_details_form': company_details_form.data,
+                }
+
+                return redirect('tickets:order_confirm')
 
     else:
         if datetime.now(timezone.utc) > settings.TICKET_SALES_CLOSE_AT:
@@ -92,6 +99,145 @@ def new_order(request):
     }
 
     return render(request, 'tickets/new_order.html', context)
+
+
+@login_required
+def order_confirm(request):
+
+    details = request.session['ticket_details']
+
+    if request.method == 'POST':
+
+        print(details)
+
+        invoice = actions.create_invoice_with_tickets(
+            request.user,
+            details['rate'],
+            details['days_for_self'],
+            details['email_addrs_and_days_for_others'],
+            details['company_details'],
+        )
+
+        return redirect(invoice)
+
+    else:
+
+        RATES = {
+            'INDI': 'Individual',
+            'CORP': 'Corporate',
+            'EDUC': 'Education',
+        }
+
+        order_total = Decimal()
+
+        number_of_tickets = len(details['email_addrs_and_days_for_others'])
+        if details['days_for_self']:
+            number_of_tickets += 1
+
+        rate = RATES[details['rate']]
+
+        details_for_self = {}
+
+        if details['days_for_self']:
+            details_for_self['days'] = [DAYS[day] for day in details['days_for_self']]
+            details_for_self['amount'] = cost_incl_vat(details['rate'], len(details['days_for_self']))
+            order_total += details_for_self['amount']
+
+        details_for_others = []
+        for email, days in details['email_addrs_and_days_for_others']:
+            details_for_others.append((
+                email,
+                [DAYS[day] for day in days],
+                cost_incl_vat(details['rate'], len(days))
+            ))
+            order_total += cost_incl_vat(details['rate'], len(days))
+
+        context = {
+            'rate': rate,
+            'number_of_tickets': number_of_tickets,
+            'details_for_self': details_for_self,
+            'details_for_others': details_for_others,
+            'order_total': order_total,
+            'company_details': details['company_details'],
+        }
+
+        return render(request, 'tickets/order_confirm.html', context)
+
+
+@login_required
+def order_edit(request):
+
+    if request.method == 'POST':
+        form = TicketForm(request.POST)
+        self_form = TicketForSelfForm(request.POST)
+        others_formset = TicketForOthersFormSet(request.POST)
+        company_details_form = CompanyDetailsForm(request.POST)
+
+        if form.is_valid():
+            who = form.cleaned_data['who']
+            rate = form.cleaned_data['rate']
+
+            if who == 'self':
+                valid = self_form.is_valid()
+                if valid:
+                    days_for_self = self_form.cleaned_data['days']
+                    email_addrs_and_days_for_others = None
+            elif who == 'others':
+                valid = others_formset.is_valid()
+                if valid:
+                    days_for_self = None
+                    email_addrs_and_days_for_others = others_formset.email_addrs_and_days
+            elif who == 'self and others':
+                valid = self_form.is_valid() and others_formset.is_valid()
+                if valid:
+                    days_for_self = self_form.cleaned_data['days']
+                    email_addrs_and_days_for_others = others_formset.email_addrs_and_days
+            else:
+                assert False
+
+            if valid:
+                if rate == 'corporate':
+                    valid = company_details_form.is_valid()
+                    if valid:
+                        company_details = {
+                            'name': company_details_form.cleaned_data['company_name'],
+                            'addr': company_details_form.cleaned_data['company_addr'],
+                        }
+                else:
+                    company_details = None
+
+            if valid:
+                request.session['ticket_details'] = {
+                    'rate': rate,
+                    'days_for_self': days_for_self,
+                    'email_addrs_and_days_for_others': email_addrs_and_days_for_others,
+                    'company_details': company_details,
+                    'form': form.data,
+                    'self_form': self_form.data,
+                    'others_formset': others_formset.data,
+                    'company_details_form': company_details_form.data,
+                }
+
+                return redirect('tickets:order_confirm')
+
+    else:
+        form = TicketForm(request.session['ticket_details']['form'])
+        self_form = TicketForSelfForm(request.session['ticket_details']['self_form'])
+        others_formset = TicketForOthersFormSet(request.session['ticket_details']['others_formset'])
+        company_details_form = CompanyDetailsForm(request.session['ticket_details']['company_details_form'])
+
+    context = {
+        'form': form,
+        'self_form': self_form,
+        'others_formset': others_formset,
+        'company_details_form': company_details_form,
+        'user_can_buy_for_self': not request.user.get_ticket(),
+        'rates_table_data': _rates_table_data(),
+        'rates_data': _rates_data(),
+        'js_paths': ['tickets/order_form.js'],
+    }
+
+    return render(request, 'tickets/order_edit.html', context)
 
 
 @login_required
