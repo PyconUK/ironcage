@@ -10,7 +10,7 @@
 
 from django.db import transaction
 
-from ironcage.stripe_integration import refund_charge
+from payments.stripe_integration import refund_charge
 
 from .mailer import send_invitation_mail, send_order_refund_mail
 from .models import Ticket

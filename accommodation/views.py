@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import redirect, render
 
-from ironcage.stripe_integration import create_charge
+from payments.stripe_integration import create_charge
 
 from .mailer import send_booking_confirmation_mail
 from .models import Booking, available_rooms, get_room_by_key, has_availability
