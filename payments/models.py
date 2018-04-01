@@ -258,9 +258,6 @@ class Payment(models.Model):
         self.full_clean()
         super().save(*args, **kwargs)
 
-    invoice = models.ForeignKey(SalesRecord, related_name='payments',
-                                on_delete=models.PROTECT)
-
     limit = models.Q(app_label='payments', model='invoice') | \
         models.Q(app_label='payments', model='credit_note')
     content_type = models.ForeignKey(ContentType, on_delete=models.DO_NOTHING,
