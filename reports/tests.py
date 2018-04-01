@@ -122,7 +122,7 @@ class TestOrdersReport(ReportsTestCase):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
-        cls.order1 = tickets_factories.create_pending_order_for_self(cls.alice, num_days=1)
+        cls.order1 = tickets_factories.create_unpaid_order_for_self(cls.alice, num_days=1)
         cls.order2 = tickets_factories.create_confirmed_order_for_self(cls.bob, num_days=2)
 
     def test_get_context_data(self):
@@ -150,7 +150,7 @@ class TestUnpaidOrdersReport(ReportsTestCase):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
-        cls.order1 = tickets_factories.create_pending_order_for_self(cls.alice, num_days=1)
+        cls.order1 = tickets_factories.create_unpaid_order_for_self(cls.alice, num_days=1)
         tickets_factories.create_confirmed_order_for_self(cls.bob, num_days=2)
 
     def test_get_context_data(self):

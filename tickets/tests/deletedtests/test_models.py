@@ -32,7 +32,7 @@ from tickets.models import Ticket, TicketInvitation
 #         self.assertEqual(order.ticket_details(), expected_details)
 
 #     def test_ticket_details_for_unconfirmed_order(self):
-#         order = factories.create_pending_order_for_self_and_others()
+#         order = factories.create_unpaid_order_for_self_and_others()
 #         expected_details = [{
 #             'name': 'Alice',
 #             'days': 'Thursday, Friday, Saturday',
@@ -71,7 +71,7 @@ from tickets.models import Ticket, TicketInvitation
 #         self.assertEqual(order.ticket_summary(), expected_summary)
 
 #     def test_form_data_for_order_for_self(self):
-#         order = factories.create_pending_order_for_self()
+#         order = factories.create_unpaid_order_for_self()
 #         expected = {
 #             'who': 'self',
 #             'rate': 'individual',
@@ -79,7 +79,7 @@ from tickets.models import Ticket, TicketInvitation
 #         self.assertEqual(order.form_data(), expected)
 
 #     def test_form_data_for_order_for_others(self):
-#         order = factories.create_pending_order_for_others()
+#         order = factories.create_unpaid_order_for_others()
 #         expected = {
 #             'who': 'others',
 #             'rate': 'individual',
@@ -87,7 +87,7 @@ from tickets.models import Ticket, TicketInvitation
 #         self.assertEqual(order.form_data(), expected)
 
 #     def test_form_data_for_order_for_self_and_others(self):
-#         order = factories.create_pending_order_for_self_and_others()
+#         order = factories.create_unpaid_order_for_self_and_others()
 #         expected = {
 #             'who': 'self and others',
 #             'rate': 'individual',
@@ -95,29 +95,29 @@ from tickets.models import Ticket, TicketInvitation
 #         self.assertEqual(order.form_data(), expected)
 
 #     def test_self_form_data_for_order_for_self(self):
-#         order = factories.create_pending_order_for_self()
+#         order = factories.create_unpaid_order_for_self()
 #         expected = {
 #             'days': ['thu', 'fri', 'sat'],
 #         }
 #         self.assertEqual(order.self_form_data(), expected)
 
 #     def test_self_form_data_for_order_for_others(self):
-#         order = factories.create_pending_order_for_others()
+#         order = factories.create_unpaid_order_for_others()
 #         self.assertEqual(order.self_form_data(), None)
 
 #     def test_self_form_data_for_order_for_self_and_others(self):
-#         order = factories.create_pending_order_for_self_and_others()
+#         order = factories.create_unpaid_order_for_self_and_others()
 #         expected = {
 #             'days': ['thu', 'fri', 'sat'],
 #         }
 #         self.assertEqual(order.self_form_data(), expected)
 
 #     def test_others_formset_data_for_order_for_self(self):
-#         order = factories.create_pending_order_for_self()
+#         order = factories.create_unpaid_order_for_self()
 #         self.assertEqual(order.others_formset_data(), None)
 
 #     def test_others_formset_data_for_order_for_others(self):
-#         order = factories.create_pending_order_for_others()
+#         order = factories.create_unpaid_order_for_others()
 #         expected = {
 #             'form-TOTAL_FORMS': '2',
 #             'form-INITIAL_FORMS': '2',
@@ -129,7 +129,7 @@ from tickets.models import Ticket, TicketInvitation
 #         self.assertEqual(order.others_formset_data(), expected)
 
 #     def test_others_formset_data_for_order_for_self_and_others(self):
-#         order = factories.create_pending_order_for_self_and_others()
+#         order = factories.create_unpaid_order_for_self_and_others()
 #         expected = {
 #             'form-TOTAL_FORMS': '2',
 #             'form-INITIAL_FORMS': '2',
@@ -141,11 +141,11 @@ from tickets.models import Ticket, TicketInvitation
 #         self.assertEqual(order.others_formset_data(), expected)
 
 #     def test_company_details_form_data_for_individual_order(self):
-#         order = factories.create_pending_order_for_self()
+#         order = factories.create_unpaid_order_for_self()
 #         self.assertEqual(order.company_details_form_data(), None)
 
 #     def test_company_details_form_data_for_corporate_order(self):
-#         order = factories.create_pending_order_for_self(rate='corporate')
+#         order = factories.create_unpaid_order_for_self(rate='corporate')
 #         expected = {
 #             'company_name': 'Sirius Cybernetics Corp.',
 #             'company_addr': 'Eadrax, Sirius Tau',
@@ -177,7 +177,7 @@ from tickets.models import Ticket, TicketInvitation
 #         self.assertEqual(len(order.tickets_for_others()), 2)
 
 #     def test_company_addr_formatted(self):
-#         order = factories.create_pending_order_for_self(rate='corporate')
+#         order = factories.create_unpaid_order_for_self(rate='corporate')
 #         order.company_addr = '''
 # City Hall,
 # Cathays Park

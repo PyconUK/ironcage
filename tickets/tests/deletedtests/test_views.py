@@ -19,7 +19,7 @@ from tickets.models import TicketInvitation, Ticket
 # class OrderEditTests(TestCase):
 #     @classmethod
 #     def setUpTestData(cls):
-#         cls.order = factories.create_pending_order_for_self()
+#         cls.order = factories.create_unpaid_order_for_self()
 
 #     def test_get(self):
 #         self.client.force_login(self.order.purchaser)

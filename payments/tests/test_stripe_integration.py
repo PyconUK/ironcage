@@ -12,7 +12,7 @@ from tickets.tests import factories as ticket_factories
 class StripeIntegrationTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.order = ticket_factories.create_pending_order_for_self()
+        cls.order = ticket_factories.create_unpaid_order_for_self()
         cls.alice = factories.create_user()
         cls.ticket = ticket_factories.create_ticket(cls.alice)
         cls.invoice = factories.create_invoice(cls.alice)

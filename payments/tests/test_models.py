@@ -16,7 +16,7 @@ from tickets.tests import factories as ticket_factories
     #     self.assertEqual(order.cost_incl_vat(), 306)  # 306 == 3 * 18 + 7 * 36
 
     # def test_cost_incl_vat_for_unconfirmed_order(self):
-    #     order = factories.create_pending_order_for_self_and_others()
+    #     order = factories.create_unpaid_order_for_self_and_others()
     #     self.assertEqual(order.cost_incl_vat(), 306)  # 306 == 3 * 18 + 7 * 36
 
     # def test_cost_excl_vat_for_confirmed_order(self):
@@ -24,7 +24,7 @@ from tickets.tests import factories as ticket_factories
     #     self.assertEqual(order.cost_excl_vat(), 255)  # 255 == 3 * 15 + 7 * 30
 
     # def test_cost_excl_vat_for_unconfirmed_order(self):
-    #     order = factories.create_pending_order_for_self_and_others()
+    #     order = factories.create_unpaid_order_for_self_and_others()
     #     self.assertEqual(order.cost_excl_vat(), 255)  # 255 == 3 * 15 + 7 * 30
 
 

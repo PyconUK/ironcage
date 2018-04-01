@@ -13,8 +13,8 @@ from payments.models import Payment
 
 # class UpdatePendingOrderTests(TestCase):
 #     def test_order_for_self_to_order_for_self(self):
-#         order = factories.create_pending_order_for_self()
-#         actions.update_pending_order(
+#         order = factories.create_unpaid_order_for_self()
+#         actions.update_unpaid_order(
 #             order,
 #             Ticket.INDIVIDUAL,
 #             days_for_self=['sat'],
@@ -28,8 +28,8 @@ from payments.models import Payment
 #         )
 
 #     def test_order_for_self_to_order_for_others(self):
-#         order = factories.create_pending_order_for_self()
-#         actions.update_pending_order(
+#         order = factories.create_unpaid_order_for_self()
+#         actions.update_unpaid_order(
 #             order,
 #             Ticket.INDIVIDUAL,
 #             email_addrs_and_days_for_others=[
@@ -49,8 +49,8 @@ from payments.models import Payment
 #         )
 
 #     def test_order_for_self_to_order_for_self_and_others(self):
-#         order = factories.create_pending_order_for_self()
-#         actions.update_pending_order(
+#         order = factories.create_unpaid_order_for_self()
+#         actions.update_unpaid_order(
 #             order,
 #             Ticket.INDIVIDUAL,
 #             days_for_self=['sat', 'sun', 'mon'],
@@ -72,8 +72,8 @@ from payments.models import Payment
 #         )
 
 #     def test_individual_order_to_corporate_order(self):
-#         order = factories.create_pending_order_for_self()
-#         actions.update_pending_order(
+#         order = factories.create_unpaid_order_for_self()
+#         actions.update_unpaid_order(
 #             order,
 #             Ticket.CORPORATE,
 #             days_for_self=['sat', 'sun', 'mon'],
@@ -95,8 +95,8 @@ from payments.models import Payment
 #         )
 
 #     def test_corporate_order_to_individual_order(self):
-#         order = factories.create_pending_order_for_self(rate=Ticket.CORPORATE)
-#         actions.update_pending_order(
+#         order = factories.create_unpaid_order_for_self(rate=Ticket.CORPORATE)
+#         actions.update_unpaid_order(
 #             order,
 #             Ticket.INDIVIDUAL,
 #             days_for_self=['sat', 'sun', 'mon'],

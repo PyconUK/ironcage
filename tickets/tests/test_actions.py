@@ -18,7 +18,7 @@ class CreatePendingOrderTests(TestCase):
         cls.alice = factories.create_user()
 
     def test_order_for_self_individual(self):
-        order = actions.create_pending_order(
+        order = actions.create_unpaid_order(
             self.alice,
             Ticket.INDIVIDUAL,
             days_for_self=['sat', 'sun', 'mon']
@@ -32,7 +32,7 @@ class CreatePendingOrderTests(TestCase):
         self.assertEqual(order.rate, Ticket.INDIVIDUAL)
 
     def test_order_for_self_corporate(self):
-        order = actions.create_pending_order(
+        order = actions.create_unpaid_order(
             self.alice,
             Ticket.CORPORATE,
             days_for_self=['sat', 'sun', 'mon'],
@@ -52,7 +52,7 @@ class CreatePendingOrderTests(TestCase):
         self.assertEqual(order.company_addr, 'Eadrax, Sirius Tau')
 
     def test_order_for_others(self):
-        order = actions.create_pending_order(
+        order = actions.create_unpaid_order(
             self.alice,
             Ticket.INDIVIDUAL,
             email_addrs_and_days_for_others=[
@@ -69,7 +69,7 @@ class CreatePendingOrderTests(TestCase):
         self.assertEqual(order.rate, Ticket.INDIVIDUAL)
 
     def test_order_for_self_and_others(self):
-        order = actions.create_pending_order(
+        order = actions.create_unpaid_order(
             self.alice,
             Ticket.INDIVIDUAL,
             days_for_self=['sat', 'sun', 'mon'],
@@ -89,7 +89,7 @@ class CreatePendingOrderTests(TestCase):
 
 class ConfirmOrderTests(TestCase):
     def test_order_for_self(self):
-        order = factories.create_pending_order_for_self()
+        order = factories.create_unpaid_order_for_self()
 
         with utils.patched_charge_creation_success(order.total_pence_inc_vat):
             payment = payment_actions.pay_invoice_by_stripe(order, 'ch_abcdefghijklmnopqurstuvw')
@@ -108,7 +108,7 @@ class ConfirmOrderTests(TestCase):
         self.assertEqual(len(mail.outbox), 1)
 
     def test_order_for_others(self):
-        order = factories.create_pending_order_for_others()
+        order = factories.create_unpaid_order_for_others()
 
         with utils.patched_charge_creation_success(order.total_pence_inc_vat):
             payment = payment_actions.pay_invoice_by_stripe(order, 'ch_abcdefghijklmnopqurstuvw')
@@ -130,7 +130,7 @@ class ConfirmOrderTests(TestCase):
         self.assertEqual(len(mail.outbox), 3)
 
     def test_order_for_self_and_others(self):
-        order = factories.create_pending_order_for_self_and_others()
+        order = factories.create_unpaid_order_for_self_and_others()
 
         with utils.patched_charge_creation_success(order.total_pence_inc_vat):
             payment = payment_actions.pay_invoice_by_stripe(order, 'ch_abcdefghijklmnopqurstuvw')
@@ -155,7 +155,7 @@ class ConfirmOrderTests(TestCase):
         self.assertEqual(len(mail.outbox), 3)
 
     def test_after_order_marked_as_failed(self):
-        order = factories.create_pending_order_for_self()
+        order = factories.create_unpaid_order_for_self()
         payment_actions.mark_payment_as_failed(order, 'There was a problem', 'ch_abcdefghijklmnopqurstuvw')
 
         with utils.patched_charge_creation_success(order.total_pence_inc_vat):
@@ -174,7 +174,7 @@ class ConfirmOrderTests(TestCase):
 
     def test_sends_slack_message(self):
         backend = get_slack_backend()
-        order = factories.create_pending_order_for_self()
+        order = factories.create_unpaid_order_for_self()
         backend.reset_messages()
 
         with utils.patched_charge_creation_success(order.total_pence_inc_vat):
@@ -188,7 +188,7 @@ class ConfirmOrderTests(TestCase):
 
 class MarkOrderAsFailed(TestCase):
     def test_mark_order_as_failed(self):
-        order = factories.create_pending_order_for_self()
+        order = factories.create_unpaid_order_for_self()
 
         payment_actions.mark_payment_as_failed(order, 'There was a problem', 'ch_abcdefghijklmnopqurstuvw')
 
@@ -198,7 +198,7 @@ class MarkOrderAsFailed(TestCase):
 
 class MarkOrderAsErroredAfterCharge(TestCase):
     def test_mark_order_as_errored_after_charge(self):
-        order = factories.create_pending_order_for_self()
+        order = factories.create_unpaid_order_for_self()
 
         payment_actions.mark_payment_as_errored_after_charge(order, 'ch_abcdefghijklmnopqurstuvw', order.total_pence_inc_vat)
 

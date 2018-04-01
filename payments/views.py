@@ -97,7 +97,7 @@ def order_edit(request, order_id):
                     company_details = None
 
             if valid:
-                actions.update_pending_order(
+                actions.update_unpaid_order(
                     order,
                     rate=rate,
                     days_for_self=days_for_self,

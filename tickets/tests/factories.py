@@ -30,7 +30,7 @@ def create_ticket_with_unclaimed_invitation_ticket(email=None, rate=None, num_da
     )
 
 
-def create_pending_order_for_self(user=None, rate=None, num_days=None):
+def create_unpaid_order_for_self(user=None, rate=None, num_days=None):
     user = user or create_user()
     rate = rate or Ticket.INDIVIDUAL
     num_days = num_days or 3
@@ -43,7 +43,7 @@ def create_pending_order_for_self(user=None, rate=None, num_days=None):
     else:
         company_details = None
 
-    return actions.create_pending_order(
+    return actions.create_unpaid_order(
         purchaser=user,
         rate=rate,
         days_for_self=['sat', 'sun', 'mon', 'tue', 'wed'][:num_days],
@@ -51,10 +51,10 @@ def create_pending_order_for_self(user=None, rate=None, num_days=None):
     )
 
 
-def create_pending_order_for_others(user=None, rate=None):
+def create_unpaid_order_for_others(user=None, rate=None):
     user = user or create_user()
     rate = rate or Ticket.INDIVIDUAL
-    return actions.create_pending_order(
+    return actions.create_unpaid_order(
         purchaser=user,
         rate=rate,
         email_addrs_and_days_for_others=[
@@ -64,10 +64,10 @@ def create_pending_order_for_others(user=None, rate=None):
     )
 
 
-def create_pending_order_for_self_and_others(user=None, rate=None):
+def create_unpaid_order_for_self_and_others(user=None, rate=None):
     user = user or create_user()
     rate = rate or Ticket.INDIVIDUAL
-    return actions.create_pending_order(
+    return actions.create_unpaid_order(
         purchaser=user,
         rate=rate,
         days_for_self=['sat', 'sun', 'mon'],
@@ -92,31 +92,31 @@ def mark_order_as_errored_after_charge(order):
 
 
 def create_confirmed_order_for_self(user=None, rate=None, num_days=None):
-    invoice = create_pending_order_for_self(user, rate, num_days)
+    invoice = create_unpaid_order_for_self(user, rate, num_days)
     payment = confirm_order(invoice)
     return invoice
 
 
 def create_confirmed_order_for_others(user=None, rate=None):
-    invoice = create_pending_order_for_others(user, rate)
+    invoice = create_unpaid_order_for_others(user, rate)
     payment = confirm_order(invoice)
     return invoice
 
 
 def create_confirmed_order_for_self_and_others(user=None, rate=None):
-    invoice = create_pending_order_for_self_and_others(user, rate)
+    invoice = create_unpaid_order_for_self_and_others(user, rate)
     payment = confirm_order(invoice)
     return invoice
 
 
 def create_failed_order(user=None, rate=None):
-    order = create_pending_order_for_self(user, rate)
+    order = create_unpaid_order_for_self(user, rate)
     mark_order_as_failed(order)
     return order
 
 
 def create_errored_order(user=None, rate=None):
-    order = create_pending_order_for_self(user, rate)
+    order = create_unpaid_order_for_self(user, rate)
     mark_order_as_errored_after_charge(order)
     return order
 
