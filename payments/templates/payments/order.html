@@ -7,7 +7,7 @@
 
 {% include './_invoice_details.html' %}
 
-{% if invoice.payment_required %}
+{% if invoice.payment_status == 'FLD' or invoice.payment_status is None %}
 <div id="stripe-form">
   <form action="{% url 'payments:invoice_payment' invoice_id=invoice.id %}" method="POST">
     {% csrf_token %}

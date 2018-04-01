@@ -23,15 +23,15 @@ def order(request, invoice_id):
         messages.warning(request, 'Only the purchaser of an invoice can view the invoice')
         return redirect('index')
 
-    # if invoice.payment_required():
+    # if not invoice.successful_payment:
     #     if request.user.get_ticket() is not None and invoice.unconfirmed_details['days_for_self']:
     #         messages.warning(request, 'You already have a ticket.  Please amend your invoice.')
     #         return redirect('tickets:order_edit', invoice.invoice_id)
 
-    # if invoice.status == 'failed':
-    #     messages.error(request, f'Payment for this invoice failed ({invoice.stripe_charge_failure_reason})')
-    # elif invoice.status == 'errored':
-    #     messages.error(request, 'There was an error creating your invoice.  You card may have been charged, but if so the charge will have been refunded.  Please make a new invoice.')
+    if invoice.payment_status == Payment.FAILED:
+        messages.error(request, f'Payment for this invoice failed')
+    elif invoice.payment_status == Payment.ERRORED:
+        messages.error(request, 'There was an error creating your invoice. Your card may have been charged, but if so the charge will have been refunded.  Please make a new invoice.')
 
     # ticket = request.user.get_ticket()
     # if ticket is not None and ticket.invoice != invoice:
@@ -39,7 +39,7 @@ def order(request, invoice_id):
 
     context = {
         'invoice': invoice,
-        'ticket': invoice.tickets()[0],
+        'ticket': invoice.ticket_for_self,
         'stripe_api_key': settings.STRIPE_API_KEY_PUBLISHABLE,
     }
     return render(request, 'payments/order.html', context)
@@ -136,7 +136,7 @@ def invoice_payment(request, invoice_id):
         messages.warning(request, 'Only the purchaser of an invoice can pay for the invoice')
         return redirect('index')
 
-    if not invoice.payment_required:
+    if invoice.successful_payment:
         messages.error(request, 'This invoice has already been paid')
         return redirect(invoice)
 

@@ -54,11 +54,11 @@ def create_new_credit_note(purchaser, invoice, reason,
 
 def confirm_invoice(invoice, charge_id, charge_created):
     logger.info('confirm_invoice', invoice=invoice.id, charge_id=charge_id)
-    # with transaction.atomic():
-    # This used to actually register the stripe charge in the DB and create tickets
-    #     invoice.confirm(charge_id, charge_created)
     send_receipt(invoice)
-    send_ticket_invitations(invoice)
+
+    for row in invoice.rows.all():
+        row.item.on_payment()
+
     slack_message('tickets/order_created.slack', {'invoice': invoice})
 
 
@@ -130,9 +130,3 @@ def pay_invoice_by_stripe(invoice, stripe_token):
 def send_receipt(order):
     logger.info('send_receipt', order=order.item_id)
     send_order_confirmation_mail(order)
-
-
-def send_ticket_invitations(order):
-    logger.info('send_ticket_invitations', order=order.item_id)
-    for ticket in order.unclaimed_tickets():
-        send_invitation_mail(ticket)

@@ -104,3 +104,9 @@ def refund_order(order):
         order.delete_tickets_and_mark_as_refunded()
     refund_charge(order.stripe_charge_id)
     send_order_refund_mail(order)
+
+
+def send_ticket_invitations(ticket):
+    logger.info('send_ticket_invitation', ticket=ticket.item_id)
+    # for ticket in order.unclaimed_tickets():
+    send_invitation_mail(ticket)

@@ -91,6 +91,10 @@ class Ticket(models.Model):
             return None
         return self.id_scrambler.forward(self.id)
 
+    @property
+    def item_id(self):
+        return self.ticket_id
+
     def get_absolute_url(self):
         return reverse('tickets:ticket', args=[self.ticket_id])
 
@@ -169,13 +173,9 @@ class Ticket(models.Model):
             return False
 
     @property
-    def item_id(self):
-        return self.ticket_id
-
-    @property
     def invoice_description(self):
         return 'PyCon UK 2018 Ticket for {} ({})'.format(
-            self.invitation.email_addr if hasattr(self, 'invitation') else self.owner,
+            self.invitation.email_addr if hasattr(self, 'invitation') else self.owner.name,
             ', '.join(self.days()),
         )
 
@@ -187,6 +187,11 @@ class Ticket(models.Model):
             rows__content_type=content_type,
             rows__object_id=self.id
         ).first()
+
+    def on_payment(self):
+        from tickets.actions import send_ticket_invitations
+        if self.owner is None:
+            send_ticket_invitations(self)
 
 
 class TicketInvitation(models.Model):

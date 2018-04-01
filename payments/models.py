@@ -9,11 +9,11 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.core.exceptions import ValidationError
 
+
 from payments.exceptions import (
     InvoiceHasPaymentsException,
     ItemNotOnInvoiceException,
 )
-
 import structlog
 
 logger = structlog.get_logger()
@@ -169,6 +169,28 @@ class SalesRecord(models.Model):
         except Payment.DoesNotExist:
             return None
 
+    @property
+    def payment_status(self):
+        # Worst to best
+        if self.payments.count():
+            STATUS_ORDER = (
+                Payment.CHARGEBACK,
+                Payment.REFUNDED,
+                Payment.ERRORED,
+                Payment.FAILED,
+                Payment.SUCCESSFUL
+            )
+
+            status_index = len(STATUS_ORDER) + 1
+
+            for payment in self.payments.all():
+                if STATUS_ORDER.index(payment.status) < status_index:
+                    status_index = STATUS_ORDER.index(payment.status)
+
+            return STATUS_ORDER[status_index]
+
+        return None
+
     def tickets(self):
         from tickets.models import Ticket
         tickets = []
@@ -178,6 +200,23 @@ class SalesRecord(models.Model):
                 tickets.append(row.item)
 
         return tickets
+
+    @property
+    def ticket_for_self(self):
+        if self.successful_payment:
+
+            from tickets.models import Ticket
+            try:
+                ticket = Ticket.objects.get(
+                    owner=self.purchaser
+                )
+            except Ticket.DoesNotExist:
+                return None
+
+            if ticket.invoice == self:
+                return ticket
+
+        return None
 
     def unclaimed_tickets(self):
         from tickets.models import Ticket, TicketInvitation

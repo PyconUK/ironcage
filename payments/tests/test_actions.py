@@ -1,5 +1,4 @@
-from datetime import datetime
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 from unittest import skip
 
 from django.core.exceptions import ValidationError
@@ -15,6 +14,7 @@ from payments.models import (
     Payment,
 )
 from payments.tests import factories
+from tickets.models import Ticket
 from tickets.tests import factories as ticket_factories
 
 
@@ -263,7 +263,41 @@ class CreateNewCreditNoteTests(TestCase):
 
 
 class ConfirmInvoiceTests(TestCase):
-    pass
+
+    def setUp(self):
+        self.invoice = ticket_factories.create_unpaid_order_for_self()
+
+    @patch('payments.actions.send_receipt')
+    @patch('payments.actions.slack_message')
+    @patch.object(Ticket, 'on_payment')
+    def test_confirm_invoice(self, on_payment, slack, receipt):
+        # arrange
+        self.payment = actions.create_successful_payment(self.invoice, 'ch_qwerty', self.invoice.total_pence_inc_vat)
+
+        # act
+        actions.confirm_invoice(self.invoice, self.payment.charge_id, self.payment.created_at)
+
+        # assert
+        receipt.assert_called_once_with(self.invoice)
+        slack.assert_called_once_with('tickets/order_created.slack', {'invoice': self.invoice})
+        on_payment.assert_called_once()
+
+    @patch('payments.actions.send_receipt')
+    @patch('payments.actions.slack_message')
+    @patch.object(Ticket, 'on_payment')
+    def test_confirm_invoice_with_multiple_tickets_runs_on_payment_for_each_item(self, on_payment, slack, receipt):
+        # arrange
+        self.ticket = ticket_factories.create_ticket_with_unclaimed_invitation_ticket()
+        self.invoice.add_item(self.ticket)
+        self.payment = actions.create_successful_payment(self.invoice, 'ch_qwerty', self.invoice.total_pence_inc_vat)
+
+        # act
+        actions.confirm_invoice(self.invoice, self.payment.charge_id, self.payment.created_at)
+
+        # assert
+        receipt.assert_called_once_with(self.invoice)
+        slack.assert_called_once_with('tickets/order_created.slack', {'invoice': self.invoice})
+        self.assertEqual(on_payment.call_count, 2)
 
 
 class MarkPaymentAsFailedTests(TestCase):
@@ -413,6 +447,7 @@ class PayInvoiceByStripeTests(TestCase):
 
 
 class ProcessStripeChargeTests(TestCase):
+    # These tests are probably now redundant
 
     def setUp(self):
         self.invoice = ticket_factories.create_unpaid_order_for_self()
@@ -454,5 +489,3 @@ class ProcessStripeChargeTests(TestCase):
         # assert
         self.assertEqual(payment.status, Payment.ERRORED)
         self.assertEqual(payment.stripe_charge_id, 'ch_abcdefghijklmnopqurstuvw')
-
-
