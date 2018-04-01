@@ -40,17 +40,17 @@ def create_ticket_with_invitation(email, rate, days=None):
         )
 
 
-def create_invoice_with_tickets(user, rate, days_for_self, email_addrs_and_days_for_others,
-                                company_details):
-    logger.info('create_invoice_with_tickets', purchaser=user.id, rate=rate)
+def create_invoice_with_tickets(purchaser, rate, days_for_self=None, email_addrs_and_days_for_others=None,
+                                company_details=None):
+    logger.info('create_invoice_with_tickets', purchaser=purchaser.id, rate=rate)
 
     company_name = company_details['name'] if isinstance(company_details, dict) else None
     company_addr = company_details['addr'] if isinstance(company_details, dict) else None
 
-    invoice = payment_actions.create_new_invoice(user, company_name, company_addr)
+    invoice = payment_actions.create_new_invoice(purchaser, company_name, company_addr)
 
     if days_for_self:
-        ticket = create_ticket(user, rate, days_for_self)
+        ticket = create_ticket(purchaser, rate, days_for_self)
         invoice.add_item(ticket)
 
     if email_addrs_and_days_for_others is not None:
