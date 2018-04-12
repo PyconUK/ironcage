@@ -22,6 +22,7 @@ class ProposalForm(forms.ModelForm):
             'would_like_mentor',
             'would_like_longer_slot',
             'coc_conformity',
+            'ticket',
         ]
 
         labels = {
@@ -46,6 +47,7 @@ class ProposalForm(forms.ModelForm):
             'outline': 'An outline of your session is optional, but helps the programme committee. A proposal with an outline is more likely to be selected than one without. More detail, including timings, is better. The outline will not be published.',
             'description_private': 'Your answer is for the benefit of the programme committee, and will not be published.  Limit: 300 words.',
             'coc_conformity': 'I confirm that my proposed session conforms to the requirements of the <a href="https://2018.pyconuk.org/code-conduct/" target="_blank">Code of Conduct</a>',
+            'ticket': 'All attendees <strong>including speakers</strong> at PyCon UK need to register for a ticket. I understand that I will either need to buy a ticket for the event <strong>or</strong> request a free ticket through the financial assistance process.',
         }
 
         widgets = {
